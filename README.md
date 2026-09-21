@@ -29,7 +29,7 @@ npm run dev
 
 Google sign-in uses a Google OAuth web client. Add `http://localhost:5173` to its authorized JavaScript origins, then set the same public client ID as `GOOGLE_CLIENT_ID` in `client/.env` and `GOOGLE_CLIENT_ID` in `server/.env`. The client ID is safe to expose in the frontend; do not add a Google client secret to either example.
 
-The API runs on `http://localhost:3001` and Vite on `http://localhost:5173`. `CLIENT_URL`, `PORT`, `DATABASE_URL`, and `JWT_SECRET` are read from `server/.env`. The production build remains `npm run build`, followed by `npm start`; the server start command applies pending Prisma migrations before booting.
+The API runs on `http://localhost:3001` and Vite on `http://localhost:5173`. `CLIENT_URL`, `ALLOWED_ORIGINS`, `PORT`, `DATABASE_URL`, and `JWT_SECRET` are read from `server/.env`. Set `ALLOWED_ORIGINS` to a comma-separated list of deployed frontend origins. The production build remains `npm run build`, followed by `npm start`; the server start command applies pending Prisma migrations before booting.
 
 ## Phase 3: Gemini AI Assistant
 

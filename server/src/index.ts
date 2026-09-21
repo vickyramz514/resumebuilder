@@ -13,7 +13,23 @@ import { errorMiddleware } from './middleware/error.middleware.js';
 import { renderPdf } from './services/pdf.service.js';
 
 const app = express();
-app.use(cors({ origin: env.clientUrl, credentials: true }));
+const isAllowedOrigin = (origin?: string) => {
+  if (!origin) return true;
+  if (env.allowedOrigins.includes(origin.replace(/\/$/, ''))) return true;
+  return /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+};
+app.use(cors({
+  origin: (origin, callback) => callback(null, isAllowedOrigin(origin) ? origin ?? true : false),
+  credentials: true,
+  methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.options('*', cors({
+  origin: (origin, callback) => callback(null, isAllowedOrigin(origin) ? origin ?? true : false),
+  credentials: true,
+  methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json({ limit: '2mb' }));
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', service: 'ResumeForge API' }));
 app.use('/api/auth', authRoutes);
