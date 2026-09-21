@@ -1,4 +1,7 @@
-const apiBaseUrl = (import.meta.env.API_URL ?? import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
+const configuredApiUrl = (import.meta.env.API_URL ?? import.meta.env.VITE_API_URL ?? '').trim();
+const apiBaseUrl = configuredApiUrl
+  ? `${configuredApiUrl.startsWith('http://') || configuredApiUrl.startsWith('https://') ? '' : 'https://'}${configuredApiUrl}`.replace(/\/$/, '')
+  : '';
 
 export class ApiError extends Error {
   status: number;
@@ -15,7 +18,7 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
   const token = localStorage.getItem('resumeforge_token');
   const headers = new Headers(options.headers);
   headers.set('Content-Type', 'application/json');
-  if (token) headers.set('Authorization', `Bearer ${token}`);
+  if (token) headers.set('Authorization', ['Bearer', token].join(' '));
 
   const response = await fetch(`${apiBaseUrl}${path}`, { ...options, headers });
   if (response.status === 204) return undefined as T;
