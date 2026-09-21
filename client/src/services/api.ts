@@ -1,3 +1,5 @@
+const apiBaseUrl = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
+
 export class ApiError extends Error {
   status: number;
   code?: string;
@@ -15,7 +17,7 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
   headers.set('Content-Type', 'application/json');
   if (token) headers.set('Authorization', `Bearer ${token}`);
 
-  const response = await fetch(path, { ...options, headers });
+  const response = await fetch(`${apiBaseUrl}${path}`, { ...options, headers });
   if (response.status === 204) return undefined as T;
 
   const body = await response.json().catch(() => ({}));
