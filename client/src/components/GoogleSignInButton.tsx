@@ -1,7 +1,7 @@
 import { GoogleLogin } from '@react-oauth/google';
 import { Button } from '@mui/material';
 
-const clientId = import.meta.env.GOOGLE_CLIENT_ID ?? '';
+const clientId = import.meta.env.GOOGLE_CLIENT_ID ?? import.meta.env.VITE_GOOGLE_CLIENT_ID ?? '';
 
 interface GoogleSignInButtonProps {
   onCredential: (credential: string) => Promise<void>;
