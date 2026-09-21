@@ -1,11 +1,31 @@
 # ResumeForge
 
-ResumeForge is a focused Phase 1 resume builder for creating, rearranging, and exporting polished resumes. It stores edits in the browser so work is available offline between visits.
+ResumeForge is a resume builder for creating, rearranging, sharing, and exporting polished resumes. Phase 2 adds optional cloud persistence, accounts, and public resume links while retaining the Phase 1 local/offline editor fallback.
 
 ## Stack
 
 - Client: React, Vite, TypeScript, Material UI, React Hook Form, Zustand, dnd-kit, lucide-react
-- Server: Express, TypeScript, Playwright PDF rendering
+- Server: Express, TypeScript, Prisma, PostgreSQL, JWT, Playwright PDF rendering
+
+## Phase 2 architecture
+
+The React client uses the existing Zustand resume model and templates. Authenticated resume changes are persisted locally immediately and debounced to the Express API (PostgreSQL through Prisma). JWTs are stored in local storage for this MVP; passwords are bcrypt-hashed and never returned. Public links use random slugs and only expose explicitly shared resume data.
+
+## Phase 2 setup
+
+Prerequisites: Node.js 20+, PostgreSQL, and (for PDF export) Chromium.
+
+```bash
+npm install
+npx playwright install chromium
+cp server/.env.example server/.env
+# Set DATABASE_URL and a strong JWT_SECRET in server/.env
+npm run prisma:generate --workspace server
+npm run prisma:migrate --workspace server
+npm run dev
+```
+
+The API runs on `http://localhost:3001` and Vite on `http://localhost:5173`. `CLIENT_URL`, `PORT`, `DATABASE_URL`, and `JWT_SECRET` are read from `server/.env`. The production build remains `npm run build`, followed by `npm start`.
 
 ## Run locally
 
@@ -25,5 +45,6 @@ Open http://localhost:5173. The client proxies `/api` requests to the Express se
 - Multiple resumes with duplicate/delete/new actions
 - Zustand localStorage persistence and responsive editor/preview layout
 - Browser print fallback and Playwright-backed PDF export endpoint
+- Registration, login, protected multi-resume dashboard, autosave, duplicate/rename/delete, and public sharing
 
 For a production deployment, build both workspaces with `npm run build` and start the server with `npm start`.

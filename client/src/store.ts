@@ -18,6 +18,7 @@ interface ResumeStore {
   setTemplate: (template: TemplateId) => void;
   setSections: (sections: SectionType[]) => void;
   reorderSections: (from: number, to: number) => void;
+  replaceResume: (resume: Resume) => void;
 }
 
 const timestamp = () => new Date().toISOString();
@@ -55,6 +56,10 @@ export const useResumeStore = create<ResumeStore>()(persist((set, get) => ({
     const [moved] = sections.splice(from, 1);
     sections.splice(to, 0, moved);
     return { resumes: state.resumes.map((resume) => resume.id === active.id ? { ...resume, sections, updatedAt: timestamp() } : resume) };
+  }),
+  replaceResume: (resume) => set((state) => {
+    const exists = state.resumes.some((item) => item.id === resume.id);
+    return { resumes: exists ? state.resumes.map((item) => item.id === resume.id ? resume : item) : [...state.resumes, resume], activeId: resume.id, selectedSection: 'personal' };
   })
 }), { name: 'resumeforge_resume' }));
 
