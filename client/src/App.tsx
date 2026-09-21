@@ -10,7 +10,7 @@ import PublicResumePage from './pages/PublicResumePage';
 import LandingPage from './pages/LandingPage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? '';
+const googleClientId = import.meta.env.GOOGLE_CLIENT_ID ?? '';
 
 function App() {
   const loadCurrentUser = useAuthStore((state) => state.loadCurrentUser);
