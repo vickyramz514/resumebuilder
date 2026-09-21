@@ -31,6 +31,27 @@ Google sign-in uses a Google OAuth web client. Add `http://localhost:5173` to it
 
 The API runs on `http://localhost:3001` and Vite on `http://localhost:5173`. `CLIENT_URL`, `PORT`, `DATABASE_URL`, and `JWT_SECRET` are read from `server/.env`. The production build remains `npm run build`, followed by `npm start`; the server start command applies pending Prisma migrations before booting.
 
+## Phase 3: Gemini AI Assistant
+
+Phase 3 adds an authenticated, server-only Gemini integration to the editor. The browser sends resume content to the Express API; `GEMINI_API_KEY` is never included in client code, `client/.env`, or API responses. Copy `server/.env.example` and set:
+
+```bash
+GEMINI_API_KEY="your-server-only-key"
+GEMINI_MODEL="gemini-2.0-flash" # optional
+```
+
+Restart the server after changing environment variables. The **AI Assistant** button in the resume editor opens a review panel. Suggestions are previewed first and are only written to the Zustand resume model after the user clicks **Apply selected suggestion**; generated content never destructively overwrites the editor by itself.
+
+Protected endpoints (all require the existing `Authorization: Bearer <JWT>` middleware):
+
+- `POST /api/ai/improve-summary` — `{ summary, targetRole?, resume? }` → `{ summary }`
+- `POST /api/ai/rewrite-experience` — `{ role, company?, bullets, targetRole? }` → `{ bullets }`
+- `POST /api/ai/generate-project-bullets` — `{ project, targetRole? }` → `{ bullets }`
+- `POST /api/ai/tailor` — `{ resume, jobDescription }` → optional `summary`, `experienceBullets`, and `skills`
+- `POST /api/ai/suggest-skills` — `{ resume, jobDescription? }` → `{ skills }`
+
+Requests and model output are validated with Zod and bounded by size/count limits. Missing configuration returns `AI_NOT_CONFIGURED`, provider failures/timeouts return a safe error, and malformed model output is rejected without changing the resume. Do not commit `.env` files or paste API keys into the frontend.
+
 ## Run locally
 
 ```bash

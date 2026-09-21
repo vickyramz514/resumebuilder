@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.routes.js';
 import resumeRoutes from './routes/resume.routes.js';
 import publicRoutes from './routes/public.routes.js';
 import pdfRoutes from './routes/pdf.routes.js';
+import aiRoutes from './routes/ai.routes.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import { renderPdf } from './services/pdf.service.js';
 
@@ -19,6 +20,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/resumes', resumeRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/resumes', pdfRoutes);
+app.use('/api/ai', aiRoutes);
 // Phase 1's local export endpoint remains available as a graceful fallback.
 app.post('/api/pdf', async (req, res, next) => {
   try {
