@@ -7,11 +7,15 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ResumeBuilder from './pages/ResumeBuilder';
 import PublicResumePage from './pages/PublicResumePage';
+import LandingPage from './pages/LandingPage';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? '';
 
 function App() {
   const loadCurrentUser = useAuthStore((state) => state.loadCurrentUser);
   useEffect(() => { loadCurrentUser(); }, [loadCurrentUser]);
-  return <BrowserRouter><Routes>
+  const routes = <BrowserRouter><Routes>
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/r/:slug" element={<PublicResumePage />} />
@@ -21,9 +25,10 @@ function App() {
       <Route path="/resume/:id" element={<ResumeBuilder />} />
       <Route path="/resume/:id/edit" element={<ResumeBuilder />} />
     </Route>
-    <Route path="/" element={<Navigate to="/dashboard" replace />} />
-    <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/" element={<LandingPage />} />
+    <Route path="*" element={<Navigate to="/" replace />} />
   </Routes></BrowserRouter>;
+  return googleClientId ? <GoogleOAuthProvider clientId={googleClientId}>{routes}</GoogleOAuthProvider> : routes;
 }
 
 export default App;

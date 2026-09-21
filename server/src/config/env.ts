@@ -4,7 +4,8 @@ export const env = {
   port: Number(process.env.PORT ?? 3001),
   clientUrl: process.env.CLIENT_URL ?? 'http://localhost:5173',
   jwtSecret: process.env.JWT_SECRET ?? 'development-only-change-me',
-  databaseUrl: process.env.DATABASE_URL
+  databaseUrl: process.env.DATABASE_URL,
+  googleClientId: process.env.GOOGLE_CLIENT_ID
 };
 
 if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {

@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { Alert, Box, Button, Paper, Stack, TextField, Typography } from '@mui/material';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 
 export default function LoginPage() {
   const navigate = useNavigate(); const location = useLocation();
-  const { isAuthenticated, login, isLoading, error } = useAuthStore();
+  const { isAuthenticated, login, loginWithGoogle, isLoading, error } = useAuthStore();
   const [email, setEmail] = useState(''); const [password, setPassword] = useState('');
   useEffect(() => { if (isAuthenticated) navigate((location.state as any)?.from || '/dashboard', { replace: true }); }, [isAuthenticated, navigate, location.state]);
   if (isAuthenticated) return <Navigate to="/dashboard" replace />;
@@ -15,6 +16,8 @@ export default function LoginPage() {
       <TextField label="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" />
       <TextField label="Password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="current-password" />
       <Button type="submit" variant="contained" size="large" disabled={isLoading}>{isLoading ? 'Signing in…' : 'Sign in'}</Button>
+      <Typography textAlign="center" variant="body2" color="text.secondary">or continue with</Typography>
+      <GoogleSignInButton disabled={isLoading} onCredential={async (credential) => { try { await loginWithGoogle(credential); } catch { /* rendered below */ } }} />
       <Typography textAlign="center" variant="body2">New to ResumeForge? <Link to="/register">Create an account</Link></Typography>
     </Stack>
   </AuthLayout>;

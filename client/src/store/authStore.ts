@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import * as authApi from '../services/authApi';
 
-export interface AuthUser { id: string; name: string; email: string }
+export interface AuthUser { id: string; name: string; email: string; provider?: string; avatar?: string | null }
 interface AuthStore {
   user: AuthUser | null;
   token: string | null;
@@ -10,6 +10,7 @@ interface AuthStore {
   isLoading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (credential: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   loadCurrentUser: () => Promise<void>;
@@ -21,6 +22,17 @@ export const useAuthStore = create<AuthStore>()(persist((set) => ({
     set({ isLoading: true, error: null });
     try { const result = await authApi.login({ email, password }); localStorage.setItem('resumeforge_token', result.token); set({ user: result.user, token: result.token, isAuthenticated: true, isLoading: false }); }
     catch (error) { set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to sign in' }); throw error; }
+  },
+  loginWithGoogle: async (credential) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await authApi.loginWithGoogle(credential);
+      localStorage.setItem('resumeforge_token', result.token);
+      set({ user: result.user, token: result.token, isAuthenticated: true, isLoading: false });
+    } catch (error) {
+      set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to sign in with Google' });
+      throw error;
+    }
   },
   register: async (name, email, password) => {
     set({ isLoading: true, error: null });
