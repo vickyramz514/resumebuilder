@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Alert, Box, Button, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { AuthLayout } from './LoginPage';
 import { useAuthStore } from '../store/authStore';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 
 export default function RegisterPage() {
-  const navigate = useNavigate(); const { isAuthenticated, register, loginWithGoogle, isLoading, error } = useAuthStore();
+  const navigate = useNavigate(); const [searchParams] = useSearchParams();
+  const { isAuthenticated, register, loginWithGoogle, isLoading, error } = useAuthStore();
   const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  useEffect(() => { if (isAuthenticated) navigate('/dashboard', { replace: true }); }, [isAuthenticated, navigate]);
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const template = searchParams.get('template');
+    navigate(template ? `/dashboard?template=${template}` : '/dashboard', { replace: true });
+  }, [isAuthenticated, navigate, searchParams]);
   return <AuthLayout title="Create your account" subtitle="Your next opportunity starts with a great resume.">
     <Stack component="form" spacing={2.25} onSubmit={async (event) => { event.preventDefault(); try { await register(name, email, password); } catch { /* rendered below */ } }}>
       {error && <Alert severity="error">{error}</Alert>}

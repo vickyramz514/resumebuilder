@@ -66,10 +66,12 @@ Open http://localhost:5173. The client proxies `/api` requests to the Express se
 
 - Sample resume with professional, minimal, and modern templates
 - Personal, profile, experience, education, skills, project, and certification editors
+- Resume strength checklist, click-to-edit preview, and section hide/show
 - Drag-and-drop section ordering
 - Multiple resumes with duplicate/delete/new actions
 - Zustand localStorage persistence and responsive editor/preview layout
 - Browser print fallback and Playwright-backed PDF export endpoint
+- JSON import/export and public sharing from the editor
 - Registration, login, protected multi-resume dashboard, autosave, duplicate/rename/delete, and public sharing
 
 For a production deployment, build both workspaces with `npm run build` and start the server with `npm start`.

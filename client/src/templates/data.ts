@@ -47,5 +47,7 @@ export const emptyResume = (): Resume => ({
   education: [],
   projects: [],
   certifications: [],
+  sections: ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'],
+  hiddenSections: [],
   updatedAt: new Date().toISOString()
 });

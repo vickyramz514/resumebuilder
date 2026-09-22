@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert, AppBar, Box, Button, Card, CardContent, Chip, CircularProgress, Dialog, DialogActions,
-  DialogContent, DialogTitle, Grid, IconButton, Menu, MenuItem, Stack, TextField, Toolbar,
+  DialogContent, DialogTitle, Grid, IconButton, InputAdornment, Menu, MenuItem, Stack, TextField, Toolbar,
   Tooltip, Typography
 } from '@mui/material';
-import { Copy, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Share2, Trash2, Upload } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Copy, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Search, Share2, Trash2, Upload } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
 import { createResume, deleteResume, duplicateResume, listResumes, renameResume, shareResume, type CloudResume } from '../services/resumeApi';
@@ -24,12 +24,16 @@ const templates: { id: TemplateId; label: string; description: string }[] = [
   { id: 'compact', label: 'Compact', description: 'High-signal and efficient' }
 ];
 
+const consumedTemplateQuery = new Set<string>();
+
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const [resumes, setResumes] = useState<CloudResume[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
   const [error, setError] = useState('');
   const [rename, setRename] = useState<CloudResume | null>(null);
   const [renameValue, setRenameValue] = useState('');
@@ -74,6 +78,14 @@ export default function DashboardPage() {
       setError(e instanceof Error ? e.message : 'Unable to create resume');
     }
   };
+
+  useEffect(() => {
+    const template = searchParams.get('template') as TemplateId | null;
+    if (!template || loading || consumedTemplateQuery.has(template)) return;
+    if (!templates.some((item) => item.id === template)) return;
+    consumedTemplateQuery.add(template);
+    void create(template);
+  }, [searchParams, loading]);
 
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -132,7 +144,10 @@ export default function DashboardPage() {
   };
   const shareUrl = share?.publicSlug ? `${window.location.origin}/r/${share.publicSlug}` : '';
   const closeActions = () => { setActionAnchor(null); setActionResume(null); };
-  const sorted = [...resumes].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+  const needle = query.trim().toLowerCase();
+  const sorted = [...resumes]
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .filter((resume) => !needle || resume.title.toLowerCase().includes(needle) || resume.templateId.toLowerCase().includes(needle));
 
   return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#F7F7F5', color: '#202124' }}>
     <AppBar position="static" elevation={0} className="dashboard-topbar" sx={{ bgcolor: '#fff', color: '#202124', borderBottom: '1px solid #D0D3D6' }}>
@@ -154,6 +169,14 @@ export default function DashboardPage() {
           <Typography color="#626871">Choose a starting point, then build a resume you feel good sending.</Typography>
         </Box>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems={{ sm: 'center' }}>
+          <TextField
+            size="small"
+            placeholder="Search resumes"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            InputProps={{ startAdornment: <InputAdornment position="start"><Search size={16} /></InputAdornment> }}
+            sx={{ minWidth: { sm: 220 }, bgcolor: '#fff' }}
+          />
           <Button variant="outlined" startIcon={<Upload size={17} />} onClick={() => inputRef.current?.click()} disabled={importing}>
             {importing ? 'Reading file…' : 'Import existing'}
           </Button>
@@ -175,12 +198,15 @@ export default function DashboardPage() {
       </Card>
 
       {error && <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>{error}</Alert>}
-      {loading ? <Box className="dashboard-loading" textAlign="center" py={8}><CircularProgress color="inherit" /><Typography variant="body2" color="text.secondary" mt={2}>Loading your library…</Typography></Box> : sorted.length ? <>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1.5}><Typography variant="h6" fontWeight={750}>Your saved resumes</Typography><Typography variant="body2" color="text.secondary">{sorted.length} {sorted.length === 1 ? 'resume' : 'resumes'}</Typography></Stack>
+      {loading ? <Box className="dashboard-loading" textAlign="center" py={8}><CircularProgress color="inherit" /><Typography variant="body2" color="text.secondary" mt={2}>Loading your library…</Typography></Box> : resumes.length ? (
+        sorted.length ? <>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1.5}><Typography variant="h6" fontWeight={750}>Your saved resumes</Typography><Typography variant="body2" color="text.secondary">{sorted.length} {sorted.length === 1 ? 'resume' : 'resumes'}{query.trim() ? ' matching' : ''}</Typography></Stack>
         <Grid container spacing={2.5}>{sorted.map((resume) => <Grid item xs={12} sm={6} md={4} key={resume.id}>
           <Card className="resume-card" variant="outlined" sx={{ height: '100%', borderColor: '#D0D3D6', bgcolor: '#fff', borderRadius: 2 }}>
             <CardContent sx={{ p: 2.5 }}>
-              <Box className={`resume-card-preview preview-${resume.templateId}`}><FileText size={24} /></Box>
+              <Box className={`resume-card-preview preview-${resume.templateId}`}>
+                <TemplateThumbnail template={templates.some((item) => item.id === resume.templateId) ? resume.templateId as TemplateId : 'professional'} compact />
+              </Box>
               <Stack direction="row" justifyContent="space-between" alignItems="start" gap={1}>
                 <Box minWidth={0}><Typography fontWeight={700} mt={2} noWrap>{resume.title}</Typography><Typography variant="caption" color="#626871" display="block">Updated {new Date(resume.updatedAt).toLocaleDateString()}</Typography></Box>
                 <Tooltip title="More actions"><IconButton size="small" aria-label={`More actions for ${resume.title}`} onClick={(event) => { setActionResume(resume); setActionAnchor(event.currentTarget); }}><MoreHorizontal size={18} /></IconButton></Tooltip>
@@ -190,7 +216,8 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </Grid>)}</Grid>
-      </> : <Card className="dashboard-empty" variant="outlined" sx={{ p: { xs: 3, sm: 7 }, textAlign: 'center', borderStyle: 'dashed', bgcolor: 'transparent' }}>
+      </> : <Alert severity="info" sx={{ mb: 3 }}>No resumes match “{query}”. Try a different name or template.</Alert>
+      ) : <Card className="dashboard-empty" variant="outlined" sx={{ p: { xs: 3, sm: 7 }, textAlign: 'center', borderStyle: 'dashed', bgcolor: 'transparent' }}>
         <Box sx={{ width: 56, height: 56, borderRadius: '50%', bgcolor: '#e7f2ed', color: '#255c4b', display: 'grid', placeItems: 'center', mx: 'auto', mb: 2 }}><FileText size={25} /></Box>
         <Typography variant="h6">Your resume library is empty</Typography><Typography color="#626871" mb={2}>Start fresh, import an existing file, or browse templates.</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="center" spacing={1}><Button variant="contained" startIcon={<Plus size={17} />} onClick={() => create()}>Create your first resume</Button><Button variant="outlined" onClick={() => setTemplateDialog(true)}>Browse templates</Button></Stack>

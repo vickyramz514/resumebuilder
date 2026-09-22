@@ -27,29 +27,37 @@ const ContactList = ({ resume }: { resume: Resume }) => {
   </div>;
 };
 
-const Section = ({ title, children, accent }: { title: string; children: React.ReactNode; accent: string }) => <section className="resume-section"><h2 style={{ color: accent }}>{title}</h2>{children}</section>;
+const Section = ({ title, children, accent, onSelect }: { title: string; children: React.ReactNode; accent: string; onSelect?: () => void }) => (
+  <section className={`resume-section${onSelect ? ' is-editable' : ''}`} onClick={onSelect} onKeyDown={onSelect ? (event) => { if (event.key === 'Enter' || event.key === ' ') onSelect(); } : undefined} role={onSelect ? 'button' : undefined} tabIndex={onSelect ? 0 : undefined}>
+    <h2 style={{ color: accent }}>{title}</h2>
+    {children}
+  </section>
+);
 
-function renderSection(section: SectionType, resume: Resume, accent: string) {
-  if (section === 'summary' && resume.summary) return <Section key={section} title="Profile" accent={accent}><p className="resume-summary">{resume.summary}</p></Section>;
-  if (section === 'experience' && resume.experience.length) return <Section key={section} title="Experience" accent={accent}>{resume.experience.map((item) => <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.role}</strong><span>{item.startDate} - {item.current ? 'Present' : item.endDate}</span></div><div className="entry-subheading">{item.company}{item.location ? ` · ${item.location}` : ''}</div><ul>{item.bullets.filter(Boolean).map((bullet, i) => <li key={i}>{bullet}</li>)}</ul></article>)}</Section>;
-  if (section === 'education' && resume.education.length) return <Section key={section} title="Education" accent={accent}>{resume.education.map((item) => <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.degree}</strong><span>{item.startDate} - {item.endDate}</span></div><div className="entry-subheading">{item.school}{item.location ? ` · ${item.location}` : ''}</div></article>)}</Section>;
-  if (section === 'skills' && resume.skills.length) return <Section key={section} title="Skills" accent={accent}><div className="skill-list">{resume.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></Section>;
-  if (section === 'projects' && resume.projects.length) return <Section key={section} title="Projects" accent={accent}>{resume.projects.map((item) => { const bullets = item.description.split('\n').filter((line) => line.trim().startsWith('• ')); return <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.name}</strong>{item.url && <span><a href={item.url} target="_blank" rel="noreferrer">View project</a></span>}</div>{bullets.length === item.description.split('\n').filter(Boolean).length && bullets.length > 0 ? <ul>{bullets.map((bullet, index) => <li key={`${bullet}-${index}`}>{bullet.replace(/^•\s*/, '')}</li>)}</ul> : <p>{item.description}</p>}{item.technologies && <small>{item.technologies}</small>}</article>; })}</Section>;
-  if (section === 'certifications' && resume.certifications.length) return <Section key={section} title="Certifications" accent={accent}>{resume.certifications.map((item) => <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.name}</strong><span>{item.date}</span></div><div className="entry-subheading">{item.issuer}</div></article>)}</Section>;
+function renderSection(section: SectionType, resume: Resume, accent: string, onSelectSection?: (section: SectionType | 'personal') => void) {
+  const onSelect = onSelectSection ? () => onSelectSection(section) : undefined;
+  if (section === 'summary' && resume.summary) return <Section key={section} title="Profile" accent={accent} onSelect={onSelect}><p className="resume-summary">{resume.summary}</p></Section>;
+  if (section === 'experience' && resume.experience.length) return <Section key={section} title="Experience" accent={accent} onSelect={onSelect}>{resume.experience.map((item) => <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.role}</strong><span>{item.startDate} - {item.current ? 'Present' : item.endDate}</span></div><div className="entry-subheading">{item.company}{item.location ? ` · ${item.location}` : ''}</div><ul>{item.bullets.filter(Boolean).map((bullet, i) => <li key={i}>{bullet}</li>)}</ul></article>)}</Section>;
+  if (section === 'education' && resume.education.length) return <Section key={section} title="Education" accent={accent} onSelect={onSelect}>{resume.education.map((item) => <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.degree}</strong><span>{item.startDate} - {item.endDate}</span></div><div className="entry-subheading">{item.school}{item.location ? ` · ${item.location}` : ''}</div></article>)}</Section>;
+  if (section === 'skills' && resume.skills.length) return <Section key={section} title="Skills" accent={accent} onSelect={onSelect}><div className="skill-list">{resume.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></Section>;
+  if (section === 'projects' && resume.projects.length) return <Section key={section} title="Projects" accent={accent} onSelect={onSelect}>{resume.projects.map((item) => { const bullets = item.description.split('\n').filter((line) => line.trim().startsWith('• ')); return <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.name}</strong>{item.url && <span><a href={item.url} target="_blank" rel="noreferrer">View project</a></span>}</div>{bullets.length === item.description.split('\n').filter(Boolean).length && bullets.length > 0 ? <ul>{bullets.map((bullet, index) => <li key={`${bullet}-${index}`}>{bullet.replace(/^•\s*/, '')}</li>)}</ul> : <p>{item.description}</p>}{item.technologies && <small>{item.technologies}</small>}</article>; })}</Section>;
+  if (section === 'certifications' && resume.certifications.length) return <Section key={section} title="Certifications" accent={accent} onSelect={onSelect}>{resume.certifications.map((item) => <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.name}</strong><span>{item.date}</span></div><div className="entry-subheading">{item.issuer}</div></article>)}</Section>;
   return null;
 }
 
-export function ResumePreview({ resume, exportMode = false }: { resume: Resume; exportMode?: boolean }) {
+export function ResumePreview({ resume, exportMode = false, onSelectSection }: { resume: Resume; exportMode?: boolean; onSelectSection?: (section: SectionType | 'personal') => void }) {
   const accent = resume.accentColor;
   const design = resume.design ?? { fontFamily: 'inter', fontSize: 11, lineHeight: 1.45, spacing: 18, density: 'comfortable' };
   const fontMap = { inter: 'Inter, Arial, sans-serif', 'source-sans': '"Source Sans 3", Arial, sans-serif', georgia: 'Georgia, serif', 'ibm-plex': '"IBM Plex Sans", Arial, sans-serif', 'space-grotesk': '"Space Grotesk", Arial, sans-serif' };
+  const hidden = new Set(resume.hiddenSections ?? []);
+  const visibleSections = resume.sections.filter((section) => !hidden.has(section));
   const isSidebar = SIDEBAR_TEMPLATES.has(resume.template);
-  const sidebarSections = isSidebar ? resume.sections.filter((s) => SIDEBAR_SECTIONS.has(s)) : [];
-  const mainSections = isSidebar ? resume.sections.filter((s) => !SIDEBAR_SECTIONS.has(s)) : resume.sections;
+  const sidebarSections = isSidebar ? visibleSections.filter((s) => SIDEBAR_SECTIONS.has(s)) : [];
+  const mainSections = isSidebar ? visibleSections.filter((s) => !SIDEBAR_SECTIONS.has(s)) : visibleSections;
   const name = resume.personal.name || 'Your Name';
 
   return <div
-    className={`resume-sheet template-${resume.template} density-${design.density}${exportMode ? ' export-mode' : ''}${isSidebar ? ' has-sidebar' : ''}`}
+    className={`resume-sheet template-${resume.template} density-${design.density}${exportMode ? ' export-mode' : ''}${isSidebar ? ' has-sidebar' : ''}${onSelectSection ? ' is-interactive' : ''}`}
     style={{
       '--accent': accent,
       '--resume-font-family': fontMap[design.fontFamily] ?? fontMap.inter,
@@ -58,7 +66,13 @@ export function ResumePreview({ resume, exportMode = false }: { resume: Resume; 
       '--resume-spacing': `${design.spacing}px`
     } as React.CSSProperties}
   >
-    <header className="resume-header">
+    <header
+      className={`resume-header${onSelectSection ? ' is-editable' : ''}`}
+      onClick={onSelectSection ? () => onSelectSection('personal') : undefined}
+      onKeyDown={onSelectSection ? (event) => { if (event.key === 'Enter' || event.key === ' ') onSelectSection('personal'); } : undefined}
+      role={onSelectSection ? 'button' : undefined}
+      tabIndex={onSelectSection ? 0 : undefined}
+    >
       {isSidebar && <div className="resume-monogram" style={{ background: accent }}>{initials(name)}</div>}
       <div className="resume-header-copy"><h1>{name}</h1><p>{resume.personal.headline}</p></div>
       {!isSidebar && <ContactList resume={resume} />}
@@ -66,9 +80,9 @@ export function ResumePreview({ resume, exportMode = false }: { resume: Resume; 
     {isSidebar ? <div className="resume-columns">
       <aside className="resume-aside">
         <ContactList resume={resume} />
-        {sidebarSections.map((section) => renderSection(section, resume, accent))}
+        {sidebarSections.map((section) => renderSection(section, resume, accent, onSelectSection))}
       </aside>
-      <div className="resume-main">{mainSections.map((section) => renderSection(section, resume, accent))}</div>
-    </div> : mainSections.map((section) => renderSection(section, resume, accent))}
+      <div className="resume-main">{mainSections.map((section) => renderSection(section, resume, accent, onSelectSection))}</div>
+    </div> : mainSections.map((section) => renderSection(section, resume, accent, onSelectSection))}
   </div>;
 }

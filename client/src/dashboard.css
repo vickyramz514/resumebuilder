@@ -5,7 +5,8 @@
 .dashboard-heading { animation: dashboard-rise .45s ease both; }
 .resume-card { overflow: hidden; transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease !important; animation: dashboard-rise .45s ease both; }
 .resume-card:hover { transform: translateY(-5px); border-color: #9bbbaa !important; box-shadow: 0 16px 32px #23463a14 !important; }
-.resume-card-preview { height: 108px; display: flex; align-items: flex-start; justify-content: flex-end; padding: 14px; color: #255c4b; background: #eef5f0; border-radius: 9px; border: 1px solid #dfe9e1; }
+.resume-card-preview { height: 118px; padding: 0; overflow: hidden; color: #255c4b; background: #eef5f0; border-radius: 9px; border: 1px solid #dfe9e1; }
+.resume-card-preview .template-thumbnail { min-height: 118px; border-radius: 8px; }
 .resume-card-preview.preview-modern { background: #e7f2ed; color: #0f766e; border-top: 7px solid #0f766e; }
 .resume-card-preview.preview-editorial { background: #f6f0e7; color: #8a5a2b; border-left: 7px solid #8a5a2b; }
 .resume-card-preview.preview-creative { background: #f8edef; color: #7a3e52; border-left: 7px solid #7a3e52; }

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
-import { Alert, Box, Button, Chip, Container, Divider, IconButton, Paper, Stack, Typography } from '@mui/material';
-import { ArrowRight, Check, FileText, Github, Linkedin, Menu, Sparkles, Upload, WandSparkles } from 'lucide-react';
+import { Alert, Box, Button, Chip, Container, Divider, Drawer, IconButton, Paper, Stack, Typography } from '@mui/material';
+import { ArrowRight, Check, FileText, Github, Linkedin, Menu, Sparkles, Upload, WandSparkles, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
@@ -25,8 +25,12 @@ export default function LandingPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [importError, setImportError] = useState('');
   const [isImporting, setIsImporting] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const startCreating = () => navigate(isAuthenticated ? '/dashboard' : '/register');
+  const startCreating = (templateId?: TemplateId) => {
+    const query = templateId ? `?template=${templateId}` : '';
+    navigate(isAuthenticated ? `/dashboard${query}` : `/register${query}`);
+  };
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = '';
@@ -52,10 +56,28 @@ export default function LandingPage() {
         <Stack direction="row" spacing={3} sx={{ ml: 5, display: { xs: 'none', md: 'flex' } }}><a href="#templates">Templates</a><a href="#how-it-works">How it works</a></Stack>
         <Box flex={1} />
         <Stack direction="row" spacing={1} alignItems="center" sx={{ display: { xs: 'none', sm: 'flex' } }}>
-          {isAuthenticated ? <Button color="inherit" onClick={() => navigate('/dashboard')}>My dashboard</Button> : <><Button color="inherit" onClick={() => navigate('/login')}>Sign in</Button><Button variant="contained" onClick={startCreating}>Get started</Button></>}
+          {isAuthenticated ? <Button color="inherit" onClick={() => navigate('/dashboard')}>My dashboard</Button> : <><Button color="inherit" onClick={() => navigate('/login')}>Sign in</Button><Button variant="contained" onClick={() => startCreating()}>Get started</Button></>}
         </Stack>
-        <IconButton sx={{ display: { xs: 'flex', sm: 'none' } }} onClick={startCreating} aria-label="Get started"><Menu size={20} /></IconButton>
+        <IconButton sx={{ display: { xs: 'flex', sm: 'none' } }} onClick={() => setMobileOpen(true)} aria-label="Open menu"><Menu size={20} /></IconButton>
       </Stack></Container>
+      <Drawer anchor="right" open={mobileOpen} onClose={() => setMobileOpen(false)}>
+        <Box sx={{ width: 280, p: 2.5 }} role="navigation">
+          <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+            <Typography fontWeight={800}>ResumeForge</Typography>
+            <IconButton aria-label="Close menu" onClick={() => setMobileOpen(false)}><X size={18} /></IconButton>
+          </Stack>
+          <Stack spacing={1.5}>
+            <Button color="inherit" href="#templates" onClick={() => setMobileOpen(false)}>Templates</Button>
+            <Button color="inherit" href="#how-it-works" onClick={() => setMobileOpen(false)}>How it works</Button>
+            {isAuthenticated
+              ? <Button variant="contained" onClick={() => { setMobileOpen(false); startCreating(); }}>My dashboard</Button>
+              : <>
+                  <Button color="inherit" onClick={() => { setMobileOpen(false); navigate('/login'); }}>Sign in</Button>
+                  <Button variant="contained" onClick={() => { setMobileOpen(false); startCreating(); }}>Get started</Button>
+                </>}
+          </Stack>
+        </Box>
+      </Drawer>
     </Box>
 
     <Box component="main">
@@ -65,7 +87,7 @@ export default function LandingPage() {
           <Typography component="h1">Make your next move <Box component="span">look inevitable.</Box></Typography>
           <Typography className="landing-lede">Create a resume that feels like you—clear, compelling, and ready for the opportunity you want next.</Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} mt={4}>
-            <Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={startCreating}>Create my resume</Button>
+            <Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={() => startCreating()}>Create my resume</Button>
             <Button variant="outlined" size="large" startIcon={<Upload size={17} />} onClick={() => inputRef.current?.click()} disabled={isImporting}>{isImporting ? 'Reading file…' : 'Upload existing resume'}</Button>
             <input ref={inputRef} type="file" accept="application/json,.json" hidden onChange={handleImport} />
           </Stack>
@@ -85,11 +107,11 @@ export default function LandingPage() {
 
       <Box className="landing-stats"><Container maxWidth="lg"><Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={2}><Typography><strong>One calm place</strong> to build your best work story.</Typography><Stack direction="row" spacing={{ xs: 2, sm: 5 }}><Box><strong>6</strong><span>polished templates</span></Box><Box><strong>100%</strong><span>yours to edit</span></Box><Box><strong>1 click</strong><span>to export</span></Box></Stack></Stack></Container></Box>
 
-      <Box component="section" id="templates" className="landing-section templates-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="Start with a strong foundation" /><Typography variant="h2">A template for your kind of brilliant.</Typography><Typography>Every layout is designed for clarity, personality, and the skim test.</Typography></Box><Box className="template-showcase">{templates.map((template) => <Box key={template.id} className="showcase-card"><TemplateThumbnail template={template.id} /><Box className="showcase-card-copy"><Typography variant="h6">{template.name}</Typography><Typography variant="body2">{template.description}</Typography><Button size="small" endIcon={<ArrowRight size={15} />} onClick={startCreating}>Use this template</Button></Box></Box>)}</Box></Container></Box>
+      <Box component="section" id="templates" className="landing-section templates-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="Start with a strong foundation" /><Typography variant="h2">A template for your kind of brilliant.</Typography><Typography>Every layout is designed for clarity, personality, and the skim test.</Typography></Box><Box className="template-showcase">{templates.map((template) => <Box key={template.id} className="showcase-card"><TemplateThumbnail template={template.id} /><Box className="showcase-card-copy"><Typography variant="h6">{template.name}</Typography><Typography variant="body2">{template.description}</Typography><Button size="small" endIcon={<ArrowRight size={15} />} onClick={() => startCreating(template.id)}>Use this template</Button></Box></Box>)}</Box></Container></Box>
 
       <Box component="section" id="how-it-works" className="landing-section how-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="A better way to begin" /><Typography variant="h2">From blank page to ready to send.</Typography></Box><Box className="steps-grid"><Box><Box className="step-number">01</Box><FileText size={22} /><Typography variant="h6">Choose your starting point</Typography><Typography variant="body2">Start fresh with a guided canvas or upload a ResumeForge JSON export you already have.</Typography></Box><Box><Box className="step-number">02</Box><WandSparkles size={22} /><Typography variant="h6">Make it unmistakably yours</Typography><Typography variant="body2">Shape your story with flexible sections, thoughtful templates, and easy visual polish.</Typography></Box><Box><Box className="step-number">03</Box><ArrowRight size={22} /><Typography variant="h6">Share with confidence</Typography><Typography variant="body2">Export a crisp PDF, keep versions organized, and share a public link when you’re ready.</Typography></Box></Box></Container></Box>
 
-      <Box className="landing-cta"><Container maxWidth="md"><Box textAlign="center"><Typography variant="h2">Your next chapter deserves a better first page.</Typography><Typography>Build something you’re proud to put your name on.</Typography><Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={startCreating} sx={{ mt: 3 }}>Start building for free</Button></Box></Container></Box>
+      <Box className="landing-cta"><Container maxWidth="md"><Box textAlign="center"><Typography variant="h2">Your next chapter deserves a better first page.</Typography><Typography>Build something you’re proud to put your name on.</Typography><Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={() => startCreating()} sx={{ mt: 3 }}>Start building for free</Button></Box></Container></Box>
     </Box>
     <Box component="footer" className="landing-footer"><Container maxWidth="lg"><Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between" alignItems={{ sm: 'center' }}><Box className="landing-brand"><Box className="landing-brand-icon"><Sparkles size={15} fill="currentColor" /></Box><Typography fontWeight={850}>ResumeForge</Typography></Box><Typography variant="caption">A calmer way to make a great impression.</Typography><Stack direction="row" spacing={1}><IconButton size="small" aria-label="GitHub"><Github size={17} /></IconButton><IconButton size="small" aria-label="LinkedIn"><Linkedin size={17} /></IconButton></Stack></Stack><Divider sx={{ my: 2 }} /><Typography variant="caption">© {new Date().getFullYear()} ResumeForge</Typography></Container></Box>
   </Box>;

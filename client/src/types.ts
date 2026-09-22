@@ -71,6 +71,8 @@ export interface Resume {
   projects: Project[];
   certifications: Certification[];
   sections: SectionType[];
+  /** Sections omitted from the preview without deleting their content. */
+  hiddenSections?: SectionType[];
 }
 
 export type TemplateId = 'minimal' | 'professional' | 'modern' | 'editorial' | 'creative' | 'compact';
