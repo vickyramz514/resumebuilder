@@ -4,7 +4,10 @@ import type { TemplateId } from '../types';
 const templateCopy: Record<TemplateId, { label: string; description: string; accent: string }> = {
   professional: { label: 'Professional', description: 'Structured and polished', accent: '#2563eb' },
   minimal: { label: 'Minimal', description: 'Quietly confident', accent: '#475569' },
-  modern: { label: 'Modern', description: 'Bold with personality', accent: '#0f766e' }
+  modern: { label: 'Modern', description: 'Bold with personality', accent: '#0f766e' },
+  editorial: { label: 'Editorial', description: 'Refined and distinctive', accent: '#8a5a2b' },
+  creative: { label: 'Creative', description: 'Expressive and warm', accent: '#7a3e52' },
+  compact: { label: 'Compact', description: 'High-signal and efficient', accent: '#334155' }
 };
 
 export function TemplateThumbnail({ template, compact = false }: { template: TemplateId; compact?: boolean }) {

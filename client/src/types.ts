@@ -44,11 +44,24 @@ export interface Certification {
   date: string;
 }
 
+export type FontFamily = 'inter' | 'source-sans' | 'georgia' | 'ibm-plex' | 'space-grotesk';
+export type ResumeDensity = 'comfortable' | 'compact' | 'airy';
+
+/** Optional so resumes created before the design controls were introduced remain valid. */
+export interface ResumeDesign {
+  fontFamily: FontFamily;
+  fontSize: number;
+  lineHeight: number;
+  spacing: number;
+  density: ResumeDensity;
+}
+
 export interface Resume {
   id: string;
   title: string;
   template: TemplateId;
   accentColor: string;
+  design?: ResumeDesign;
   updatedAt: string;
   personal: { name: string; headline: string; contact: Contact };
   summary: string;
@@ -60,4 +73,4 @@ export interface Resume {
   sections: SectionType[];
 }
 
-export type TemplateId = 'minimal' | 'professional' | 'modern';
+export type TemplateId = 'minimal' | 'professional' | 'modern' | 'editorial' | 'creative' | 'compact';

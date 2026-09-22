@@ -15,7 +15,18 @@ const Section = ({ title, children, accent }: { title: string; children: React.R
 
 export function ResumePreview({ resume, exportMode = false }: { resume: Resume; exportMode?: boolean }) {
   const accent = resume.accentColor;
-  const content = <div className={`resume-sheet template-${resume.template}${exportMode ? ' export-mode' : ''}`}>
+  const design = resume.design ?? { fontFamily: 'inter', fontSize: 11, lineHeight: 1.45, spacing: 18, density: 'comfortable' };
+  const fontMap = { inter: 'Inter, Arial, sans-serif', 'source-sans': '"Source Sans 3", Arial, sans-serif', georgia: 'Georgia, serif', 'ibm-plex': '"IBM Plex Sans", Arial, sans-serif', 'space-grotesk': '"Space Grotesk", Arial, sans-serif' };
+  const content = <div
+    className={`resume-sheet template-${resume.template} density-${design.density}${exportMode ? ' export-mode' : ''}`}
+    style={{
+      '--accent': accent,
+      '--resume-font-family': fontMap[design.fontFamily] ?? fontMap.inter,
+      '--resume-font-size': `${design.fontSize}px`,
+      '--resume-line-height': design.lineHeight,
+      '--resume-spacing': `${design.spacing}px`
+    } as React.CSSProperties}
+  >
     <header className="resume-header">
       <div><h1>{resume.personal.name || 'Your Name'}</h1><p>{resume.personal.headline}</p></div>
       <ContactLine resume={resume} />

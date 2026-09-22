@@ -1,0 +1,18 @@
+.dashboard-page { position: relative; overflow: hidden; }
+.dashboard-page:before { content: ""; position: absolute; top: 58px; right: -120px; width: 360px; height: 360px; border: 1px solid #d8e5de; border-radius: 50%; opacity: .55; pointer-events: none; }
+.dashboard-topbar { position: relative; z-index: 1; }
+.dashboard-content { position: relative; z-index: 1; }
+.dashboard-heading { animation: dashboard-rise .45s ease both; }
+.resume-card { overflow: hidden; transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease !important; animation: dashboard-rise .45s ease both; }
+.resume-card:hover { transform: translateY(-5px); border-color: #9bbbaa !important; box-shadow: 0 16px 32px #23463a14 !important; }
+.resume-card-preview { height: 108px; display: flex; align-items: flex-start; justify-content: flex-end; padding: 14px; color: #255c4b; background: #eef5f0; border-radius: 9px; border: 1px solid #dfe9e1; }
+.resume-card-preview.preview-modern { background: #e7f2ed; color: #0f766e; border-top: 7px solid #0f766e; }
+.resume-card-preview.preview-editorial { background: #f6f0e7; color: #8a5a2b; border-left: 7px solid #8a5a2b; }
+.resume-card-preview.preview-creative { background: #f8edef; color: #7a3e52; border-left: 7px solid #7a3e52; }
+.resume-card-preview.preview-compact { background: #eef1f5; color: #334155; }
+.resume-card-preview.preview-minimal { background: #f4f3f0; color: #475569; }
+.dashboard-empty { animation: dashboard-rise .45s ease both; background: #ffffff80 !important; }
+.dashboard-loading { animation: dashboard-pulse 1.4s ease-in-out infinite; }
+@keyframes dashboard-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes dashboard-pulse { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .dashboard-heading, .resume-card, .dashboard-empty, .dashboard-loading { animation: none; } .resume-card { transition: none !important; } }

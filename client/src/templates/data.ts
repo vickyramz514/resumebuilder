@@ -5,6 +5,7 @@ export const sampleResume: Resume = {
   title: 'Vigneshwar R Resume',
   template: 'professional',
   accentColor: '#202124',
+  design: { fontFamily: 'inter', fontSize: 11, lineHeight: 1.45, spacing: 18, density: 'comfortable' },
   updatedAt: new Date().toISOString(),
   personal: {
     name: 'Vigneshwar R',

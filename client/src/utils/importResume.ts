@@ -1,7 +1,9 @@
-import type { Contact, Resume, SectionType, TemplateId } from '../types';
+import type { Contact, FontFamily, Resume, ResumeDesign, ResumeDensity, SectionType, TemplateId } from '../types';
 
 const sectionTypes: SectionType[] = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'];
-const templateIds: TemplateId[] = ['minimal', 'professional', 'modern'];
+const templateIds: TemplateId[] = ['minimal', 'professional', 'modern', 'editorial', 'creative', 'compact'];
+const fontFamilies: FontFamily[] = ['inter', 'source-sans', 'georgia', 'ibm-plex', 'space-grotesk'];
+const densities: ResumeDensity[] = ['comfortable', 'compact', 'airy'];
 
 const isRecord = (value: unknown): value is Record<string, any> => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 const asString = (value: unknown, fallback = '') => typeof value === 'string' ? value : fallback;
@@ -27,12 +29,21 @@ export function normalizeImportedResume(input: unknown): Resume {
   const sections = Array.isArray(source.sections)
     ? source.sections.filter((section): section is SectionType => typeof section === 'string' && sectionTypes.includes(section as SectionType))
     : sectionTypes.filter((section) => section === 'summary' ? Boolean(source.summary) : Array.isArray(source[section]) ? source[section].length > 0 : false);
+  const sourceDesign = isRecord(source.design) ? source.design : {};
+  const design: ResumeDesign = {
+    fontFamily: fontFamilies.includes(sourceDesign.fontFamily) ? sourceDesign.fontFamily : 'inter',
+    fontSize: typeof sourceDesign.fontSize === 'number' ? Math.min(14, Math.max(9, sourceDesign.fontSize)) : 11,
+    lineHeight: typeof sourceDesign.lineHeight === 'number' ? Math.min(1.8, Math.max(1.2, sourceDesign.lineHeight)) : 1.45,
+    spacing: typeof sourceDesign.spacing === 'number' ? Math.min(30, Math.max(8, sourceDesign.spacing)) : 18,
+    density: densities.includes(sourceDesign.density) ? sourceDesign.density : 'comfortable'
+  };
 
   return {
     id: `resume-${Date.now()}`,
     title: asString(source.title, `${asString(personal.name, 'Imported')} Resume`),
     template: templateIds.includes(source.template) ? source.template : 'professional',
     accentColor: asString(source.accentColor, '#202124'),
+    design,
     updatedAt: new Date().toISOString(),
     personal: {
       name: asString(personal.name, 'Your Name'),

@@ -12,7 +12,10 @@ import '../landing.css';
 const templates: { id: TemplateId; name: string; description: string }[] = [
   { id: 'professional', name: 'Professional', description: 'A timeless layout for making a clear, confident first impression.' },
   { id: 'minimal', name: 'Minimal', description: 'Beautiful restraint that keeps your experience in focus.' },
-  { id: 'modern', name: 'Modern', description: 'A little more personality, without sacrificing readability.' }
+  { id: 'modern', name: 'Modern', description: 'A little more personality, without sacrificing readability.' },
+  { id: 'editorial', name: 'Editorial', description: 'A refined, story-forward layout with a considered rhythm.' },
+  { id: 'creative', name: 'Creative', description: 'Warm visual accents for portfolios and people-first roles.' },
+  { id: 'compact', name: 'Compact', description: 'High-signal spacing for experienced candidates with more to say.' }
 ];
 
 export default function LandingPage() {
@@ -80,7 +83,7 @@ export default function LandingPage() {
         </Box>
       </Box></Container></Box>
 
-      <Box className="landing-stats"><Container maxWidth="lg"><Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={2}><Typography><strong>One calm place</strong> to build your best work story.</Typography><Stack direction="row" spacing={{ xs: 2, sm: 5 }}><Box><strong>3</strong><span>polished templates</span></Box><Box><strong>100%</strong><span>yours to edit</span></Box><Box><strong>1 click</strong><span>to export</span></Box></Stack></Stack></Container></Box>
+      <Box className="landing-stats"><Container maxWidth="lg"><Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={2}><Typography><strong>One calm place</strong> to build your best work story.</Typography><Stack direction="row" spacing={{ xs: 2, sm: 5 }}><Box><strong>6</strong><span>polished templates</span></Box><Box><strong>100%</strong><span>yours to edit</span></Box><Box><strong>1 click</strong><span>to export</span></Box></Stack></Stack></Container></Box>
 
       <Box component="section" id="templates" className="landing-section templates-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="Start with a strong foundation" /><Typography variant="h2">A template for your kind of brilliant.</Typography><Typography>Every layout is designed for clarity, personality, and the skim test.</Typography></Box><Box className="template-showcase">{templates.map((template) => <Box key={template.id} className="showcase-card"><TemplateThumbnail template={template.id} /><Box className="showcase-card-copy"><Typography variant="h6">{template.name}</Typography><Typography variant="body2">{template.description}</Typography><Button size="small" endIcon={<ArrowRight size={15} />} onClick={startCreating}>Use this template</Button></Box></Box>)}</Box></Container></Box>
 
