@@ -13,6 +13,16 @@
 .resume-card-preview.preview-minimal { background: #f4f3f0; color: #475569; }
 .dashboard-empty { animation: dashboard-rise .45s ease both; background: #ffffff80 !important; }
 .dashboard-loading { animation: dashboard-pulse 1.4s ease-in-out infinite; }
+.quick-actions { animation: dashboard-rise .5s ease both; }
+.quick-action { justify-content: flex-start !important; min-height: 64px !important; padding: 10px 14px !important; text-transform: none !important; color: #25312d !important; border-color: #d7ded9 !important; }
+.quick-action:hover { border-color: #79a38f !important; background: #f4faf6 !important; }
+.quick-action .MuiButton-startIcon { color: #255c4b; }
+.quick-action strong, .quick-action small { display: block; text-align: left; }
+.quick-action strong { font-size: 13px; }
+.quick-action small { margin-top: 3px; color: #626871; font-size: 11px; font-weight: 400; }
+.template-choice { transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+.template-choice:hover { border-color: #79a38f; box-shadow: 0 8px 18px #23463a12; transform: translateY(-2px); }
 @keyframes dashboard-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes dashboard-pulse { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .dashboard-heading, .resume-card, .dashboard-empty, .dashboard-loading { animation: none; } .resume-card { transition: none !important; } }
+@media (max-width: 600px) { .dashboard-content .MuiTypography-h3 { font-size: 2.25rem; } .resume-card-preview { height: 92px; } }
+@media (prefers-reduced-motion: reduce) { .dashboard-heading, .resume-card, .dashboard-empty, .dashboard-loading, .quick-actions { animation: none; } .resume-card, .template-choice { transition: none !important; } }
