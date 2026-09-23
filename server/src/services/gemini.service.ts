@@ -37,7 +37,7 @@ function parseJson<T>(text: string): T {
 }
 
 export async function generateJson<T>(prompt: string): Promise<T> {
-  if (!env.geminiApiKey) {
+  if (!env.geminiApiKey || env.geminiApiKey === 'YOUR_GEMINI_API_KEY') {
     throw new AiServiceError('AI writing is not configured on the server', 'AI_NOT_CONFIGURED');
   }
 
@@ -55,6 +55,13 @@ export async function generateJson<T>(prompt: string): Promise<T> {
     });
     const payload = await response.json().catch(() => ({})) as GeminiResponse;
     if (!response.ok) {
+      if (response.status === 402) {
+        throw new AiServiceError(
+          'Gemini has no remaining credits. Add prepaid credit in Google AI Studio, then try again.',
+          'AI_PROVIDER_ERROR',
+          402
+        );
+      }
       throw new AiServiceError(payload.error?.message || 'The AI provider could not complete that request');
     }
     const text = payload.candidates?.[0]?.content?.parts?.map((part) => part.text ?? '').join('').trim();

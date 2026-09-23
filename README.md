@@ -37,7 +37,7 @@ Phase 3 adds an authenticated, server-only Gemini integration to the editor. The
 
 ```bash
 GEMINI_API_KEY="your-server-only-key"
-GEMINI_MODEL="gemini-2.0-flash" # optional
+GEMINI_MODEL="gemini-3.5-flash-lite" # optional
 ```
 
 Restart the server after changing environment variables. The **AI Assistant** button in the resume editor opens a review panel. Suggestions are previewed first and are only written to the Zustand resume model after the user clicks **Apply selected suggestion**; generated content never destructively overwrites the editor by itself.

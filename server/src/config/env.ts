@@ -11,7 +11,7 @@ export const env = {
   databaseUrl: process.env.DATABASE_URL,
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   geminiApiKey: process.env.GEMINI_API_KEY,
-  geminiModel: process.env.GEMINI_MODEL ?? 'gemini-2.0-flash'
+  geminiModel: process.env.GEMINI_MODEL ?? 'gemini-3.5-flash-lite'
 };
 
 if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
