@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Alert, AppBar, Box, Button, Card, CardContent, Chip, CircularProgress, Dialog, DialogActions,
+  Alert, AppBar, Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Dialog, DialogActions,
   DialogContent, DialogTitle, Grid, IconButton, InputAdornment, Menu, MenuItem, Stack, TextField, Toolbar,
   Tooltip, Typography
 } from '@mui/material';
-import { Copy, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Search, Share2, Trash2, Upload } from 'lucide-react';
+import { ChevronDown, Clock, Copy, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Search, Share2, Sparkles, Trash2, Upload } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
@@ -35,6 +35,7 @@ export default function DashboardPage() {
   const [actionAnchor, setActionAnchor] = useState<null | HTMLElement>(null);
   const [templateDialog, setTemplateDialog] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const localResumes = useResumeStore((state) => state.resumes);
   const replaceResume = useResumeStore((state) => state.replaceResume);
@@ -142,14 +143,19 @@ export default function DashboardPage() {
     .filter((resume) => !needle || resume.title.toLowerCase().includes(needle) || resume.templateId.toLowerCase().includes(needle));
 
   return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#F7F7F5', color: '#202124' }}>
-    <AppBar position="static" elevation={0} className="dashboard-topbar" sx={{ bgcolor: '#fff', color: '#202124', borderBottom: '1px solid #D0D3D6' }}>
+    <AppBar position="static" elevation={0} className="dashboard-topbar" sx={{ bgcolor: '#fff', color: '#202124', borderBottom: '1px solid #e5e9e6' }}>
       <Toolbar sx={{ maxWidth: 1180, width: '100%', mx: 'auto' }}>
-        <Typography fontWeight={800} fontSize={19}>✦ ResumeForge</Typography>
+        <Box className="brand-mark"><Box className="brand-badge"><Sparkles size={16} fill="currentColor" /></Box><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
         <Box flex={1} />
-        <Typography variant="body2" sx={{ mr: { xs: 1, sm: 2 } }}>{user?.name}</Typography>
-        <Tooltip title="Sign out">
-          <Button startIcon={<LogOut size={16} />} color="inherit" onClick={() => { logout(); navigate('/login'); }}>Logout</Button>
-        </Tooltip>
+        <Box className="user-chip" onClick={(event) => setUserMenuAnchor(event.currentTarget)}>
+          <Avatar sx={{ width: 30, height: 30, fontSize: 13, fontWeight: 700, bgcolor: '#255c4b' }}>{(user?.name || 'U').slice(0, 1).toUpperCase()}</Avatar>
+          <Typography variant="body2" fontWeight={650} sx={{ display: { xs: 'none', sm: 'inline' } }} noWrap maxWidth={140}>{user?.name}</Typography>
+          <ChevronDown size={15} />
+        </Box>
+        <Menu anchorEl={userMenuAnchor} open={Boolean(userMenuAnchor)} onClose={() => setUserMenuAnchor(null)} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
+          <Box px={2} py={1.25} sx={{ borderBottom: '1px solid #eef1ee' }}><Typography variant="body2" fontWeight={700} noWrap>{user?.name}</Typography><Typography variant="caption" color="text.secondary" noWrap>{user?.email}</Typography></Box>
+          <MenuItem onClick={() => { logout(); navigate('/login'); }} sx={{ color: 'error.main', gap: 1 }}><LogOut size={15} /> Sign out</MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
 
@@ -182,9 +188,9 @@ export default function DashboardPage() {
           <Typography variant="subtitle1" fontWeight={750}>Start your next version</Typography>
           <Typography variant="body2" color="text.secondary" mb={2}>Not sure where to begin? Pick the path that fits you best.</Typography>
           <Grid container spacing={1.5}>
-            <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" startIcon={<Plus size={17} />} onClick={() => create()}><Box textAlign="left"><strong>Start from scratch</strong><small>A guided blank canvas</small></Box></Button></Grid>
-            <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" startIcon={<FolderOpen size={17} />} onClick={() => inputRef.current?.click()}><Box textAlign="left"><strong>Bring an existing resume</strong><small>Import a ResumeForge JSON file</small></Box></Button></Grid>
-            <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" startIcon={<FileText size={17} />} onClick={() => setTemplateDialog(true)}><Box textAlign="left"><strong>Browse templates</strong><small>Find a layout that fits your story</small></Box></Button></Grid>
+            <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" onClick={() => create()}><Box className="quick-action-icon icon-scratch"><Plus size={18} /></Box><Box textAlign="left"><strong>Start from scratch</strong><small>A guided blank canvas</small></Box></Button></Grid>
+            <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" onClick={() => inputRef.current?.click()}><Box className="quick-action-icon icon-import"><FolderOpen size={18} /></Box><Box textAlign="left"><strong>Bring an existing resume</strong><small>Import a ResumeForge JSON file</small></Box></Button></Grid>
+            <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" onClick={() => setTemplateDialog(true)}><Box className="quick-action-icon icon-browse"><FileText size={18} /></Box><Box textAlign="left"><strong>Browse templates</strong><small>Find a layout that fits your story</small></Box></Button></Grid>
           </Grid>
         </CardContent>
       </Card>
@@ -196,22 +202,25 @@ export default function DashboardPage() {
         <Grid container spacing={2.5}>{sorted.map((resume) => <Grid item xs={12} sm={6} md={4} key={resume.id}>
           <Card className="resume-card" variant="outlined" sx={{ height: '100%', borderColor: '#D0D3D6', bgcolor: '#fff', borderRadius: 2 }}>
             <CardContent sx={{ p: 2.5 }}>
-              <Box className={`resume-card-preview preview-${resume.templateId}`}>
+              <Box className={`resume-card-thumb preview-${resume.templateId}`}>
                 <TemplateThumbnail template={isTemplateId(resume.templateId) ? resume.templateId : 'professional'} compact />
               </Box>
               <Stack direction="row" justifyContent="space-between" alignItems="start" gap={1}>
-                <Box minWidth={0}><Typography fontWeight={700} mt={2} noWrap>{resume.title}</Typography><Typography variant="caption" color="#626871" display="block">Updated {new Date(resume.updatedAt).toLocaleDateString()}</Typography></Box>
-                <Tooltip title="More actions"><IconButton size="small" aria-label={`More actions for ${resume.title}`} onClick={(event) => { setActionResume(resume); setActionAnchor(event.currentTarget); }}><MoreHorizontal size={18} /></IconButton></Tooltip>
+                <Box minWidth={0}>
+                  <Typography fontWeight={700} mt={2} noWrap>{resume.title}</Typography>
+                  <Stack direction="row" alignItems="center" spacing={0.5} className="resume-card-meta"><Clock size={12} /><Typography variant="caption" component="span">Updated {new Date(resume.updatedAt).toLocaleDateString()}</Typography></Stack>
+                </Box>
+                <Tooltip title="More actions"><IconButton className="card-menu-btn" size="small" aria-label={`More actions for ${resume.title}`} onClick={(event) => { setActionResume(resume); setActionAnchor(event.currentTarget); }}><MoreHorizontal size={18} /></IconButton></Tooltip>
               </Stack>
-              <Stack direction="row" spacing={1} mt={1.5}><Chip label={resume.templateId} size="small" variant="outlined" /><Chip label={resume.isPublic ? 'Shared' : 'Private'} size="small" color={resume.isPublic ? 'success' : 'default'} variant="outlined" /></Stack>
+              <Stack direction="row" spacing={1} mt={1.5}><Chip className="template-chip" label={resume.templateId} size="small" /><Chip label={resume.isPublic ? 'Shared' : 'Private'} size="small" color={resume.isPublic ? 'success' : 'default'} variant="outlined" /></Stack>
               <Stack direction="row" spacing={1} mt={2}><Button fullWidth variant="contained" size="small" onClick={() => navigate(`/resume/${resume.id}/edit`)}>Continue editing</Button><Button size="small" variant="outlined" startIcon={<Share2 size={14} />} onClick={() => setShare(resume)}>Share</Button></Stack>
             </CardContent>
           </Card>
         </Grid>)}</Grid>
       </> : <Alert severity="info" sx={{ mb: 3 }}>No resumes match “{query}”. Try a different name or template.</Alert>
       ) : <Card className="dashboard-empty" variant="outlined" sx={{ p: { xs: 3, sm: 7 }, textAlign: 'center', borderStyle: 'dashed', bgcolor: 'transparent' }}>
-        <Box sx={{ width: 56, height: 56, borderRadius: '50%', bgcolor: '#e7f2ed', color: '#255c4b', display: 'grid', placeItems: 'center', mx: 'auto', mb: 2 }}><FileText size={25} /></Box>
-        <Typography variant="h6">Your resume library is empty</Typography><Typography color="#626871" mb={2}>Start fresh, import an existing file, or browse templates.</Typography>
+        <Box className="empty-state-icon"><Box className="empty-state-ring" /><Box className="empty-state-badge"><FileText size={26} /></Box></Box>
+        <Typography variant="h6" fontWeight={750}>Your resume library is empty</Typography><Typography color="#626871" mb={2}>Start fresh, import an existing file, or browse templates.</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="center" spacing={1}><Button variant="contained" startIcon={<Plus size={17} />} onClick={() => create()}>Create your first resume</Button><Button variant="outlined" onClick={() => setTemplateDialog(true)}>Browse templates</Button></Stack>
       </Card>}
     </Box>
@@ -225,12 +234,12 @@ export default function DashboardPage() {
     </Menu>
 
     <Dialog open={templateDialog} onClose={() => setTemplateDialog(false)} fullWidth maxWidth="lg">
-      <DialogTitle>Choose a starting template</DialogTitle>
+      <DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><FileText size={16} /></Box>Choose a starting template</DialogTitle>
       <DialogContent><Typography color="text.secondary" variant="body2" mb={2}>You can change the template and design controls at any time.</Typography><Grid container spacing={1.5}>{TEMPLATE_CATALOG.map((template) => <Grid item xs={12} sm={6} md={3} key={template.id}><Card className="template-choice" variant="outlined" onClick={() => create(template.id)} sx={{ cursor: 'pointer', p: 1.25, height: '100%' }}><TemplateThumbnail template={template.id} compact /><Typography fontWeight={750} mt={1}>{template.label}</Typography><Typography variant="caption" color="text.secondary">{template.description}</Typography><Button size="small" sx={{ mt: 1 }} onClick={(event) => { event.stopPropagation(); create(template.id); }}>Use this template</Button></Card></Grid>)}</Grid></DialogContent>
       <DialogActions><Button onClick={() => setTemplateDialog(false)}>Cancel</Button></DialogActions>
     </Dialog>
-    <Dialog open={Boolean(rename)} onClose={() => setRename(null)}><DialogTitle>Rename resume</DialogTitle><DialogContent><TextField autoFocus fullWidth label="Resume title" value={renameValue} onChange={(e) => setRenameValue(e.target.value)} sx={{ mt: 1 }} /></DialogContent><DialogActions><Button onClick={() => setRename(null)}>Cancel</Button><Button variant="contained" onClick={submitRename} disabled={!renameValue.trim()}>Save name</Button></DialogActions></Dialog>
-    <Dialog open={Boolean(share)} onClose={() => setShare(null)}><DialogTitle>Share resume</DialogTitle><DialogContent>{share?.isPublic ? <Stack spacing={2} pt={1}><Typography variant="body2">Anyone with this link can view your resume.</Typography><TextField fullWidth value={shareUrl} InputProps={{ readOnly: true }} /><Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}><Button startIcon={<Copy size={15} />} onClick={() => navigator.clipboard.writeText(shareUrl)}>Copy link</Button><Button startIcon={<ExternalLink size={15} />} onClick={() => window.open(shareUrl, '_blank')}>Open resume</Button></Stack></Stack> : <Typography py={1}>Your resume is private. Enable sharing to create a public link.</Typography>}</DialogContent><DialogActions><Button onClick={() => setShare(null)}>Close</Button><Button variant="contained" onClick={toggleShare}>{share?.isPublic ? 'Disable sharing' : 'Enable sharing'}</Button></DialogActions></Dialog>
-    <Dialog open={Boolean(importResume)} onClose={() => setImportResume(null)}><DialogTitle>Resume ready to import</DialogTitle><DialogContent><Typography>Save <strong>{importResume?.title}</strong> to your cloud resume library so you can keep editing it anywhere?</Typography></DialogContent><DialogActions><Button onClick={() => { sessionStorage.removeItem('resumeforge_pending_import'); if (importResume) sessionStorage.setItem('resumeforge_dismissed_import', importResume.id); setImportResume(null); }}>Not now</Button><Button variant="contained" onClick={async () => { if (!importResume) return; try { const result = await createResume({ title: importResume.title, data: importResume, templateId: importResume.template }); setResumes((items) => [result.resume, ...items]); sessionStorage.removeItem('resumeforge_pending_import'); sessionStorage.removeItem('resumeforge_dismissed_import'); setImportResume(null); } catch (e) { setError(e instanceof ApiError ? e.message : 'Unable to import resume'); } }}>Import to My Resumes</Button></DialogActions></Dialog>
+    <Dialog open={Boolean(rename)} onClose={() => setRename(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><FileText size={16} /></Box>Rename resume</DialogTitle><DialogContent><TextField autoFocus fullWidth label="Resume title" value={renameValue} onChange={(e) => setRenameValue(e.target.value)} sx={{ mt: 1 }} /></DialogContent><DialogActions><Button onClick={() => setRename(null)}>Cancel</Button><Button variant="contained" onClick={submitRename} disabled={!renameValue.trim()}>Save name</Button></DialogActions></Dialog>
+    <Dialog open={Boolean(share)} onClose={() => setShare(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><Share2 size={16} /></Box>Share resume</DialogTitle><DialogContent>{share?.isPublic ? <Stack spacing={2} pt={1}><Typography variant="body2">Anyone with this link can view your resume.</Typography><TextField fullWidth value={shareUrl} InputProps={{ readOnly: true }} /><Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}><Button startIcon={<Copy size={15} />} onClick={() => navigator.clipboard.writeText(shareUrl)}>Copy link</Button><Button startIcon={<ExternalLink size={15} />} onClick={() => window.open(shareUrl, '_blank')}>Open resume</Button></Stack></Stack> : <Typography py={1}>Your resume is private. Enable sharing to create a public link.</Typography>}</DialogContent><DialogActions><Button onClick={() => setShare(null)}>Close</Button><Button variant="contained" onClick={toggleShare}>{share?.isPublic ? 'Disable sharing' : 'Enable sharing'}</Button></DialogActions></Dialog>
+    <Dialog open={Boolean(importResume)} onClose={() => setImportResume(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><Upload size={16} /></Box>Resume ready to import</DialogTitle><DialogContent><Typography>Save <strong>{importResume?.title}</strong> to your cloud resume library so you can keep editing it anywhere?</Typography></DialogContent><DialogActions><Button onClick={() => { sessionStorage.removeItem('resumeforge_pending_import'); if (importResume) sessionStorage.setItem('resumeforge_dismissed_import', importResume.id); setImportResume(null); }}>Not now</Button><Button variant="contained" onClick={async () => { if (!importResume) return; try { const result = await createResume({ title: importResume.title, data: importResume, templateId: importResume.template }); setResumes((items) => [result.resume, ...items]); sessionStorage.removeItem('resumeforge_pending_import'); sessionStorage.removeItem('resumeforge_dismissed_import'); setImportResume(null); } catch (e) { setError(e instanceof ApiError ? e.message : 'Unable to import resume'); } }}>Import to My Resumes</Button></DialogActions></Dialog>
   </Box>;
 }

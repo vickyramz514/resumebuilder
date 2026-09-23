@@ -281,7 +281,7 @@ function ResumeBuilder() {
         <Typography variant="body2" color="text.secondary">Make it yours</Typography>
       </Box>
       <Box className="form-scroll">
-        <Typography variant="overline" color="text.secondary">Template gallery</Typography>
+        <Typography variant="overline" color="text.secondary" className="design-section-label">Template gallery</Typography>
         <Box className="template-picker">{TEMPLATE_CATALOG.map((item) => (
           <Box key={item.id} className={`template-picker-option ${resume.template === item.id ? 'selected' : ''}`} onClick={() => setTemplate(item.id)} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setTemplate(item.id); }}>
             <TemplateThumbnail template={item.id} compact />
@@ -292,19 +292,19 @@ function ResumeBuilder() {
             {resume.template === item.id && <Chip label="Selected" size="small" color="primary" />}
           </Box>
         ))}</Box>
-        <Typography variant="overline" color="text.secondary" display="block" mt={3}>Accent color</Typography>
-        <Stack direction="row" spacing={1.2} mt={1} useFlexGap flexWrap="wrap">{colors.map((color) => <IconButton aria-label={`Use ${color} accent`} key={color} onClick={() => updateResume({ accentColor: color })} sx={{ bgcolor: color, width: 28, height: 28, border: resume.accentColor === color ? '3px solid #dbeafe' : 'none', '&:hover': { bgcolor: color } }} />)}</Stack>
-        <Typography variant="overline" color="text.secondary" display="block" mt={3}>Typography</Typography>
-        <Stack spacing={2} mt={1}>
+        <Typography variant="overline" color="text.secondary" display="block" mt={3} className="design-section-label">Accent color</Typography>
+        <Stack direction="row" spacing={1.4} mt={1.25} useFlexGap flexWrap="wrap">{colors.map((color) => <Box key={color} component="button" aria-label={`Use ${color} accent`} onClick={() => updateResume({ accentColor: color })} className={`accent-swatch ${resume.accentColor === color ? 'selected' : ''}`} sx={{ bgcolor: color, color }} />)}</Stack>
+        <Typography variant="overline" color="text.secondary" display="block" mt={3} className="design-section-label">Typography</Typography>
+        <Stack spacing={2.25} mt={1.25}>
           <FormControl size="small" fullWidth>
             <InputLabel id="font-family-label">Font family</InputLabel>
             <Select labelId="font-family-label" label="Font family" value={design.fontFamily} onChange={(event) => updateDesign({ fontFamily: event.target.value as FontFamily })}>
               {fonts.map((font) => <MenuItem value={font.id} key={font.id}>{font.label}</MenuItem>)}
             </Select>
           </FormControl>
-          <Box><Stack direction="row" justifyContent="space-between"><Typography variant="caption" color="text.secondary">Font size</Typography><Typography variant="caption" fontWeight={700}>{design.fontSize}px</Typography></Stack><Slider size="small" min={9} max={14} step={0.5} value={design.fontSize} onChange={(_, value) => updateDesign({ fontSize: value as number })} /></Box>
-          <Box><Stack direction="row" justifyContent="space-between"><Typography variant="caption" color="text.secondary">Line height</Typography><Typography variant="caption" fontWeight={700}>{design.lineHeight.toFixed(2)}</Typography></Stack><Slider size="small" min={1.2} max={1.8} step={0.05} value={design.lineHeight} onChange={(_, value) => updateDesign({ lineHeight: value as number })} /></Box>
-          <Box><Stack direction="row" justifyContent="space-between"><Typography variant="caption" color="text.secondary">Section spacing</Typography><Typography variant="caption" fontWeight={700}>{design.spacing}px</Typography></Stack><Slider size="small" min={8} max={30} step={1} value={design.spacing} onChange={(_, value) => updateDesign({ spacing: value as number })} /></Box>
+          <Box className="design-slider"><Stack direction="row" justifyContent="space-between"><Typography variant="caption" color="text.secondary">Font size</Typography><Typography variant="caption" fontWeight={700} color="primary.main">{design.fontSize}px</Typography></Stack><Slider size="small" min={9} max={14} step={0.5} value={design.fontSize} onChange={(_, value) => updateDesign({ fontSize: value as number })} /></Box>
+          <Box className="design-slider"><Stack direction="row" justifyContent="space-between"><Typography variant="caption" color="text.secondary">Line height</Typography><Typography variant="caption" fontWeight={700} color="primary.main">{design.lineHeight.toFixed(2)}</Typography></Stack><Slider size="small" min={1.2} max={1.8} step={0.05} value={design.lineHeight} onChange={(_, value) => updateDesign({ lineHeight: value as number })} /></Box>
+          <Box className="design-slider"><Stack direction="row" justifyContent="space-between"><Typography variant="caption" color="text.secondary">Section spacing</Typography><Typography variant="caption" fontWeight={700} color="primary.main">{design.spacing}px</Typography></Stack><Slider size="small" min={8} max={30} step={1} value={design.spacing} onChange={(_, value) => updateDesign({ spacing: value as number })} /></Box>
           <FormControl size="small" fullWidth>
             <InputLabel id="density-label">Content density</InputLabel>
             <Select labelId="density-label" label="Content density" value={design.density} onChange={(event) => updateDesign({ density: event.target.value as ResumeDensity })}>
@@ -314,7 +314,7 @@ function ResumeBuilder() {
             </Select>
           </FormControl>
         </Stack>
-        <Typography variant="overline" color="text.secondary" display="block" mt={3}>Sections</Typography>
+        <Typography variant="overline" color="text.secondary" display="block" mt={3} className="design-section-label">Sections</Typography>
         <Typography variant="caption" color="text.secondary" display="block" mb={1}>Drag to reorder. Hide a section without deleting its content.</Typography>
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={dragEnd}>
           <SortableContext items={resume.sections} strategy={verticalListSortingStrategy}>
@@ -337,13 +337,13 @@ function ResumeBuilder() {
     <Box className="app-shell">
       <AppBar position="static" color="inherit" elevation={0} className="topbar">
         <Toolbar>
-          <IconButton edge="start" aria-label="Open resume navigation" onClick={() => setMobileMenu(!mobileMenu)} sx={{ display: { md: 'none' }, mr: 1 }}><MenuIcon size={20} /></IconButton>
-          <Box className="brand-mark"><Sparkles size={18} fill="currentColor" /><Typography fontWeight={800} letterSpacing="-0.5px">ResumeForge</Typography></Box>
+          <IconButton className="topbar-icon-btn" edge="start" aria-label="Open resume navigation" onClick={() => setMobileMenu(!mobileMenu)} sx={{ display: { md: 'none' }, mr: 1 }}><MenuIcon size={20} /></IconButton>
+          <Box className="brand-mark"><Box className="brand-badge"><Sparkles size={16} fill="currentColor" /></Box><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
           <Button size="small" color="inherit" onClick={() => navigate('/dashboard')} sx={{ textTransform: 'none', ml: 1 }}>My Resumes</Button>
           <Box className="topbar-title">
             <FileText size={16} color="#64748b" />
             <Typography variant="body2" noWrap>{activeTitle}</Typography>
-            <Chip label={saveState === 'saving' ? 'Saving…' : saveState === 'offline' ? 'Offline — saved locally' : 'Saved ✓'} size="small" color={saveState === 'offline' ? 'warning' : 'success'} variant="outlined" />
+            <Chip className={saveState === 'saving' ? 'save-chip saving' : undefined} icon={saveState === 'saving' ? <span className="save-dot" /> : undefined} label={saveState === 'saving' ? 'Saving…' : saveState === 'offline' ? 'Offline — saved locally' : 'Saved ✓'} size="small" color={saveState === 'offline' ? 'warning' : 'success'} variant="outlined" />
             <Chip label={`${completeness.score}%`} size="small" variant="outlined" color={completeness.score === 100 ? 'success' : 'default'} />
           </Box>
           <Box flex={1} />
@@ -354,13 +354,13 @@ function ResumeBuilder() {
             </Tabs>
           )}
           <Tooltip title="Undo last change">
-            <span><IconButton aria-label="Undo last change" disabled={!canUndo} onClick={() => undo()}><Undo2 size={18} /></IconButton></span>
+            <span><IconButton className="topbar-icon-btn" aria-label="Undo last change" disabled={!canUndo} onClick={() => undo()}><Undo2 size={18} /></IconButton></span>
           </Tooltip>
           <Tooltip title="Improve with AI">
             <Button onClick={() => setAiOpen(true)} startIcon={<Sparkles size={16} />} color="inherit" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>AI Assistant</Button>
           </Tooltip>
           <Tooltip title="Improve with AI">
-            <IconButton aria-label="Open AI assistant" onClick={() => setAiOpen(true)} sx={{ display: { xs: 'inline-flex', md: 'none' } }}><Sparkles size={18} /></IconButton>
+            <IconButton className="topbar-icon-btn" aria-label="Open AI assistant" onClick={() => setAiOpen(true)} sx={{ display: { xs: 'inline-flex', md: 'none' } }}><Sparkles size={18} /></IconButton>
           </Tooltip>
           <Tooltip title="Download a PDF copy">
             <Button onClick={exportPdf} startIcon={<Download size={17} />} variant="contained" size="small">
@@ -369,7 +369,7 @@ function ResumeBuilder() {
             </Button>
           </Tooltip>
           <Tooltip title="More resume actions">
-            <IconButton aria-label="More resume actions" onClick={(e) => setMenuAnchor(e.currentTarget)}><MoreVertical size={19} /></IconButton>
+            <IconButton className="topbar-icon-btn" aria-label="More resume actions" onClick={(e) => setMenuAnchor(e.currentTarget)}><MoreVertical size={19} /></IconButton>
           </Tooltip>
           <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={() => setMenuAnchor(null)}>
             <MenuItem onClick={() => { setShareOpen(true); setMenuAnchor(null); }}><Share2 size={15} />&nbsp; Share link</MenuItem>
