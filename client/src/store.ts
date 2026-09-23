@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Resume, SectionType, TemplateId } from './types';
 import { emptyResume, sampleResume } from './templates/data';
+import { TEMPLATE_META } from './templates/catalog';
 
 interface ResumeStore {
   resumes: Resume[];
@@ -70,7 +71,11 @@ export const useResumeStore = create<ResumeStore>()(persist((set, get) => ({
     ...resume,
     personal: { ...resume.personal, contact: { ...resume.personal.contact, ...patch } }
   }))),
-  setTemplate: (template) => set((state) => withActive(state, (resume) => ({ ...resume, template }))),
+  setTemplate: (template) => set((state) => withActive(state, (resume) => ({
+    ...resume,
+    template,
+    accentColor: TEMPLATE_META[template]?.accent ?? resume.accentColor
+  }))),
   setSections: (sections) => set((state) => withActive(state, (resume) => ({ ...resume, sections }))),
   reorderSections: (from, to) => set((state) => withActive(state, (resume) => {
     const sections = [...resume.sections];

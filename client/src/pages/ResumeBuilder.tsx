@@ -14,6 +14,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import { ResumePreview } from '../templates/ResumePreview';
 import { useActiveResume, useResumeStore } from '../store';
+import { TEMPLATE_CATALOG } from '../templates/catalog';
 import type { FontFamily, ResumeDesign, ResumeDensity, SectionType, TemplateId } from '../types';
 import { PersonalForm } from '../components/PersonalForm';
 import { CertificationsForm, EducationForm, ExperienceForm, ProjectsForm, SkillsForm, SummaryForm } from '../components/SectionForms';
@@ -31,15 +32,7 @@ import '../app.css';
 
 const sectionLabels: Record<SectionType, string> = { summary: 'Profile', experience: 'Experience', education: 'Education', skills: 'Skills', projects: 'Projects', certifications: 'Certifications' };
 const sectionIcons: Record<SectionType, string> = { summary: '01', experience: '02', education: '03', skills: '04', projects: '05', certifications: '06' };
-const templates: { id: TemplateId; label: string; description: string }[] = [
-  { id: 'professional', label: 'Professional', description: 'Clean and structured' },
-  { id: 'minimal', label: 'Minimal', description: 'Simple and elegant' },
-  { id: 'modern', label: 'Modern', description: 'Bold and expressive' },
-  { id: 'editorial', label: 'Editorial', description: 'Refined and distinctive' },
-  { id: 'creative', label: 'Creative', description: 'Expressive and warm' },
-  { id: 'compact', label: 'Compact', description: 'High-signal and efficient' }
-];
-const colors = ['#202124', '#626871', '#0f766e', '#8a5a2b', '#7a3e52', '#111827'];
+const colors = ['#202124', '#626871', '#0f766e', '#8a5a2b', '#7a3e52', '#1e3a5f', '#4338ca', '#15232c', '#7c2d12', '#111827'];
 const fonts: { id: FontFamily; label: string }[] = [
   { id: 'inter', label: 'Inter · modern' },
   { id: 'source-sans', label: 'Source Sans · friendly' },
@@ -289,7 +282,7 @@ function ResumeBuilder() {
       </Box>
       <Box className="form-scroll">
         <Typography variant="overline" color="text.secondary">Template gallery</Typography>
-        <Box className="template-picker">{templates.map((item) => (
+        <Box className="template-picker">{TEMPLATE_CATALOG.map((item) => (
           <Box key={item.id} className={`template-picker-option ${resume.template === item.id ? 'selected' : ''}`} onClick={() => setTemplate(item.id)} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setTemplate(item.id); }}>
             <TemplateThumbnail template={item.id} compact />
             <Box className="template-picker-copy">
@@ -300,7 +293,7 @@ function ResumeBuilder() {
           </Box>
         ))}</Box>
         <Typography variant="overline" color="text.secondary" display="block" mt={3}>Accent color</Typography>
-        <Stack direction="row" spacing={1.2} mt={1}>{colors.map((color) => <IconButton aria-label={`Use ${color} accent`} key={color} onClick={() => updateResume({ accentColor: color })} sx={{ bgcolor: color, width: 28, height: 28, border: resume.accentColor === color ? '3px solid #dbeafe' : 'none', '&:hover': { bgcolor: color } }} />)}</Stack>
+        <Stack direction="row" spacing={1.2} mt={1} useFlexGap flexWrap="wrap">{colors.map((color) => <IconButton aria-label={`Use ${color} accent`} key={color} onClick={() => updateResume({ accentColor: color })} sx={{ bgcolor: color, width: 28, height: 28, border: resume.accentColor === color ? '3px solid #dbeafe' : 'none', '&:hover': { bgcolor: color } }} />)}</Stack>
         <Typography variant="overline" color="text.secondary" display="block" mt={3}>Typography</Typography>
         <Stack spacing={2} mt={1}>
           <FormControl size="small" fullWidth>

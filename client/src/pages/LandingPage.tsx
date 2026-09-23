@@ -6,17 +6,9 @@ import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
 import { normalizeImportedResume } from '../utils/importResume';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
+import { TEMPLATE_CATALOG } from '../templates/catalog';
 import type { TemplateId } from '../types';
 import '../landing.css';
-
-const templates: { id: TemplateId; name: string; description: string }[] = [
-  { id: 'professional', name: 'Professional', description: 'A timeless layout for making a clear, confident first impression.' },
-  { id: 'minimal', name: 'Minimal', description: 'Beautiful restraint that keeps your experience in focus.' },
-  { id: 'modern', name: 'Modern', description: 'A little more personality, without sacrificing readability.' },
-  { id: 'editorial', name: 'Editorial', description: 'A refined, story-forward layout with a considered rhythm.' },
-  { id: 'creative', name: 'Creative', description: 'Warm visual accents for portfolios and people-first roles.' },
-  { id: 'compact', name: 'Compact', description: 'High-signal spacing for experienced candidates with more to say.' }
-];
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -105,9 +97,9 @@ export default function LandingPage() {
         </Box>
       </Box></Container></Box>
 
-      <Box className="landing-stats"><Container maxWidth="lg"><Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={2}><Typography><strong>One calm place</strong> to build your best work story.</Typography><Stack direction="row" spacing={{ xs: 2, sm: 5 }}><Box><strong>6</strong><span>polished templates</span></Box><Box><strong>100%</strong><span>yours to edit</span></Box><Box><strong>1 click</strong><span>to export</span></Box></Stack></Stack></Container></Box>
+      <Box className="landing-stats"><Container maxWidth="lg"><Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={2}><Typography><strong>One calm place</strong> to build your best work story.</Typography><Stack direction="row" spacing={{ xs: 2, sm: 5 }}><Box><strong>12</strong><span>polished templates</span></Box><Box><strong>100%</strong><span>yours to edit</span></Box><Box><strong>1 click</strong><span>to export</span></Box></Stack></Stack></Container></Box>
 
-      <Box component="section" id="templates" className="landing-section templates-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="Start with a strong foundation" /><Typography variant="h2">A template for your kind of brilliant.</Typography><Typography>Every layout is designed for clarity, personality, and the skim test.</Typography></Box><Box className="template-showcase">{templates.map((template) => <Box key={template.id} className="showcase-card"><TemplateThumbnail template={template.id} /><Box className="showcase-card-copy"><Typography variant="h6">{template.name}</Typography><Typography variant="body2">{template.description}</Typography><Button size="small" endIcon={<ArrowRight size={15} />} onClick={() => startCreating(template.id)}>Use this template</Button></Box></Box>)}</Box></Container></Box>
+      <Box component="section" id="templates" className="landing-section templates-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="Start with a strong foundation" /><Typography variant="h2">A template for your kind of brilliant.</Typography><Typography>Every layout is designed for clarity, personality, and the skim test.</Typography></Box><Box className="template-showcase">{TEMPLATE_CATALOG.map((template) => <Box key={template.id} className="showcase-card"><TemplateThumbnail template={template.id} /><Box className="showcase-card-copy"><Typography variant="h6">{template.label}</Typography><Typography variant="body2">{template.pitch}</Typography><Button size="small" endIcon={<ArrowRight size={15} />} onClick={() => startCreating(template.id)}>Use this template</Button></Box></Box>)}</Box></Container></Box>
 
       <Box component="section" id="how-it-works" className="landing-section how-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="A better way to begin" /><Typography variant="h2">From blank page to ready to send.</Typography></Box><Box className="steps-grid"><Box><Box className="step-number">01</Box><FileText size={22} /><Typography variant="h6">Choose your starting point</Typography><Typography variant="body2">Start fresh with a guided canvas or upload a ResumeForge JSON export you already have.</Typography></Box><Box><Box className="step-number">02</Box><WandSparkles size={22} /><Typography variant="h6">Make it unmistakably yours</Typography><Typography variant="body2">Shape your story with flexible sections, thoughtful templates, and easy visual polish.</Typography></Box><Box><Box className="step-number">03</Box><ArrowRight size={22} /><Typography variant="h6">Share with confidence</Typography><Typography variant="body2">Export a crisp PDF, keep versions organized, and share a public link when you’re ready.</Typography></Box></Box></Container></Box>
 

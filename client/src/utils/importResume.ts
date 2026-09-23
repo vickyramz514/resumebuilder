@@ -1,7 +1,8 @@
 import type { Contact, FontFamily, Resume, ResumeDesign, ResumeDensity, SectionType, TemplateId } from '../types';
+import { TEMPLATE_IDS } from '../templates/catalog';
 
 const sectionTypes: SectionType[] = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'];
-const templateIds: TemplateId[] = ['minimal', 'professional', 'modern', 'editorial', 'creative', 'compact'];
+const templateIds: TemplateId[] = TEMPLATE_IDS;
 const fontFamilies: FontFamily[] = ['inter', 'source-sans', 'georgia', 'ibm-plex', 'space-grotesk'];
 const densities: ResumeDensity[] = ['comfortable', 'compact', 'airy'];
 

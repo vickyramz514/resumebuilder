@@ -27,6 +27,23 @@
 .template-thumbnail-professional { background: #eef2f8; }
 .template-thumbnail-modern { background: #eaf3ed; padding-top: 0; }
 .template-thumbnail-creative { background: #f8edef; }
+.template-thumbnail-classic { background: #f7f7f5; text-align: center; }
+.template-thumbnail-classic .template-thumb-avatar { display: none; }
+.template-thumbnail-classic .template-thumb-top.is-centered { justify-content: center; }
+.template-thumbnail-classic .template-thumb-identity { display: flex; flex-direction: column; align-items: center; }
+.template-thumbnail-classic .template-thumb-contact.is-centered { justify-content: center; }
+.template-thumbnail-executive { background: #eef2f6; padding-top: 0; }
+.template-thumbnail-executive .template-thumb-avatar { display: none; }
+.template-thumbnail-technical { background: #eef0fb; border-left: 8px solid #4338ca; padding-left: 28px; }
+.template-thumbnail-technical .template-thumb-avatar { display: none; }
+.template-thumbnail-academic { background: #f6efe8; }
+.template-thumbnail-academic .template-thumb-avatar { display: none; }
+.template-thumbnail-swiss { background: #f4f4f2; }
+.template-thumbnail-swiss .template-thumb-avatar { display: none; }
+.template-thumbnail-swiss .template-thumb-name { width: 140px; height: 12px; border-radius: 0; }
+.template-thumbnail-folio { background: #e8eef2; padding-left: 0; }
+.template-thumbnail-folio .template-thumb-columns { gap: 0; margin-top: 12px; }
+.template-thumbnail-folio .template-thumb-aside { border-radius: 0; min-height: 140px; }
 .template-thumb-band { height: 46px; margin: -35px -36px 14px; }
 .template-thumb-top { display: flex; gap: 10px; align-items: center; }
 .template-thumb-avatar { width: 31px; height: 31px; border-radius: 50%; background: #c9ddd0; flex-shrink: 0; }
@@ -49,7 +66,7 @@
 .template-thumb-label { position: absolute; right: 16px; bottom: 13px; display: flex; flex-direction: column; align-items: flex-end; }
 .how-section { background: #f1f4ef; }.steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }.steps-grid > div { position: relative; min-height: 200px; padding: 24px; border: 1px solid #dbe4dc; border-radius: 14px; background: #f9fbf8; }.steps-grid svg { color: #255c4b; margin: 20px 0 16px; }.steps-grid h6 { font-weight: 800; }.steps-grid p { color: #6c746f; line-height: 1.5; }.step-number { position: absolute; top: 19px; right: 22px; color: #9eb7a6; font-size: 11px; font-weight: 800; }
 .landing-cta { padding: 110px 0; background: #dcebe2; }.landing-cta h2 { max-width: 650px; margin-left: auto; margin-right: auto; }.landing-cta p { margin-bottom: 0; }.landing-footer { padding: 28px 0 24px; background: #fbfaf8; color: #69746e; }.landing-footer .landing-brand { color: #255c4b; }.landing-footer .MuiIconButton-root { color: #64716a; }
-.template-thumbnail.compact { min-height: 98px; padding: 13px 14px; border-radius: 8px; }.template-thumbnail.compact .template-thumb-avatar { width: 16px; height: 16px; }.template-thumbnail.compact .template-thumb-name { width: 48px; height: 4px; }.template-thumbnail.compact .template-thumb-subtitle { width: 34px; height: 3px; margin-top: 3px; }.template-thumbnail.compact .template-thumb-contact { margin-top: 4px; gap: 3px; }.template-thumbnail.compact .template-thumb-contact i { width: 13px; height: 2px; }.template-thumbnail.compact .template-thumb-section { margin-top: 9px; }.template-thumbnail.compact .template-thumb-heading { width: 23px; height: 2px; margin-bottom: 4px; }.template-thumbnail.compact .template-thumb-line { height: 2px; margin: 3px 0; }.template-thumbnail.compact .template-thumb-label { display: none; }.template-thumbnail.compact .template-thumb-band { height: 18px; margin-bottom: 6px; }.template-thumbnail.compact .template-thumb-columns { margin-top: 7px; gap: 6px; }.template-thumbnail.compact .template-thumb-aside { padding: 5px; gap: 3px; border-radius: 4px; }.template-thumbnail.compact .template-thumb-aside .template-thumb-line { height: 2px; }
+.template-thumbnail.compact { min-height: 98px; padding: 13px 14px; border-radius: 8px; }.template-thumbnail.compact .template-thumb-avatar { width: 16px; height: 16px; }.template-thumbnail.compact .template-thumb-name { width: 48px; height: 4px; }.template-thumbnail.compact .template-thumb-subtitle { width: 34px; height: 3px; margin-top: 3px; }.template-thumbnail.compact .template-thumb-contact { margin-top: 4px; gap: 3px; }.template-thumbnail.compact .template-thumb-contact i { width: 13px; height: 2px; }.template-thumbnail.compact .template-thumb-section { margin-top: 9px; }.template-thumbnail.compact .template-thumb-heading { width: 23px; height: 2px; margin-bottom: 4px; }.template-thumbnail.compact .template-thumb-line { height: 2px; margin: 3px 0; }.template-thumbnail.compact .template-thumb-label { display: none; }.template-thumbnail.compact .template-thumb-band { height: 18px; margin-bottom: 6px; }.template-thumbnail.compact .template-thumb-columns { margin-top: 7px; gap: 6px; }.template-thumbnail.compact .template-thumb-aside { padding: 5px; gap: 3px; border-radius: 4px; }.template-thumbnail.compact .template-thumb-aside .template-thumb-line { height: 2px; }.template-thumbnail.compact.template-thumbnail-folio .template-thumb-aside { min-height: 64px; border-radius: 0; }.template-thumbnail.compact.template-thumbnail-swiss .template-thumb-name { width: 62px; height: 6px; }
 @media (max-width: 900px) { .landing-hero-grid { grid-template-columns: 1fr; padding: 65px 0; }.landing-hero-art { min-height: 410px; margin-top: 10px; }.template-showcase, .steps-grid { grid-template-columns: 1fr; }.template-thumbnail { min-height: 250px; }.landing-section { padding: 78px 0; } }
 @keyframes landing-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) { .landing-hero-copy, .landing-hero-art { animation: none; } .showcase-card { transition: none; } }

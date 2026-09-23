@@ -1,9 +1,8 @@
 import type { Resume, SectionType } from '../types';
 import { Mail, MapPin, Phone, Globe, Linkedin, Github, type LucideIcon } from 'lucide-react';
+import { SIDEBAR_TEMPLATES } from './catalog';
 import './resume.css';
 
-/** Templates that use a two-column layout (colored/boxed sidebar + main column). */
-const SIDEBAR_TEMPLATES = new Set<Resume['template']>(['professional', 'modern', 'creative']);
 /** Sections routed into the sidebar for two-column templates; everything else stays in the main column. */
 const SIDEBAR_SECTIONS = new Set<SectionType>(['skills', 'education', 'certifications']);
 

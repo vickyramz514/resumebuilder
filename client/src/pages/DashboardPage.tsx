@@ -12,17 +12,9 @@ import { createResume, deleteResume, duplicateResume, listResumes, renameResume,
 import { ApiError } from '../services/api';
 import { normalizeImportedResume } from '../utils/importResume';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
+import { TEMPLATE_CATALOG, isTemplateId } from '../templates/catalog';
 import type { Resume, TemplateId } from '../types';
 import '../dashboard.css';
-
-const templates: { id: TemplateId; label: string; description: string }[] = [
-  { id: 'professional', label: 'Professional', description: 'Clear and structured' },
-  { id: 'minimal', label: 'Minimal', description: 'Simple and focused' },
-  { id: 'modern', label: 'Modern', description: 'Bold and expressive' },
-  { id: 'editorial', label: 'Editorial', description: 'Refined and distinctive' },
-  { id: 'creative', label: 'Creative', description: 'Warm and personable' },
-  { id: 'compact', label: 'Compact', description: 'High-signal and efficient' }
-];
 
 const consumedTemplateQuery = new Set<string>();
 
@@ -82,7 +74,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const template = searchParams.get('template') as TemplateId | null;
     if (!template || loading || consumedTemplateQuery.has(template)) return;
-    if (!templates.some((item) => item.id === template)) return;
+    if (!isTemplateId(template)) return;
     consumedTemplateQuery.add(template);
     void create(template);
   }, [searchParams, loading]);
@@ -205,7 +197,7 @@ export default function DashboardPage() {
           <Card className="resume-card" variant="outlined" sx={{ height: '100%', borderColor: '#D0D3D6', bgcolor: '#fff', borderRadius: 2 }}>
             <CardContent sx={{ p: 2.5 }}>
               <Box className={`resume-card-preview preview-${resume.templateId}`}>
-                <TemplateThumbnail template={templates.some((item) => item.id === resume.templateId) ? resume.templateId as TemplateId : 'professional'} compact />
+                <TemplateThumbnail template={isTemplateId(resume.templateId) ? resume.templateId : 'professional'} compact />
               </Box>
               <Stack direction="row" justifyContent="space-between" alignItems="start" gap={1}>
                 <Box minWidth={0}><Typography fontWeight={700} mt={2} noWrap>{resume.title}</Typography><Typography variant="caption" color="#626871" display="block">Updated {new Date(resume.updatedAt).toLocaleDateString()}</Typography></Box>
@@ -232,9 +224,9 @@ export default function DashboardPage() {
       <MenuItem onClick={() => { if (actionResume) remove(actionResume); closeActions(); }} sx={{ color: 'error.main' }}><Trash2 size={15} />&nbsp; Delete</MenuItem>
     </Menu>
 
-    <Dialog open={templateDialog} onClose={() => setTemplateDialog(false)} fullWidth maxWidth="md">
+    <Dialog open={templateDialog} onClose={() => setTemplateDialog(false)} fullWidth maxWidth="lg">
       <DialogTitle>Choose a starting template</DialogTitle>
-      <DialogContent><Typography color="text.secondary" variant="body2" mb={2}>You can change the template and design controls at any time.</Typography><Grid container spacing={1.5}>{templates.map((template) => <Grid item xs={12} sm={6} md={4} key={template.id}><Card className="template-choice" variant="outlined" onClick={() => create(template.id)} sx={{ cursor: 'pointer', p: 1.25, height: '100%' }}><TemplateThumbnail template={template.id} compact /><Typography fontWeight={750} mt={1}>{template.label}</Typography><Typography variant="caption" color="text.secondary">{template.description}</Typography><Button size="small" sx={{ mt: 1 }} onClick={(event) => { event.stopPropagation(); create(template.id); }}>Use this template</Button></Card></Grid>)}</Grid></DialogContent>
+      <DialogContent><Typography color="text.secondary" variant="body2" mb={2}>You can change the template and design controls at any time.</Typography><Grid container spacing={1.5}>{TEMPLATE_CATALOG.map((template) => <Grid item xs={12} sm={6} md={3} key={template.id}><Card className="template-choice" variant="outlined" onClick={() => create(template.id)} sx={{ cursor: 'pointer', p: 1.25, height: '100%' }}><TemplateThumbnail template={template.id} compact /><Typography fontWeight={750} mt={1}>{template.label}</Typography><Typography variant="caption" color="text.secondary">{template.description}</Typography><Button size="small" sx={{ mt: 1 }} onClick={(event) => { event.stopPropagation(); create(template.id); }}>Use this template</Button></Card></Grid>)}</Grid></DialogContent>
       <DialogActions><Button onClick={() => setTemplateDialog(false)}>Cancel</Button></DialogActions>
     </Dialog>
     <Dialog open={Boolean(rename)} onClose={() => setRename(null)}><DialogTitle>Rename resume</DialogTitle><DialogContent><TextField autoFocus fullWidth label="Resume title" value={renameValue} onChange={(e) => setRenameValue(e.target.value)} sx={{ mt: 1 }} /></DialogContent><DialogActions><Button onClick={() => setRename(null)}>Cancel</Button><Button variant="contained" onClick={submitRename} disabled={!renameValue.trim()}>Save name</Button></DialogActions></Dialog>

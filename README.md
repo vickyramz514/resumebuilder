@@ -64,7 +64,7 @@ Open http://localhost:5173. The client proxies `/api` requests to the Express se
 
 ## Included in Phase 1
 
-- Sample resume with professional, minimal, and modern templates
+- Sample resume with 12 layouts, including classic, executive, technical, academic, swiss, and folio
 - Personal, profile, experience, education, skills, project, and certification editors
 - Resume strength checklist, click-to-edit preview, and section hide/show
 - Drag-and-drop section ordering
