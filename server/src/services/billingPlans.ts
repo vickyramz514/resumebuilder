@@ -3,6 +3,7 @@ import { prisma } from '../db.js';
 import { env } from '../config/env.js';
 
 const starterPlanId = () => env.razorpay.starterPlanId;
+const ACTIVE_SLUGS = ['free', 'starter'];
 
 export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
   {
@@ -19,60 +20,23 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
     isActive: true,
     adminOnly: false,
     sortOrder: 0,
-    metadata: { unlocksAtPaid: ['AI writing assistant', 'Job-tailored rewrites', 'Priority support'] }
+    metadata: { unlocksAtPaid: ['AI writing assistant', 'Job-tailored rewrites'] }
   },
   {
     name: 'Starter',
     slug: 'starter',
     description: 'AI-assisted resumes for active job searches',
-    priceCents: 150000,
+    priceCents: 65000,
     currency: 'INR',
     credits: 0,
     creditsPerMonth: 0,
     billingCycle: 'monthly',
     razorpayPlanId: starterPlanId(),
-    features: ['Everything in Free', 'Gemini AI assistant', 'Job-description tailoring', 'Email support'] as Prisma.InputJsonValue,
+    features: ['Everything in Free', 'Gemini AI assistant', 'Job-description tailoring'] as Prisma.InputJsonValue,
     isActive: true,
     adminOnly: false,
     sortOrder: 1,
-    metadata: {
-      offerBadge: 'Launch price',
-      compareAtCents: 200000,
-      offerNote: 'Introductory monthly rate — unlock AI writing',
-      popular: true
-    }
-  },
-  {
-    name: 'Pro',
-    slug: 'pro',
-    description: 'For growing teams and heavier AI usage',
-    priceCents: 250000,
-    currency: 'INR',
-    credits: 0,
-    creditsPerMonth: 0,
-    billingCycle: 'monthly',
-    razorpayPlanId: 'plan_SwfausudpObmnp',
-    features: ['Everything in Starter', 'Higher AI usage', 'Priority support'] as Prisma.InputJsonValue,
-    isActive: true,
-    adminOnly: false,
-    sortOrder: 2,
-    metadata: { popular: false }
-  },
-  {
-    name: 'Ultra',
-    slug: 'ultra',
-    description: 'High-volume production',
-    priceCents: 500000,
-    currency: 'INR',
-    credits: 0,
-    creditsPerMonth: 0,
-    billingCycle: 'monthly',
-    razorpayPlanId: 'plan_SwfbIF8TLF3IFq',
-    features: ['Everything in Pro', 'High-volume AI usage', 'Dedicated onboarding'] as Prisma.InputJsonValue,
-    isActive: true,
-    adminOnly: false,
-    sortOrder: 3,
-    metadata: { popular: false }
+    metadata: { popular: true }
   }
 ];
 
@@ -81,8 +45,12 @@ export async function ensureBillingPlans() {
     const razorpayPlanId = plan.slug === 'starter' ? starterPlanId() : plan.razorpayPlanId;
     await prisma.subscriptionPlan.upsert({
       where: { slug: plan.slug },
-      update: { ...plan, razorpayPlanId },
+      update: { ...plan, razorpayPlanId, isActive: true },
       create: { ...plan, razorpayPlanId }
     });
   }
+  await prisma.subscriptionPlan.updateMany({
+    where: { slug: { notIn: ACTIVE_SLUGS } },
+    data: { isActive: false }
+  });
 }

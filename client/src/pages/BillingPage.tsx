@@ -187,8 +187,7 @@ export default function BillingPage() {
         <Grid container spacing={2.5}>
           {plans.map((plan) => {
             const current = isActive && subscription?.plan.slug === plan.slug;
-            const compareAt = plan.metadata?.compareAtCents && plan.metadata.compareAtCents > plan.priceCents ? plan.metadata.compareAtCents : undefined;
-            return <Grid item xs={12} sm={6} md={3} key={plan.id}>
+            return <Grid item xs={12} sm={6} key={plan.id}>
               <Card variant="outlined" className={`billing-plan-card ${plan.slug === popularSlug ? 'popular' : ''}`}>
                 <CardContent>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -197,7 +196,6 @@ export default function BillingPage() {
                   </Stack>
                   <Typography variant="body2" color="text.secondary" mt={0.75} minHeight={40}>{plan.description}</Typography>
                   <Stack direction="row" alignItems="baseline" spacing={1} mt={2}>
-                    {compareAt && <Typography className="billing-compare">{formatMoney(compareAt, plan.currency)}</Typography>}
                     <Typography variant="h4" fontWeight={800}>{formatMoney(plan.priceCents, plan.currency)}</Typography>
                     {plan.priceCents > 0 && <Typography color="text.secondary">/{plan.billingCycle === 'yearly' ? 'year' : 'mo'}</Typography>}
                   </Stack>

@@ -114,7 +114,7 @@ export default function LandingPage() {
           </Box>
           <Box>
             <Typography variant="overline" color="#255c4b" fontWeight={800}>Starter</Typography>
-            <Typography variant="h6">₹1,500/mo</Typography>
+            <Typography variant="h6">₹650/mo</Typography>
             <Typography variant="body2">AI writing assistant, job-tailored rewrites, and email support.</Typography>
             <Button sx={{ mt: 2 }} variant="contained" onClick={() => navigate(isAuthenticated ? '/billing' : '/register')}>Upgrade</Button>
           </Box>
