@@ -50,7 +50,22 @@ Protected endpoints (all require the existing `Authorization: Bearer <JWT>` midd
 - `POST /api/ai/tailor` — `{ resume, jobDescription }` → optional `summary`, `experienceBullets`, and `skills`
 - `POST /api/ai/suggest-skills` — `{ resume, jobDescription? }` → `{ skills }`
 
-Requests and model output are validated with Zod and bounded by size/count limits. Missing configuration returns `AI_NOT_CONFIGURED`, provider failures/timeouts return a safe error, and malformed model output is rejected without changing the resume. Do not commit `.env` files or paste API keys into the frontend.
+Requests and model output are validated with Zod and bounded by size/count limits. Missing configuration returns `AI_NOT_CONFIGURED`, provider failures/timeouts return a safe error, and malformed model output is rejected without changing the resume. AI writing requires an active Starter (or higher) subscription.
+
+## Billing (Razorpay / DataCaptain)
+
+ResumeForge uses the same Razorpay account, env names, checkout, and webhook flow as DataCaptain. The Starter plan is `plan_TfKovTk3qxjBhH`. Copy `server/.env.example` and set:
+
+```bash
+RAZORPAY_KEY_ID="rzp_live_..."
+RAZORPAY_KEY_SECRET="..."
+RAZORPAY_WEBHOOK_SECRET="..."
+RAZORPAY_PLAN_STARTER="plan_TfKovTk3qxjBhH"
+```
+
+Webhook URL: `POST /api/payment/webhook` (legacy alias `POST /v1/payment/webhook`). After Standard Checkout, Razorpay POSTs to `/api/payment/razorpay-callback`, which redirects to `/billing`.
+
+Do not commit `.env` files or paste API keys into the frontend.
 
 ## Run locally
 

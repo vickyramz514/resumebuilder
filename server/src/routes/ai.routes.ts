@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { requireAuth } from '../middleware/auth.middleware.js';
+import { requirePaidPlan } from '../middleware/paid.middleware.js';
 import { generateJson } from '../services/gemini.service.js';
 
 const router = Router();
 router.use(requireAuth);
+router.use(requirePaidPlan);
 
 const stringField = (max: number) => z.string().trim().min(1).max(max);
 const contextString = (max: number) => z.string().trim().max(max);

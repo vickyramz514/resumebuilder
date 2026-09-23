@@ -7,17 +7,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserPlan {
+  FREE
+  STARTER
+  PRO
+  ULTRA
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PAST_DUE
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum PaymentProvider {
+  RAZORPAY
+}
+
 model User {
-  id           String   @id @default(cuid())
-  name         String
-  email        String   @unique
-  passwordHash String?
-  provider     String   @default("password")
-  googleId     String?  @unique
-  avatar       String?
-  resumes      Resume[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String             @id @default(cuid())
+  name            String
+  email           String             @unique
+  passwordHash    String?
+  provider        String             @default("password")
+  googleId        String?            @unique
+  avatar          String?
+  plan            UserPlan           @default(FREE)
+  planExpiresAt   DateTime?
+  resumes         Resume[]
+  subscriptions   UserSubscription[]
+  payments        Payment[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 }
 
 model Resume {
@@ -33,4 +61,68 @@ model Resume {
   updatedAt  DateTime @updatedAt
 
   @@index([userId, updatedAt])
+}
+
+model SubscriptionPlan {
+  id              String             @id @default(cuid())
+  name            String
+  slug            String             @unique
+  description     String?
+  priceCents      Int                @default(0)
+  currency        String             @default("INR")
+  credits         Int                @default(0)
+  creditsPerMonth Int?
+  billingCycle    String?
+  razorpayPlanId  String?
+  features        Json?
+  isActive        Boolean            @default(true)
+  adminOnly       Boolean            @default(false)
+  sortOrder       Int                @default(0)
+  metadata        Json?
+  subscriptions   UserSubscription[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([isActive])
+  @@index([razorpayPlanId])
+}
+
+model UserSubscription {
+  id                 String             @id @default(cuid())
+  userId             String
+  planId             String
+  status             SubscriptionStatus @default(ACTIVE)
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean            @default(false)
+  cancelledAt        DateTime?
+  externalId         String?
+  metadata           Json?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan               SubscriptionPlan   @relation(fields: [planId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, planId])
+  @@index([userId])
+  @@index([status])
+  @@index([externalId])
+}
+
+model Payment {
+  id             String          @id @default(cuid())
+  userId         String
+  amountCents    Int
+  currency       String          @default("INR")
+  status         PaymentStatus   @default(PENDING)
+  provider       PaymentProvider
+  providerId     String?
+  providerData   Json?
+  subscriptionId String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([provider, providerId])
 }

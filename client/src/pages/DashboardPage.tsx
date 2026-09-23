@@ -4,7 +4,7 @@ import {
   DialogContent, DialogTitle, Grid, IconButton, InputAdornment, Menu, MenuItem, Stack, TextField, Toolbar,
   Tooltip, Typography
 } from '@mui/material';
-import { ChevronDown, Clock, Copy, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Search, Share2, Sparkles, Trash2, Upload } from 'lucide-react';
+import { ChevronDown, Clock, Copy, CreditCard, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Search, Share2, Sparkles, Trash2, Upload } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
@@ -154,6 +154,7 @@ export default function DashboardPage() {
         </Box>
         <Menu anchorEl={userMenuAnchor} open={Boolean(userMenuAnchor)} onClose={() => setUserMenuAnchor(null)} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
           <Box px={2} py={1.25} sx={{ borderBottom: '1px solid #eef1ee' }}><Typography variant="body2" fontWeight={700} noWrap>{user?.name}</Typography><Typography variant="caption" color="text.secondary" noWrap>{user?.email}</Typography></Box>
+          <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/billing'); }} sx={{ gap: 1 }}><CreditCard size={15} /> Billing</MenuItem>
           <MenuItem onClick={() => { logout(); navigate('/login'); }} sx={{ color: 'error.main', gap: 1 }}><LogOut size={15} /> Sign out</MenuItem>
         </Menu>
       </Toolbar>

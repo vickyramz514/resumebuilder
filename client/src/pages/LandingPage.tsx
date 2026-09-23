@@ -45,7 +45,7 @@ export default function LandingPage() {
     <Box component="header" className="landing-header">
       <Container maxWidth="lg"><Stack direction="row" alignItems="center" spacing={1.5} py={2}>
         <Box className="landing-brand"><Box className="landing-brand-icon"><Sparkles size={17} fill="currentColor" /></Box><Typography fontWeight={850} letterSpacing="-0.8px">ResumeForge</Typography></Box>
-        <Stack direction="row" spacing={3} sx={{ ml: 5, display: { xs: 'none', md: 'flex' } }}><a href="#templates">Templates</a><a href="#how-it-works">How it works</a></Stack>
+        <Stack direction="row" spacing={3} sx={{ ml: 5, display: { xs: 'none', md: 'flex' } }}><a href="#templates">Templates</a><a href="#how-it-works">How it works</a><a href="#pricing">Pricing</a></Stack>
         <Box flex={1} />
         <Stack direction="row" spacing={1} alignItems="center" sx={{ display: { xs: 'none', sm: 'flex' } }}>
           {isAuthenticated ? <Button color="inherit" onClick={() => navigate('/dashboard')}>My dashboard</Button> : <><Button color="inherit" onClick={() => navigate('/login')}>Sign in</Button><Button variant="contained" onClick={() => startCreating()}>Get started</Button></>}
@@ -61,6 +61,7 @@ export default function LandingPage() {
           <Stack spacing={1.5}>
             <Button color="inherit" href="#templates" onClick={() => setMobileOpen(false)}>Templates</Button>
             <Button color="inherit" href="#how-it-works" onClick={() => setMobileOpen(false)}>How it works</Button>
+            <Button color="inherit" href="#pricing" onClick={() => setMobileOpen(false)}>Pricing</Button>
             {isAuthenticated
               ? <Button variant="contained" onClick={() => { setMobileOpen(false); startCreating(); }}>My dashboard</Button>
               : <>
@@ -102,6 +103,23 @@ export default function LandingPage() {
       <Box component="section" id="templates" className="landing-section templates-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="Start with a strong foundation" /><Typography variant="h2">A template for your kind of brilliant.</Typography><Typography>Every layout is designed for clarity, personality, and the skim test.</Typography></Box><Box className="template-showcase">{TEMPLATE_CATALOG.map((template) => <Box key={template.id} className="showcase-card"><TemplateThumbnail template={template.id} /><Box className="showcase-card-copy"><Typography variant="h6">{template.label}</Typography><Typography variant="body2">{template.pitch}</Typography><Button size="small" endIcon={<ArrowRight size={15} />} onClick={() => startCreating(template.id)}>Use this template</Button></Box></Box>)}</Box></Container></Box>
 
       <Box component="section" id="how-it-works" className="landing-section how-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="A better way to begin" /><Typography variant="h2">From blank page to ready to send.</Typography></Box><Box className="steps-grid"><Box><Box className="step-number">01</Box><FileText size={22} /><Typography variant="h6">Choose your starting point</Typography><Typography variant="body2">Start fresh with a guided canvas or upload a ResumeForge JSON export you already have.</Typography></Box><Box><Box className="step-number">02</Box><WandSparkles size={22} /><Typography variant="h6">Make it unmistakably yours</Typography><Typography variant="body2">Shape your story with flexible sections, thoughtful templates, and easy visual polish.</Typography></Box><Box><Box className="step-number">03</Box><ArrowRight size={22} /><Typography variant="h6">Share with confidence</Typography><Typography variant="body2">Export a crisp PDF, keep versions organized, and share a public link when you’re ready.</Typography></Box></Box></Container></Box>
+
+      <Box component="section" id="pricing" className="landing-section how-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="Simple plans" /><Typography variant="h2">Start free. Upgrade for AI.</Typography><Typography>Checkout uses the same Razorpay billing as DataCaptain.</Typography></Box>
+        <Box className="steps-grid">
+          <Box>
+            <Typography variant="overline" color="#255c4b" fontWeight={800}>Free</Typography>
+            <Typography variant="h6">₹0</Typography>
+            <Typography variant="body2">12 templates, cloud library, and PDF export. No card required.</Typography>
+            <Button sx={{ mt: 2 }} variant="outlined" onClick={() => startCreating()}>Get started</Button>
+          </Box>
+          <Box>
+            <Typography variant="overline" color="#255c4b" fontWeight={800}>Starter</Typography>
+            <Typography variant="h6">₹1,500/mo</Typography>
+            <Typography variant="body2">AI writing assistant, job-tailored rewrites, and email support.</Typography>
+            <Button sx={{ mt: 2 }} variant="contained" onClick={() => navigate(isAuthenticated ? '/billing' : '/register')}>Upgrade</Button>
+          </Box>
+        </Box>
+      </Container></Box>
 
       <Box className="landing-cta"><Container maxWidth="md"><Box textAlign="center"><Typography variant="h2">Your next chapter deserves a better first page.</Typography><Typography>Build something you’re proud to put your name on.</Typography><Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={() => startCreating()} sx={{ mt: 3 }}>Start building for free</Button></Box></Container></Box>
     </Box>

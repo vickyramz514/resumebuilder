@@ -376,6 +376,7 @@ function ResumeBuilder() {
             <MenuItem onClick={() => { exportJson(); setMenuAnchor(null); }}><FileJson size={15} />&nbsp; Export JSON</MenuItem>
             <MenuItem onClick={async () => { try { const result = await duplicateCloudResume(activeId); navigate(`/resume/${result.resume.id}/edit`); } catch { duplicateResume(activeId); } setMenuAnchor(null); }}>Duplicate resume</MenuItem>
             <MenuItem onClick={() => { if (window.confirm('Delete this resume?')) { deleteCloudResume(activeId).catch(() => undefined); deleteResume(activeId); navigate('/dashboard'); } setMenuAnchor(null); }}>Delete resume</MenuItem>
+            <MenuItem onClick={() => { navigate('/billing'); setMenuAnchor(null); }}>Billing</MenuItem>
             <MenuItem onClick={() => { logout(); navigate('/login'); setMenuAnchor(null); }}>Logout</MenuItem>
           </Menu>
         </Toolbar>

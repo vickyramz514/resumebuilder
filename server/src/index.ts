@@ -9,8 +9,11 @@ import resumeRoutes from './routes/resume.routes.js';
 import publicRoutes from './routes/public.routes.js';
 import pdfRoutes from './routes/pdf.routes.js';
 import aiRoutes from './routes/ai.routes.js';
+import subscriptionRoutes from './routes/subscription.routes.js';
+import { handleRazorpayCallback, handleRazorpayWebhook } from './routes/payment.routes.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import { renderPdf } from './services/pdf.service.js';
+import { ensureBillingPlans } from './services/billingPlans.js';
 
 const app = express();
 const isAllowedOrigin = (origin?: string) => {
@@ -30,6 +33,10 @@ app.options('*', cors({
   methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+app.post('/api/payment/webhook', express.raw({ type: 'application/json' }), handleRazorpayWebhook);
+app.post('/v1/payment/webhook', express.raw({ type: 'application/json' }), handleRazorpayWebhook);
+app.post('/api/payment/razorpay-callback', express.urlencoded({ extended: true }), handleRazorpayCallback);
+app.get('/api/payment/razorpay-callback', handleRazorpayCallback);
 app.use(express.json({ limit: '2mb' }));
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', service: 'ResumeForge API' }));
 app.use('/api/auth', authRoutes);
@@ -37,6 +44,7 @@ app.use('/api/resumes', resumeRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/resumes', pdfRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 // Phase 1's local export endpoint remains available as a graceful fallback.
 app.post('/api/pdf', async (req, res, next) => {
   try {
@@ -55,6 +63,7 @@ app.use(express.static(clientDist));
 app.get('*', (_req, res) => res.sendFile(path.join(clientDist, 'index.html')));
 
 const server = app.listen(env.port, () => console.log(`ResumeForge API listening on http://localhost:${env.port}`));
+void ensureBillingPlans().catch((error) => console.error('Unable to seed billing plans', error));
 const shutdown = async () => { server.close(); await prisma.$disconnect(); };
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
