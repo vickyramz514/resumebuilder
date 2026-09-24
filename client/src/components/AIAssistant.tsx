@@ -53,7 +53,7 @@ export function AIAssistant({ open, onClose, resume, onApply }: Props) {
       setSelected(true);
     } catch (cause) {
       if (cause instanceof ApiError && (cause.status === 402 || cause.code === 'PAYWALL')) {
-        setError('AI writing is included on Starter. Upgrade in Billing to generate suggestions.');
+        setError('AI writing is included on Starter and Pro. Upgrade in Billing to generate suggestions.');
       } else {
         setError(cause instanceof Error ? cause.message : 'AI writing failed. Please try again.');
       }

@@ -187,7 +187,7 @@ export default function BillingPage() {
         <Grid container spacing={2.5}>
           {plans.map((plan) => {
             const current = isActive && subscription?.plan.slug === plan.slug;
-            return <Grid item xs={12} sm={6} key={plan.id}>
+            return <Grid item xs={12} sm={6} md={plans.length > 2 ? 4 : 6} key={plan.id}>
               <Card variant="outlined" className={`billing-plan-card ${plan.slug === popularSlug ? 'popular' : ''}`}>
                 <CardContent>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">

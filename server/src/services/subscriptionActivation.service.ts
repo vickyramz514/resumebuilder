@@ -30,7 +30,7 @@ export async function findSubscriptionPlanByRazorpayId(razorpayPlanId?: string) 
   if (!id) return null;
   const slug = resolvePlanSlugByRazorpayId(id);
   if (slug) {
-    const bySlug = await prisma.subscriptionPlan.findFirst({ where: { slug, isActive: true } });
+    const bySlug = await prisma.subscriptionPlan.findFirst({ where: { slug } });
     if (bySlug) return bySlug;
   }
   return prisma.subscriptionPlan.findFirst({ where: { razorpayPlanId: id } });

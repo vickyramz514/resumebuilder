@@ -54,13 +54,16 @@ Requests and model output are validated with Zod and bounded by size/count limit
 
 ## Billing (Razorpay / DataCaptain)
 
-ResumeForge uses the same Razorpay account, env names, checkout, and webhook flow as DataCaptain. The Starter plan is `plan_TfKovTk3qxjBhH`. Copy `server/.env.example` and set:
+ResumeForge uses the same Razorpay account, env names, checkout, and webhook flow as DataCaptain. Paid plans are Starter (`plan_TfKovTk3qxjBhH`) and Pro (`plan_TfjVh8pptWF8AG`). Copy `server/.env.example` and set:
 
 ```bash
 RAZORPAY_KEY_ID="rzp_live_..."
 RAZORPAY_KEY_SECRET="..."
 RAZORPAY_WEBHOOK_SECRET="..."
 RAZORPAY_PLAN_STARTER="plan_TfKovTk3qxjBhH"
+RAZORPAY_PLAN_PRO="plan_TfjVh8pptWF8AG"
+# Set to false / disable / 0 to hide Pro without deleting the plan.
+RAZORPAY_PLAN_PRO_ENABLED=true
 ```
 
 Webhook URL: `POST /api/payment/webhook` (legacy alias `POST /v1/payment/webhook`). After Standard Checkout, Razorpay POSTs to `/api/payment/razorpay-callback`, which redirects to `/billing`.

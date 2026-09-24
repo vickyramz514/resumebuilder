@@ -1,5 +1,10 @@
 import 'dotenv/config';
 
+function envFlag(value: string | undefined, defaultValue: boolean) {
+  if (value == null || value.trim() === '') return defaultValue;
+  return !['0', 'false', 'off', 'no', 'disabled', 'disable'].includes(value.trim().toLowerCase());
+}
+
 export const env = {
   port: Number(process.env.PORT ?? 3001),
   clientUrl: process.env.CLIENT_URL ?? 'http://localhost:5173',
@@ -25,7 +30,10 @@ export const env = {
       webhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET,
       mode,
       declaredMode,
-      starterPlanId: process.env.RAZORPAY_PLAN_STARTER ?? 'plan_TfKovTk3qxjBhH'
+      starterPlanId: process.env.RAZORPAY_PLAN_STARTER ?? 'plan_TfKovTk3qxjBhH',
+      proPlanId: process.env.RAZORPAY_PLAN_PRO ?? 'plan_TfjVh8pptWF8AG',
+      // Flip RAZORPAY_PLAN_PRO_ENABLED to false/disable/0 to hide this plan without deleting it.
+      proPlanEnabled: envFlag(process.env.RAZORPAY_PLAN_PRO_ENABLED, true)
     };
   })()
 };

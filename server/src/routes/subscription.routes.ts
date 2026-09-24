@@ -75,11 +75,11 @@ async function assertRazorpayPlanPricing(plan: { slug: string; priceCents: numbe
 
 router.get('/plans', async (_req, res, next) => {
   try {
-    const plans = await prisma.subscriptionPlan.findMany({
+    const plans = (await prisma.subscriptionPlan.findMany({
       where: { isActive: true, adminOnly: false },
       orderBy: { sortOrder: 'asc' },
       select: publicPlanSelect
-    });
+    })).filter((plan) => plan.slug !== 'pro' || env.razorpay.proPlanEnabled);
     return res.json({
       success: true,
       data: {
@@ -127,6 +127,9 @@ router.post('/create', requireAuth, async (req, res, next) => {
     const { planSlug } = z.object({ planSlug: z.string().trim().min(1) }).parse(req.body ?? {});
     const plan = await prisma.subscriptionPlan.findFirst({ where: { slug: planSlug, isActive: true } });
     if (!plan) throw new BillingError('Plan not found.', 404, 'PLAN_NOT_FOUND');
+    if (plan.slug === 'pro' && !env.razorpay.proPlanEnabled) {
+      throw new BillingError('This plan is currently unavailable.', 404, 'PLAN_DISABLED');
+    }
     if (plan.adminOnly) throw new BillingError('This plan is only available to admin users', 403, 'FORBIDDEN');
     if (plan.priceCents <= 0) throw new BillingError('Free plan cannot be subscribed', 400, 'FREE_PLAN');
     const { planId: razorpayPlanId, mode } = resolvePlanId(plan.slug, plan.razorpayPlanId);

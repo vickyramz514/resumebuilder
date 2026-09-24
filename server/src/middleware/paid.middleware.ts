@@ -17,7 +17,7 @@ export async function requirePaidPlan(req: Request, res: Response, next: NextFun
       return res.status(402).json({
         error: {
           code: 'PAYWALL',
-          message: 'AI writing is included on Starter. Upgrade in Billing to generate suggestions.'
+          message: 'AI writing is included on Starter and Pro. Upgrade in Billing to generate suggestions.'
         }
       });
     }

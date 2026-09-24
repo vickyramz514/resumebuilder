@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert, Box, Button, Chip, Container, Divider, Drawer, IconButton, Paper, Stack, Typography } from '@mui/material';
 import { ArrowRight, Check, FileText, Github, Linkedin, Menu, Sparkles, Upload, WandSparkles, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -7,8 +7,23 @@ import { useResumeStore } from '../store';
 import { normalizeImportedResume } from '../utils/importResume';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
 import { TEMPLATE_CATALOG } from '../templates/catalog';
+import { listPlans, type SubscriptionPlan } from '../services/billingApi';
 import type { TemplateId } from '../types';
 import '../landing.css';
+
+function formatMoney(cents: number, currency = 'INR') {
+  if (cents <= 0) return '₹0';
+  try {
+    return new Intl.NumberFormat('en-IN', { style: 'currency', currency, maximumFractionDigits: 0 }).format(cents / 100);
+  } catch {
+    return `₹${Math.round(cents / 100)}`;
+  }
+}
+
+const FALLBACK_PRICING: Pick<SubscriptionPlan, 'slug' | 'name' | 'priceCents' | 'currency' | 'billingCycle' | 'description'>[] = [
+  { slug: 'free', name: 'Free', priceCents: 0, currency: 'INR', billingCycle: null, description: '12 templates, cloud library, and PDF export. No card required.' },
+  { slug: 'starter', name: 'Starter', priceCents: 65000, currency: 'INR', billingCycle: 'monthly', description: 'AI writing assistant, job-tailored rewrites, and email support.' }
+];
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -18,6 +33,13 @@ export default function LandingPage() {
   const [importError, setImportError] = useState('');
   const [isImporting, setIsImporting] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [pricingPlans, setPricingPlans] = useState(FALLBACK_PRICING);
+
+  useEffect(() => {
+    listPlans()
+      .then((plans) => { if (plans.length) setPricingPlans(plans); })
+      .catch(() => {});
+  }, []);
 
   const startCreating = (templateId?: TemplateId) => {
     const query = templateId ? `?template=${templateId}` : '';
@@ -105,19 +127,19 @@ export default function LandingPage() {
       <Box component="section" id="how-it-works" className="landing-section how-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="A better way to begin" /><Typography variant="h2">From blank page to ready to send.</Typography></Box><Box className="steps-grid"><Box><Box className="step-number">01</Box><FileText size={22} /><Typography variant="h6">Choose your starting point</Typography><Typography variant="body2">Start fresh with a guided canvas or upload a ResumeForge JSON export you already have.</Typography></Box><Box><Box className="step-number">02</Box><WandSparkles size={22} /><Typography variant="h6">Make it unmistakably yours</Typography><Typography variant="body2">Shape your story with flexible sections, thoughtful templates, and easy visual polish.</Typography></Box><Box><Box className="step-number">03</Box><ArrowRight size={22} /><Typography variant="h6">Share with confidence</Typography><Typography variant="body2">Export a crisp PDF, keep versions organized, and share a public link when you’re ready.</Typography></Box></Box></Container></Box>
 
       <Box component="section" id="pricing" className="landing-section how-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="Simple plans" /><Typography variant="h2">Start free. Upgrade for AI.</Typography><Typography>Checkout uses the same Razorpay billing as DataCaptain.</Typography></Box>
-        <Box className="steps-grid">
-          <Box>
-            <Typography variant="overline" color="#255c4b" fontWeight={800}>Free</Typography>
-            <Typography variant="h6">₹0</Typography>
-            <Typography variant="body2">12 templates, cloud library, and PDF export. No card required.</Typography>
-            <Button sx={{ mt: 2 }} variant="outlined" onClick={() => startCreating()}>Get started</Button>
-          </Box>
-          <Box>
-            <Typography variant="overline" color="#255c4b" fontWeight={800}>Starter</Typography>
-            <Typography variant="h6">₹650/mo</Typography>
-            <Typography variant="body2">AI writing assistant, job-tailored rewrites, and email support.</Typography>
-            <Button sx={{ mt: 2 }} variant="contained" onClick={() => navigate(isAuthenticated ? '/billing' : '/register')}>Upgrade</Button>
-          </Box>
+        <Box className="pricing-grid">
+          {pricingPlans.map((plan) => {
+            const paid = plan.priceCents > 0;
+            const period = plan.billingCycle === 'yearly' ? '/yr' : paid ? '/mo' : '';
+            return <Box key={plan.slug}>
+              <Typography variant="overline" color="#255c4b" fontWeight={800}>{plan.name}</Typography>
+              <Typography variant="h6">{formatMoney(plan.priceCents, plan.currency)}{period}</Typography>
+              <Typography variant="body2">{plan.description}</Typography>
+              {paid
+                ? <Button sx={{ mt: 2 }} variant="contained" onClick={() => navigate(isAuthenticated ? '/billing' : '/register')}>Upgrade</Button>
+                : <Button sx={{ mt: 2 }} variant="outlined" onClick={() => startCreating()}>Get started</Button>}
+            </Box>;
+          })}
         </Box>
       </Container></Box>
 
