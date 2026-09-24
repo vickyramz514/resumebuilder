@@ -21,8 +21,8 @@ function formatMoney(cents: number, currency = 'INR') {
 }
 
 const FALLBACK_PRICING: Pick<SubscriptionPlan, 'slug' | 'name' | 'priceCents' | 'currency' | 'billingCycle' | 'description'>[] = [
-  { slug: 'free', name: 'Free', priceCents: 0, currency: 'INR', billingCycle: null, description: '12 templates, cloud library, and PDF export. No card required.' },
-  { slug: 'starter', name: 'Starter', priceCents: 65000, currency: 'INR', billingCycle: 'monthly', description: 'AI writing assistant, job-tailored rewrites, and email support.' }
+  { slug: 'free', name: 'Free', priceCents: 0, currency: 'INR', billingCycle: null, description: '12 templates, cloud library, and the editor. No card required.' },
+  { slug: 'starter', name: 'Starter', priceCents: 65000, currency: 'INR', billingCycle: 'monthly', description: 'PDF export, AI writing assistant, and job-tailored rewrites.' }
 ];
 
 export default function LandingPage() {
@@ -126,7 +126,7 @@ export default function LandingPage() {
 
       <Box component="section" id="how-it-works" className="landing-section how-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="A better way to begin" /><Typography variant="h2">From blank page to ready to send.</Typography></Box><Box className="steps-grid"><Box><Box className="step-number">01</Box><FileText size={22} /><Typography variant="h6">Choose your starting point</Typography><Typography variant="body2">Start fresh with a guided canvas or upload a ResumeForge JSON export you already have.</Typography></Box><Box><Box className="step-number">02</Box><WandSparkles size={22} /><Typography variant="h6">Make it unmistakably yours</Typography><Typography variant="body2">Shape your story with flexible sections, thoughtful templates, and easy visual polish.</Typography></Box><Box><Box className="step-number">03</Box><ArrowRight size={22} /><Typography variant="h6">Share with confidence</Typography><Typography variant="body2">Export a crisp PDF, keep versions organized, and share a public link when you’re ready.</Typography></Box></Box></Container></Box>
 
-      <Box component="section" id="pricing" className="landing-section how-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="Simple plans" /><Typography variant="h2">Start free. Upgrade for AI.</Typography><Typography>Checkout uses the same Razorpay billing as DataCaptain.</Typography></Box>
+      <Box component="section" id="pricing" className="landing-section how-section"><Container maxWidth="lg"><Box className="section-intro"><Chip label="Simple plans" /><Typography variant="h2">Start free. Subscribe for PDF and AI.</Typography><Typography>Checkout uses the same Razorpay billing as DataCaptain.</Typography></Box>
         <Box className="pricing-grid">
           {pricingPlans.map((plan) => {
             const paid = plan.priceCents > 0;

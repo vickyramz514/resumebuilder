@@ -16,18 +16,18 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
   {
     name: 'Free',
     slug: 'free',
-    description: 'Build and export resumes without a card',
+    description: 'Build and edit resumes without a card',
     priceCents: 0,
     currency: 'INR',
     credits: 0,
     creditsPerMonth: 0,
     billingCycle: null,
     razorpayPlanId: null,
-    features: ['12 templates', 'Cloud resume library', 'PDF export', 'Manual editing'] as Prisma.InputJsonValue,
+    features: ['12 templates', 'Cloud resume library', 'Manual editing'] as Prisma.InputJsonValue,
     isActive: true,
     adminOnly: false,
     sortOrder: 0,
-    metadata: { unlocksAtPaid: ['AI writing assistant', 'Job-tailored rewrites'] }
+    metadata: { unlocksAtPaid: ['PDF export', 'AI writing assistant', 'Job-tailored rewrites'] }
   },
   {
     name: 'Starter',
@@ -39,7 +39,7 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
     creditsPerMonth: 0,
     billingCycle: 'monthly',
     razorpayPlanId: starterPlanId(),
-    features: ['Everything in Free', 'Gemini AI assistant', 'Job-description tailoring'] as Prisma.InputJsonValue,
+    features: ['Everything in Free', 'PDF export', 'Gemini AI assistant', 'Job-description tailoring'] as Prisma.InputJsonValue,
     isActive: true,
     adminOnly: false,
     sortOrder: 1,
@@ -48,7 +48,7 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
   {
     name: 'Pro',
     slug: 'pro',
-    description: 'Priority support and extra AI capacity for heavier job searches',
+    description: 'AI-assisted resumes, PDF export, and extra AI capacity',
     priceCents: 129900,
     currency: 'INR',
     credits: 0,

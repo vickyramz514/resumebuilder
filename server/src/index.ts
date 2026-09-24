@@ -12,6 +12,8 @@ import aiRoutes from './routes/ai.routes.js';
 import subscriptionRoutes from './routes/subscription.routes.js';
 import { handleRazorpayCallback, handleRazorpayWebhook } from './routes/payment.routes.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
+import { requireAuth } from './middleware/auth.middleware.js';
+import { requirePaidPlan } from './middleware/paid.middleware.js';
 import { renderPdf } from './services/pdf.service.js';
 import { ensureBillingPlans } from './services/billingPlans.js';
 
@@ -45,8 +47,7 @@ app.use('/api/public', publicRoutes);
 app.use('/api/resumes', pdfRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
-// Phase 1's local export endpoint remains available as a graceful fallback.
-app.post('/api/pdf', async (req, res, next) => {
+app.post('/api/pdf', requireAuth, requirePaidPlan, async (req, res, next) => {
   try {
     if (typeof req.body?.html !== 'string') return res.status(400).json({ error: { code: 'HTML_REQUIRED', message: 'html is required' } });
     const pdf = await renderPdf(req.body.html);
@@ -54,7 +55,7 @@ app.post('/api/pdf', async (req, res, next) => {
     return res.set({ 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename="${safeName || 'ResumeForge_Resume'}.pdf"` }).send(pdf);
   } catch (error) { return next(error); }
 });
-app.post('/api/export/pdf', (req, res) => { req.url = '/api/pdf'; return res.redirect(307, '/api/pdf'); });
+app.post('/api/export/pdf', requireAuth, requirePaidPlan, (req, res) => { req.url = '/api/pdf'; return res.redirect(307, '/api/pdf'); });
 app.use(errorMiddleware);
 
 const serverDir = path.dirname(fileURLToPath(import.meta.url));

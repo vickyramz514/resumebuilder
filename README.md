@@ -50,7 +50,7 @@ Protected endpoints (all require the existing `Authorization: Bearer <JWT>` midd
 - `POST /api/ai/tailor` — `{ resume, jobDescription }` → optional `summary`, `experienceBullets`, and `skills`
 - `POST /api/ai/suggest-skills` — `{ resume, jobDescription? }` → `{ skills }`
 
-Requests and model output are validated with Zod and bounded by size/count limits. Missing configuration returns `AI_NOT_CONFIGURED`, provider failures/timeouts return a safe error, and malformed model output is rejected without changing the resume. AI writing requires an active Starter (or higher) subscription.
+Requests and model output are validated with Zod and bounded by size/count limits. Missing configuration returns `AI_NOT_CONFIGURED`, provider failures/timeouts return a safe error, and malformed model output is rejected without changing the resume. **PDF export and AI writing require an active Starter (or Pro) subscription.** Unpaid clicks in the editor open the same Razorpay plans used on Billing.
 
 ## Billing (Razorpay / DataCaptain)
 

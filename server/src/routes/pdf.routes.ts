@@ -2,10 +2,11 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../db.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
+import { requirePaidPlan } from '../middleware/paid.middleware.js';
 import { renderPdf } from '../services/pdf.service.js';
 
 const router = Router();
-router.post('/:id/pdf', requireAuth, async (req, res, next) => {
+router.post('/:id/pdf', requireAuth, requirePaidPlan, async (req, res, next) => {
   try {
     const resume = await prisma.resume.findFirst({ where: { id: String(req.params.id), userId: req.user!.userId }, select: { data: true } });
     if (!resume) return res.status(404).json({ error: { code: 'RESUME_NOT_FOUND', message: 'Resume not found' } });

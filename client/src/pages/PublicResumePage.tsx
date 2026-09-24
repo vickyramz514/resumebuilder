@@ -8,17 +8,21 @@ import type { Resume, TemplateId } from '../types';
 export default function PublicResumePage() {
   const { slug } = useParams();
   const [resume, setResume] = useState<Resume | null>(null);
+  const [pdfExport, setPdfExport] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     fetch(`/api/public/resumes/${slug}`)
       .then((response) => response.ok ? response.json() : Promise.reject())
-      .then((body) => setResume({
-        ...body.resume.data,
-        id: body.resume.id,
-        title: body.resume.title,
-        template: body.resume.templateId as TemplateId
-      }))
+      .then((body) => {
+        setResume({
+          ...body.resume.data,
+          id: body.resume.id,
+          title: body.resume.title,
+          template: body.resume.templateId as TemplateId
+        });
+        setPdfExport(Boolean(body.pdfExport));
+      })
       .catch(() => setError(true));
   }, [slug]);
 
@@ -37,7 +41,7 @@ export default function PublicResumePage() {
         <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
           <Stack direction="row" alignItems="center" spacing={1}><Sparkles size={16} /><Typography fontWeight={800}>ResumeForge</Typography></Stack>
         </Link>
-        <Button startIcon={<Download size={16} />} onClick={() => window.open(`/api/public/resumes/${slug}/pdf`, '_blank')}>Download PDF</Button>
+        {pdfExport && <Button startIcon={<Download size={16} />} onClick={() => window.open(`/api/public/resumes/${slug}/pdf`, '_blank')}>Download PDF</Button>}
       </Stack>
       <Box sx={{ p: { xs: 1, sm: 5 }, display: 'flex', justifyContent: 'center' }}>
         <ResumePreview resume={resume} />

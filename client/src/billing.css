@@ -3,3 +3,5 @@
 .billing-plan-card.popular { border-color: #255c4b !important; box-shadow: 0 12px 28px #255c4b14 !important; }
 .billing-compare { text-decoration: line-through; color: #94a3b8; font-size: 14px; }
 .billing-checkout-summary { padding: 14px; border-radius: 12px; background: #e7f2ec; margin: 8px 0 16px; }
+.paywall-plan { padding: 14px; border: 1px solid #d7e3db; border-radius: 12px; background: #fff; }
+.paywall-plan.popular { border-color: #255c4b; box-shadow: 0 8px 20px #255c4b14; }

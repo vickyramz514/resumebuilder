@@ -21,8 +21,10 @@ import { CertificationsForm, EducationForm, ExperienceForm, ProjectsForm, Skills
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
 import { AIAssistant, type AssistantResult } from '../components/AIAssistant';
 import { CompletenessCard } from '../components/CompletenessCard';
+import { PaywallDialog } from '../components/PaywallDialog';
 import { getResumeCompleteness } from '../utils/completeness';
 import { applyAiSuggestion } from '../utils/applyAiSuggestion';
+import { hasPaidPlan } from '../utils/entitlements';
 import { useAuthStore } from '../store/authStore';
 import {
   createResume, deleteResume as deleteCloudResume, duplicateResume as duplicateCloudResume, getResume,
@@ -62,7 +64,9 @@ function ResumeBuilder() {
   const { id: routeId } = useParams();
   const navigate = useNavigate();
   const authenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const loadCurrentUser = useAuthStore((state) => state.loadCurrentUser);
   const resume = useActiveResume();
   const {
     selectedSection, setSelectedSection, reorderSections, setTemplate, updateResume, activeId,
@@ -78,6 +82,8 @@ function ResumeBuilder() {
   const [tab, setTab] = useState<'editor' | 'design'>('editor');
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [aiOpen, setAiOpen] = useState(false);
+  const [paywallReason, setPaywallReason] = useState<'pdf' | 'ai' | null>(null);
+  const [exportingPdf, setExportingPdf] = useState(false);
   const [zoom, setZoom] = useState(100);
   const [toast, setToast] = useState('');
   const [shareOpen, setShareOpen] = useState(false);
@@ -102,6 +108,7 @@ function ResumeBuilder() {
   }, [authenticated]);
 
   useEffect(() => { refreshLibrary(); }, [refreshLibrary]);
+  useEffect(() => { void loadCurrentUser(); }, [loadCurrentUser]);
 
   useEffect(() => {
     if (!authenticated || !routeId) return;
@@ -207,14 +214,42 @@ function ResumeBuilder() {
     }
   };
 
+  const paid = hasPaidPlan(user);
+  const openAi = () => {
+    if (!paid) { setPaywallReason('ai'); return; }
+    setAiOpen(true);
+  };
+
   const exportPdf = async () => {
     if (!resume) return;
+    if (!paid) { setPaywallReason('pdf'); return; }
     const node = document.querySelector('.resume-sheet');
     if (!node) return;
     const css = [...document.styleSheets].flatMap((sheet) => { try { return [...sheet.cssRules].map((rule) => rule.cssText); } catch { return []; } }).join('\n');
-    const response = await fetch(routeId ? `/api/resumes/${routeId}/pdf` : '/api/pdf', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ resume, html: `<html><head><style>${css}</style></head><body>${node.outerHTML}</body></html>` }) });
-    if (!response.ok) { window.print(); return; }
-    const blob = await response.blob(); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = `${resume.personal.name || 'resume'}.pdf`; link.click(); URL.revokeObjectURL(url);
+    const token = localStorage.getItem('resumeforge_token');
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers.Authorization = `Bearer ${token}`;
+    setExportingPdf(true);
+    try {
+      const response = await fetch(routeId ? `/api/resumes/${routeId}/pdf` : '/api/pdf', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ resume, html: `<html><head><style>${css}</style></head><body>${node.outerHTML}</body></html>` })
+      });
+      if (response.status === 402) { setPaywallReason('pdf'); return; }
+      if (!response.ok) { setToast('Unable to export PDF. Try again in a moment.'); return; }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${resume.personal.name || 'resume'}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setToast('Unable to export PDF. Try again in a moment.');
+    } finally {
+      setExportingPdf(false);
+    }
   };
 
   const exportJson = () => {
@@ -356,16 +391,16 @@ function ResumeBuilder() {
           <Tooltip title="Undo last change">
             <span><IconButton className="topbar-icon-btn" aria-label="Undo last change" disabled={!canUndo} onClick={() => undo()}><Undo2 size={18} /></IconButton></span>
           </Tooltip>
-          <Tooltip title="Improve with AI">
-            <Button onClick={() => setAiOpen(true)} startIcon={<Sparkles size={16} />} color="inherit" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>AI Assistant</Button>
+          <Tooltip title={paid ? 'Improve with AI' : 'Subscribe to use AI'}>
+            <Button onClick={openAi} startIcon={<Sparkles size={16} />} color="inherit" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>AI Assistant</Button>
           </Tooltip>
-          <Tooltip title="Improve with AI">
-            <IconButton className="topbar-icon-btn" aria-label="Open AI assistant" onClick={() => setAiOpen(true)} sx={{ display: { xs: 'inline-flex', md: 'none' } }}><Sparkles size={18} /></IconButton>
+          <Tooltip title={paid ? 'Improve with AI' : 'Subscribe to use AI'}>
+            <IconButton className="topbar-icon-btn" aria-label="Open AI assistant" onClick={openAi} sx={{ display: { xs: 'inline-flex', md: 'none' } }}><Sparkles size={18} /></IconButton>
           </Tooltip>
-          <Tooltip title="Download a PDF copy">
-            <Button onClick={exportPdf} startIcon={<Download size={17} />} variant="contained" size="small">
-              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Export PDF</Box>
-              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>Export</Box>
+          <Tooltip title={paid ? 'Download a PDF copy' : 'Subscribe to export PDF'}>
+            <Button onClick={exportPdf} startIcon={<Download size={17} />} variant="contained" size="small" disabled={exportingPdf}>
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{exportingPdf ? 'Exporting…' : 'Export PDF'}</Box>
+              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>{exportingPdf ? '…' : 'Export'}</Box>
             </Button>
           </Tooltip>
           <Tooltip title="More resume actions">
@@ -451,6 +486,7 @@ function ResumeBuilder() {
         )}
       </Box>
       <AIAssistant open={aiOpen} onClose={() => setAiOpen(false)} resume={resume} onApply={applySuggestion} />
+      <PaywallDialog open={Boolean(paywallReason)} reason={paywallReason ?? 'pdf'} onClose={() => setPaywallReason(null)} />
       <Dialog open={shareOpen} onClose={() => setShareOpen(false)}>
         <DialogTitle>Share resume</DialogTitle>
         <DialogContent>

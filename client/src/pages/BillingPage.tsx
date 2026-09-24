@@ -8,10 +8,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { ApiError } from '../services/api';
 import {
-  cancelSubscription, confirmSubscription, createSubscription, getSubscriptionStatus, listPlans,
+  cancelSubscription, confirmSubscription, getSubscriptionStatus, listPlans,
   type SubscriptionPlan, type UserSubscription
 } from '../services/billingApi';
-import { openRazorpaySubscriptionCheckout, razorpayCallbackUrl } from '../lib/razorpayCheckout';
+import { startPlanCheckout } from '../lib/razorpayCheckout';
 import '../dashboard.css';
 import '../billing.css';
 
@@ -86,19 +86,9 @@ export default function BillingPage() {
     setCheckoutLoading(true);
     setError('');
     try {
-      const data = await createSubscription(selected.slug);
+      const plan = selected;
       setSelected(null);
-      if (data.razorpayKeyId && data.subscriptionId) {
-        await openRazorpaySubscriptionCheckout({
-          key: data.razorpayKeyId,
-          subscriptionId: data.subscriptionId,
-          name: 'ResumeForge',
-          description: selected.name,
-          callbackUrl: razorpayCallbackUrl()
-        });
-      } else {
-        window.location.href = data.checkoutUrl;
-      }
+      await startPlanCheckout(plan);
     } catch (cause) {
       setError(cause instanceof ApiError ? cause.message : cause instanceof Error ? cause.message : 'Checkout failed');
     } finally {
@@ -166,7 +156,7 @@ export default function BillingPage() {
               ) : (
                 <>
                   <Typography variant="h5" fontWeight={750} mt={1}>Free tier</Typography>
-                  <Typography color="text.secondary" mt={1}>Upgrade below to unlock the AI assistant.</Typography>
+                  <Typography color="text.secondary" mt={1}>Upgrade below to unlock PDF export and the AI assistant.</Typography>
                 </>
               )}
             </CardContent>

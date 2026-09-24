@@ -1,3 +1,5 @@
+import { createSubscription } from '../services/billingApi';
+
 const SCRIPT_URL = 'https://checkout.razorpay.com/v1/checkout.js';
 
 declare global {
@@ -50,4 +52,19 @@ export function razorpayCallbackUrl() {
     ? `${configured.startsWith('http') ? '' : 'https://'}${configured}`
     : window.location.origin;
   return `${origin}/api/payment/razorpay-callback`;
+}
+
+export async function startPlanCheckout(plan: { slug: string; name: string }) {
+  const data = await createSubscription(plan.slug);
+  if (data.razorpayKeyId && data.subscriptionId) {
+    await openRazorpaySubscriptionCheckout({
+      key: data.razorpayKeyId,
+      subscriptionId: data.subscriptionId,
+      name: 'ResumeForge',
+      description: plan.name,
+      callbackUrl: razorpayCallbackUrl()
+    });
+    return;
+  }
+  window.location.href = data.checkoutUrl;
 }

@@ -53,7 +53,7 @@ export function AIAssistant({ open, onClose, resume, onApply }: Props) {
       setSelected(true);
     } catch (cause) {
       if (cause instanceof ApiError && (cause.status === 402 || cause.code === 'PAYWALL')) {
-        setError('AI writing is included on Starter and Pro. Upgrade in Billing to generate suggestions.');
+        setError('PDF export and AI writing are included on Starter and Pro. Subscribe to continue.');
       } else {
         setError(cause instanceof Error ? cause.message : 'AI writing failed. Please try again.');
       }
@@ -79,8 +79,8 @@ export function AIAssistant({ open, onClose, resume, onApply }: Props) {
         {(action === 'tailor' || action === 'skills') && <TextField label="Paste job description (optional for skills)" value={jobDescription} onChange={(event) => setJobDescription(event.target.value)} multiline minRows={6} inputProps={{ maxLength: 12000 }} helperText={`${jobDescription.length}/12000`} />}
         <Button variant="contained" startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <Sparkles size={16} />} onClick={run} disabled={loading || !hasTarget}>{loading ? 'Writing…' : 'Generate suggestion'}</Button>
         {error && <>
-          <Alert severity={error.includes('Starter') ? 'info' : 'error'}>{error}</Alert>
-          {error.includes('Starter') && <Button variant="contained" onClick={() => { onClose(); navigate('/billing'); }}>View billing</Button>}
+          <Alert severity={error.includes('Subscribe') || error.includes('Starter') ? 'info' : 'error'}>{error}</Alert>
+          {(error.includes('Subscribe') || error.includes('Starter')) && <Button variant="contained" onClick={() => { onClose(); navigate('/billing'); }}>Subscribe</Button>}
         </>}
         {result && <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1.5, p: 1.5 }}>
           <Typography variant="overline" color="text.secondary">Preview — nothing has been changed</Typography>
