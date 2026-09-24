@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import ResumeBuilder from './pages/ResumeBuilder';
 import PublicResumePage from './pages/PublicResumePage';
 import LandingPage from './pages/LandingPage';
+import BillingPage from './pages/BillingPage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const googleClientId = import.meta.env.GOOGLE_CLIENT_ID ?? import.meta.env.VITE_GOOGLE_CLIENT_ID ?? '';
@@ -21,6 +22,7 @@ function App() {
     <Route path="/r/:slug" element={<PublicResumePage />} />
     <Route element={<ProtectedRoute />}>
       <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/billing" element={<BillingPage />} />
       <Route path="/resume/new" element={<ResumeBuilder />} />
       <Route path="/resume/:id" element={<ResumeBuilder />} />
       <Route path="/resume/:id/edit" element={<ResumeBuilder />} />

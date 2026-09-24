@@ -1,18 +1,24 @@
 import { useEffect, useState } from 'react';
 import { Alert, Box, Button, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { Check, Eye, EyeOff, Sparkles } from 'lucide-react';import { useAuthStore } from '../store/authStore';
+import { Check, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { useAuthStore } from '../store/authStore';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 import '../auth.css';
 
-const FEATURES = ['Six polished, genuinely different templates', 'Auto-save with real-time preview', 'One-click PDF export, ATS-friendly'];
+const FEATURES = ['Twelve polished, genuinely different templates', 'Auto-save with real-time preview', 'PDF export and AI writing on Starter'];
 
 export default function LoginPage() {
   const navigate = useNavigate(); const location = useLocation();
   const { isAuthenticated, login, loginWithGoogle, isLoading, error } = useAuthStore();
   const [email, setEmail] = useState(''); const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  useEffect(() => { if (isAuthenticated) navigate((location.state as any)?.from || '/dashboard', { replace: true }); }, [isAuthenticated, navigate, location.state]);
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const template = new URLSearchParams(location.search).get('template');
+    const from = (location.state as { from?: string } | null)?.from;
+    navigate(from || (template ? `/dashboard?template=${template}` : '/dashboard'), { replace: true });
+  }, [isAuthenticated, navigate, location.state, location.search]);
   if (isAuthenticated) return <Navigate to="/dashboard" replace />;
   return <AuthLayout title="Welcome back" subtitle="Sign in to keep building your resume.">
     <Stack component="form" spacing={2.25} onSubmit={async (event) => { event.preventDefault(); try { await login(email, password); } catch { /* rendered below */ } }}>

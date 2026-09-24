@@ -5,9 +5,20 @@
 .dashboard-heading { animation: dashboard-rise .45s ease both; }
 .resume-card { overflow: hidden; transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease !important; animation: dashboard-rise .45s ease both; }
 .resume-card:hover { transform: translateY(-5px); border-color: #9bbbaa !important; box-shadow: 0 16px 32px #23463a14 !important; }
-.resume-card-thumb { border-radius: 10px; overflow: hidden; border: 1px solid #dfe9e1; box-shadow: 0 1px 2px #1c2b2308; }
+.resume-card-thumb { border-radius: 10px; overflow: hidden; border: 1px solid #dfe9e1; box-shadow: 0 1px 2px #1c2b2308; color: #255c4b; background: #eef5f0; }
 .resume-card-thumb .template-thumbnail { min-height: 116px; transition: transform .3s ease; }
 .resume-card:hover .resume-card-thumb .template-thumbnail { transform: scale(1.035); }
+.resume-card-thumb.preview-modern { background: #e7f2ed; color: #0f766e; border-top: 7px solid #0f766e; }
+.resume-card-thumb.preview-editorial { background: #f6f0e7; color: #8a5a2b; border-left: 7px solid #8a5a2b; }
+.resume-card-thumb.preview-creative { background: #f8edef; color: #7a3e52; border-left: 7px solid #7a3e52; }
+.resume-card-thumb.preview-compact { background: #eef1f5; color: #334155; }
+.resume-card-thumb.preview-minimal { background: #f4f3f0; color: #475569; }
+.resume-card-thumb.preview-classic { background: #f7f7f5; color: #1f2937; }
+.resume-card-thumb.preview-executive { background: #eef2f6; color: #1e3a5f; border-top: 7px solid #1e3a5f; }
+.resume-card-thumb.preview-technical { background: #eef0fb; color: #4338ca; border-left: 7px solid #4338ca; }
+.resume-card-thumb.preview-academic { background: #f6efe8; color: #7c2d12; }
+.resume-card-thumb.preview-swiss { background: #f4f4f2; color: #111827; }
+.resume-card-thumb.preview-folio { background: #e8eef2; color: #15232c; border-left: 7px solid #15232c; }
 .resume-card-meta { color: #7c8580; margin-top: 3px; }
 .card-menu-btn { color: #7c8580 !important; transition: background .15s ease, color .15s ease; }
 .card-menu-btn:hover { background: #eef4f0 !important; color: #255c4b !important; }

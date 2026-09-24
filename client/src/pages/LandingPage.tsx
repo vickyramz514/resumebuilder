@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import {
   Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, Chip, Container,
   Divider, Drawer, IconButton, Paper, Stack, Typography
@@ -12,16 +12,23 @@ import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
 import { normalizeImportedResume } from '../utils/importResume';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
+import { TEMPLATE_CATALOG } from '../templates/catalog';
+import { listPlans, type SubscriptionPlan } from '../services/billingApi';
 import type { TemplateId } from '../types';
 import '../landing.css';
 
-const templates: { id: TemplateId; name: string; description: string; bestFor: string }[] = [
-  { id: 'professional', name: 'Professional', description: 'A clear sidebar and a reading order that holds up in a first skim.', bestFor: 'Client work, operations, finance' },
-  { id: 'minimal', name: 'Minimal', description: 'Quiet type and open space, so the experience stays in front.', bestFor: 'When the work should speak' },
-  { id: 'modern', name: 'Modern', description: 'A color band and sidebar for a sharper first glance.', bestFor: 'Product, tech, and hybrid roles' },
-  { id: 'editorial', name: 'Editorial', description: 'Serif headlines and a magazine rhythm for a longer story.', bestFor: 'Research, writing, strategy' },
-  { id: 'creative', name: 'Creative', description: 'A warm, color-filled sidebar for portfolios and people-first roles.', bestFor: 'Design and community work' },
-  { id: 'compact', name: 'Compact', description: 'Tighter spacing when you have more than a page of proof.', bestFor: 'Senior and multi-role careers' }
+function formatMoney(cents: number, currency = 'INR') {
+  if (cents <= 0) return '₹0';
+  try {
+    return new Intl.NumberFormat('en-IN', { style: 'currency', currency, maximumFractionDigits: 0 }).format(cents / 100);
+  } catch {
+    return `₹${Math.round(cents / 100)}`;
+  }
+}
+
+const FALLBACK_PRICING: Pick<SubscriptionPlan, 'slug' | 'name' | 'priceCents' | 'currency' | 'billingCycle' | 'description'>[] = [
+  { slug: 'free', name: 'Free', priceCents: 0, currency: 'INR', billingCycle: null, description: '12 templates, cloud library, and the editor. No card required.' },
+  { slug: 'starter', name: 'Starter', priceCents: 65000, currency: 'INR', billingCycle: 'monthly', description: 'PDF export, AI writing assistant, and job-tailored rewrites.' }
 ];
 
 const audiences = [
@@ -35,10 +42,10 @@ const audiences = [
 
 const features = [
   { icon: Eye, title: 'Live preview', copy: 'The page updates as you type, so length, hierarchy, and spacing stay visible while you edit.', tone: 'green' },
-  { icon: WandSparkles, title: 'Writing help you approve', copy: 'Improve a summary, rewrite bullets, draft project points, or tailor the page to a job. Nothing is saved until you apply a suggestion.', tone: 'amber' },
-  { icon: Layers, title: 'Six layouts, one resume', copy: 'Switch between Professional, Minimal, Modern, Editorial, Creative, and Compact without rewriting your content.', tone: 'green' },
+  { icon: WandSparkles, title: 'Writing help you approve', copy: 'On the paid plan, improve a summary, rewrite bullets, draft project points, or tailor the page to a job. Nothing is saved until you apply a suggestion.', tone: 'amber' },
+  { icon: Layers, title: 'Twelve layouts, one resume', copy: 'Switch layouts without rewriting your content. The catalog runs from Professional and Minimal through Executive, Academic, Swiss, and Folio.', tone: 'green' },
   { icon: PenLine, title: 'Type, color, and density', copy: 'Pick a font, an accent, a type size, line height, spacing, and a comfortable, compact, or airy density.', tone: 'ink' },
-  { icon: Download, title: 'A PDF that matches the page', copy: 'Export the resume you see. If you need a fallback, the editor can also print from the browser.', tone: 'green' },
+  { icon: Download, title: 'A PDF that matches the page', copy: 'Subscribe to export the resume you see. The file follows the layout, type, and spacing in the preview.', tone: 'green' },
   { icon: Share2, title: 'Private until you share', copy: 'Keep the file in your library, or turn on a public link you can copy, open, and switch off again.', tone: 'amber' }
 ];
 
@@ -60,13 +67,13 @@ const assistantMoves = [
 ];
 
 const steps = [
-  { icon: FileText, title: 'Choose a starting point', copy: 'Open a guided blank resume, pick one of the six layouts, or import a ResumeForge JSON export you already have.' },
+  { icon: FileText, title: 'Choose a starting point', copy: 'Open a guided blank resume, pick a layout, or import a ResumeForge JSON export you already have.' },
   { icon: GripVertical, title: 'Shape the story', copy: 'Reorder sections, adjust the design, and use the assistant when a line needs to be clearer. You apply only the suggestions you want.' },
-  { icon: ArrowRight, title: 'Send the version that fits', copy: 'Export a PDF, keep extra versions in your library, and share a public link only when you are ready.' }
+  { icon: ArrowRight, title: 'Send the version that fits', copy: 'Export a PDF on the paid plan, keep extra versions in your library, and share a public link only when you are ready.' }
 ];
 
 const faqs = [
-  { q: 'Do I need an account?', a: 'Saving to your library, sharing a link, PDF export, and the writing assistant use an account. This page sends you to create one, or back to your dashboard if you are already signed in.' },
+  { q: 'Do I need an account?', a: 'Saving to your library and sharing a link use an account. PDF export and the writing assistant are on the paid plan. This page sends you to create an account, or back to your dashboard if you are already signed in.' },
   { q: 'Will the assistant overwrite my resume?', a: 'No. Suggestions open in a review panel. They are written into the resume only after you apply the ones you want.' },
   { q: 'What can I import?', a: 'A ResumeForge JSON export. The importer checks that the file has resume content, then keeps it ready so you can save it to your library.' },
   { q: 'Can I change the template later?', a: 'Yes. Your content stays in place when you switch layouts. Font, accent, spacing, and density live in the editor and can change at any time.' },
@@ -82,8 +89,18 @@ export default function LandingPage() {
   const [importError, setImportError] = useState('');
   const [isImporting, setIsImporting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pricingPlans, setPricingPlans] = useState(FALLBACK_PRICING);
 
-  const startCreating = () => navigate(isAuthenticated ? '/dashboard' : '/register');
+  useEffect(() => {
+    listPlans()
+      .then((plans) => { if (plans.length) setPricingPlans(plans); })
+      .catch(() => {});
+  }, []);
+
+  const startCreating = (templateId?: TemplateId) => {
+    const query = templateId ? `?template=${templateId}` : '';
+    navigate(isAuthenticated ? `/dashboard${query}` : `/register${query}`);
+  };
   const handleImport = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = '';
@@ -109,20 +126,21 @@ export default function LandingPage() {
       <Container maxWidth="lg">
         <Stack direction="row" alignItems="center" spacing={1.5} py={1.75}>
           <Box className="landing-brand" component="a" href="#top"><Box className="landing-brand-icon"><Sparkles size={17} fill="currentColor" /></Box><Typography fontWeight={850} letterSpacing="-0.8px">ResumeForge</Typography></Box>
-          <Stack direction="row" spacing={3} sx={{ ml: 5, display: { xs: 'none', md: 'flex' } }} className="landing-nav">
+          <Stack direction="row" spacing={2.5} sx={{ ml: 4, display: { xs: 'none', lg: 'flex' } }} className="landing-nav">
             <a href="#features">Features</a>
             <a href="#templates">Templates</a>
             <a href="#editor">Editor</a>
             <a href="#how-it-works">How it works</a>
+            <a href="#pricing">Pricing</a>
             <a href="#faq">FAQ</a>
           </Stack>
           <Box flex={1} />
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ display: { xs: 'none', md: 'flex' } }}>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ display: { xs: 'none', lg: 'flex' } }}>
             {isAuthenticated
               ? <Button color="inherit" onClick={() => navigate('/dashboard')}>My dashboard</Button>
-              : <><Button color="inherit" onClick={() => navigate('/login')}>Sign in</Button><Button variant="contained" onClick={startCreating}>Get started</Button></>}
+              : <><Button color="inherit" onClick={() => navigate('/login')}>Sign in</Button><Button variant="contained" onClick={() => startCreating()}>Get started</Button></>}
           </Stack>
-          <IconButton sx={{ display: { xs: 'flex', md: 'none' } }} onClick={() => setMenuOpen(true)} aria-label="Open menu"><Menu size={20} /></IconButton>
+          <IconButton sx={{ display: { xs: 'flex', lg: 'none' } }} onClick={() => setMenuOpen(true)} aria-label="Open menu"><Menu size={20} /></IconButton>
         </Stack>
       </Container>
     </Box>
@@ -137,6 +155,7 @@ export default function LandingPage() {
         <a href="#templates" onClick={closeMenu}>Templates</a>
         <a href="#editor" onClick={closeMenu}>Editor</a>
         <a href="#how-it-works" onClick={closeMenu}>How it works</a>
+        <a href="#pricing" onClick={closeMenu}>Pricing</a>
         <a href="#faq" onClick={closeMenu}>FAQ</a>
       </Stack>
       <Stack spacing={1} mt={3}>
@@ -156,9 +175,9 @@ export default function LandingPage() {
             <Box className="landing-hero-copy">
               <Chip icon={<Sparkles size={14} />} label="Editor, templates, and writing help" className="landing-kicker" />
               <Typography component="h1">Make your next move <Box component="span">look inevitable.</Box></Typography>
-              <Typography className="landing-lede">Build a resume with a live preview, six layouts, and an assistant that only changes the lines you approve.</Typography>
+              <Typography className="landing-lede">Build a resume with a live preview, twelve layouts, and an assistant that only changes the lines you approve.</Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} mt={4}>
-                <Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={startCreating}>Create my resume</Button>
+                <Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={() => startCreating()}>Create my resume</Button>
                 <Button variant="outlined" size="large" startIcon={<Upload size={17} />} onClick={() => inputRef.current?.click()} disabled={isImporting}>{isImporting ? 'Reading file…' : 'Import JSON resume'}</Button>
                 <input ref={inputRef} type="file" accept="application/json,.json" hidden onChange={handleImport} />
               </Stack>
@@ -203,9 +222,9 @@ export default function LandingPage() {
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={2}>
             <Typography><strong>One library</strong> for the draft, the tailored version, and the page you send.</Typography>
             <Stack direction="row" spacing={{ xs: 2, sm: 5 }}>
-              <Box><strong>6</strong><span>layouts</span></Box>
+              <Box><strong>12</strong><span>layouts</span></Box>
               <Box><strong>Live</strong><span>preview</span></Box>
-              <Box><strong>PDF</strong><span>when you export</span></Box>
+              <Box><strong>PDF</strong><span>on the paid plan</span></Box>
             </Stack>
           </Stack>
         </Container>
@@ -255,13 +274,13 @@ export default function LandingPage() {
             <Typography>Every layout is built for a skim: clear headings, real text, and a rhythm you can still edit.</Typography>
           </Box>
           <Box className="template-showcase">
-            {templates.map((template) => <Box key={template.id} className="showcase-card">
+            {TEMPLATE_CATALOG.map((template) => <Box key={template.id} className="showcase-card">
               <TemplateThumbnail template={template.id} />
               <Box className="showcase-card-copy">
-                <Typography variant="overline" className="showcase-best-for">{template.bestFor}</Typography>
-                <Typography variant="h6">{template.name}</Typography>
-                <Typography variant="body2">{template.description}</Typography>
-                <Button size="small" endIcon={<ArrowRight size={15} />} onClick={startCreating}>Use this template</Button>
+                <Typography variant="overline" className="showcase-best-for">{template.description}</Typography>
+                <Typography variant="h6">{template.label}</Typography>
+                <Typography variant="body2">{template.pitch}</Typography>
+                <Button size="small" endIcon={<ArrowRight size={15} />} onClick={() => startCreating(template.id)}>Use this template</Button>
               </Box>
             </Box>)}
           </Box>
@@ -291,7 +310,7 @@ export default function LandingPage() {
             <Box className="inside-panel inside-panel-dark">
               <Box className="inside-dark-icon"><WandSparkles size={18} /></Box>
               <Typography variant="h5">The assistant reviews. You decide.</Typography>
-              <Typography className="inside-dark-lede">Open it from the editor when a line is vague. Generated text is previewed first and is never applied on its own.</Typography>
+              <Typography className="inside-dark-lede">Open it from the editor on the paid plan when a line is vague. Generated text is previewed first and is never applied on its own.</Typography>
               <Box component="ul" className="assistant-list">
                 {assistantMoves.map((move) => <li key={move}><Check size={15} />{move}</li>)}
               </Box>
@@ -321,6 +340,30 @@ export default function LandingPage() {
         </Container>
       </Box>
 
+      <Box component="section" id="pricing" className="landing-section pricing-section">
+        <Container maxWidth="lg">
+          <Box className="section-intro">
+            <Chip label="Simple plans" />
+            <Typography variant="h2">Start free. Subscribe for PDF and AI.</Typography>
+            <Typography>Checkout uses Razorpay. The free plan includes the editor, the cloud library, and all twelve layouts.</Typography>
+          </Box>
+          <Box className="pricing-grid">
+            {pricingPlans.map((plan) => {
+              const paid = plan.priceCents > 0;
+              const period = plan.billingCycle === 'yearly' ? '/yr' : paid ? '/mo' : '';
+              return <Box key={plan.slug}>
+                <Typography variant="overline" color="#255c4b" fontWeight={800}>{plan.name}</Typography>
+                <Typography variant="h6">{formatMoney(plan.priceCents, plan.currency)}{period}</Typography>
+                <Typography variant="body2">{plan.description}</Typography>
+                {paid
+                  ? <Button sx={{ mt: 2 }} variant="contained" onClick={() => navigate(isAuthenticated ? '/billing' : '/register')}>Upgrade</Button>
+                  : <Button sx={{ mt: 2 }} variant="outlined" onClick={() => startCreating()}>Get started</Button>}
+              </Box>;
+            })}
+          </Box>
+        </Container>
+      </Box>
+
       <Box component="section" id="faq" className="landing-section faq-section">
         <Container maxWidth="md">
           <Box className="section-intro">
@@ -340,7 +383,7 @@ export default function LandingPage() {
             <Typography variant="h2">Your next chapter deserves a better first page.</Typography>
             <Typography>Start with a layout, import a JSON export, or open the resume you already saved.</Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="center" mt={3}>
-              <Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={startCreating}>{isAuthenticated ? 'Go to my resumes' : 'Start building for free'}</Button>
+              <Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={() => startCreating()}>{isAuthenticated ? 'Go to my resumes' : 'Start building for free'}</Button>
               <Button variant="outlined" size="large" onClick={() => navigate(isAuthenticated ? '/dashboard' : '/login')}>{isAuthenticated ? 'Open the editor' : 'I already have an account'}</Button>
             </Stack>
           </Box>
@@ -364,14 +407,16 @@ export default function LandingPage() {
           <Box>
             <Typography variant="overline">Start</Typography>
             <a href="#how-it-works">How it works</a>
+            <a href="#pricing">Pricing</a>
             <a href="#faq">FAQ</a>
-            <button type="button" onClick={startCreating}>{isAuthenticated ? 'Dashboard' : 'Create an account'}</button>
+            <button type="button" onClick={() => startCreating()}>{isAuthenticated ? 'Dashboard' : 'Create an account'}</button>
           </Box>
           <Box>
             <Typography variant="overline">Account</Typography>
             {isAuthenticated
               ? <button type="button" onClick={() => navigate('/dashboard')}>My resumes</button>
               : <button type="button" onClick={() => navigate('/login')}>Sign in</button>}
+            <button type="button" onClick={() => navigate(isAuthenticated ? '/billing' : '/register')}>Plans</button>
             <button type="button" onClick={() => inputRef.current?.click()}>Import JSON</button>
           </Box>
         </Box>

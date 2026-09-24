@@ -1,35 +1,31 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert, AppBar, Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Dialog, DialogActions,
-  DialogContent, DialogTitle, Grid, IconButton, Menu, MenuItem, Stack, TextField, Toolbar,
+  DialogContent, DialogTitle, Grid, IconButton, InputAdornment, Menu, MenuItem, Stack, TextField, Toolbar,
   Tooltip, Typography
 } from '@mui/material';
-import { ChevronDown, Clock, Copy, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Share2, Sparkles, Trash2, Upload } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ChevronDown, Clock, Copy, CreditCard, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Search, Share2, Sparkles, Trash2, Upload } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
 import { createResume, deleteResume, duplicateResume, listResumes, renameResume, shareResume, type CloudResume } from '../services/resumeApi';
 import { ApiError } from '../services/api';
 import { normalizeImportedResume } from '../utils/importResume';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
+import { TEMPLATE_CATALOG, isTemplateId } from '../templates/catalog';
 import type { Resume, TemplateId } from '../types';
 import '../dashboard.css';
 
-const templates: { id: TemplateId; label: string; description: string }[] = [
-  { id: 'professional', label: 'Professional', description: 'Clear and structured' },
-  { id: 'minimal', label: 'Minimal', description: 'Simple and focused' },
-  { id: 'modern', label: 'Modern', description: 'Bold and expressive' },
-  { id: 'editorial', label: 'Editorial', description: 'Refined and distinctive' },
-  { id: 'creative', label: 'Creative', description: 'Warm and personable' },
-  { id: 'compact', label: 'Compact', description: 'High-signal and efficient' }
-];
+const consumedTemplateQuery = new Set<string>();
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const [resumes, setResumes] = useState<CloudResume[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
   const [error, setError] = useState('');
   const [rename, setRename] = useState<CloudResume | null>(null);
   const [renameValue, setRenameValue] = useState('');
@@ -75,6 +71,14 @@ export default function DashboardPage() {
       setError(e instanceof Error ? e.message : 'Unable to create resume');
     }
   };
+
+  useEffect(() => {
+    const template = searchParams.get('template') as TemplateId | null;
+    if (!template || loading || consumedTemplateQuery.has(template)) return;
+    if (!isTemplateId(template)) return;
+    consumedTemplateQuery.add(template);
+    void create(template);
+  }, [searchParams, loading]);
 
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -133,7 +137,10 @@ export default function DashboardPage() {
   };
   const shareUrl = share?.publicSlug ? `${window.location.origin}/r/${share.publicSlug}` : '';
   const closeActions = () => { setActionAnchor(null); setActionResume(null); };
-  const sorted = [...resumes].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+  const needle = query.trim().toLowerCase();
+  const sorted = [...resumes]
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .filter((resume) => !needle || resume.title.toLowerCase().includes(needle) || resume.templateId.toLowerCase().includes(needle));
 
   return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#F7F7F5', color: '#202124' }}>
     <AppBar position="static" elevation={0} className="dashboard-topbar" sx={{ bgcolor: '#fff', color: '#202124', borderBottom: '1px solid #e5e9e6' }}>
@@ -147,6 +154,7 @@ export default function DashboardPage() {
         </Box>
         <Menu anchorEl={userMenuAnchor} open={Boolean(userMenuAnchor)} onClose={() => setUserMenuAnchor(null)} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
           <Box px={2} py={1.25} sx={{ borderBottom: '1px solid #eef1ee' }}><Typography variant="body2" fontWeight={700} noWrap>{user?.name}</Typography><Typography variant="caption" color="text.secondary" noWrap>{user?.email}</Typography></Box>
+          <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/billing'); }} sx={{ gap: 1 }}><CreditCard size={15} /> Billing</MenuItem>
           <MenuItem onClick={() => { logout(); navigate('/login'); }} sx={{ color: 'error.main', gap: 1 }}><LogOut size={15} /> Sign out</MenuItem>
         </Menu>
       </Toolbar>
@@ -160,6 +168,14 @@ export default function DashboardPage() {
           <Typography color="#626871">Choose a starting point, then build a resume you feel good sending.</Typography>
         </Box>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems={{ sm: 'center' }}>
+          <TextField
+            size="small"
+            placeholder="Search resumes"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            InputProps={{ startAdornment: <InputAdornment position="start"><Search size={16} /></InputAdornment> }}
+            sx={{ minWidth: { sm: 220 }, bgcolor: '#fff' }}
+          />
           <Button variant="outlined" startIcon={<Upload size={17} />} onClick={() => inputRef.current?.click()} disabled={importing}>
             {importing ? 'Reading file…' : 'Import existing'}
           </Button>
@@ -181,12 +197,15 @@ export default function DashboardPage() {
       </Card>
 
       {error && <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>{error}</Alert>}
-      {loading ? <Box className="dashboard-loading" textAlign="center" py={8}><CircularProgress color="inherit" /><Typography variant="body2" color="text.secondary" mt={2}>Loading your library…</Typography></Box> : sorted.length ? <>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1.5}><Typography variant="h6" fontWeight={750}>Your saved resumes</Typography><Typography variant="body2" color="text.secondary">{sorted.length} {sorted.length === 1 ? 'resume' : 'resumes'}</Typography></Stack>
+      {loading ? <Box className="dashboard-loading" textAlign="center" py={8}><CircularProgress color="inherit" /><Typography variant="body2" color="text.secondary" mt={2}>Loading your library…</Typography></Box> : resumes.length ? (
+        sorted.length ? <>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1.5}><Typography variant="h6" fontWeight={750}>Your saved resumes</Typography><Typography variant="body2" color="text.secondary">{sorted.length} {sorted.length === 1 ? 'resume' : 'resumes'}{query.trim() ? ' matching' : ''}</Typography></Stack>
         <Grid container spacing={2.5}>{sorted.map((resume) => <Grid item xs={12} sm={6} md={4} key={resume.id}>
           <Card className="resume-card" variant="outlined" sx={{ height: '100%', borderColor: '#D0D3D6', bgcolor: '#fff', borderRadius: 2 }}>
             <CardContent sx={{ p: 2.5 }}>
-              <Box className="resume-card-thumb"><TemplateThumbnail template={(resume.templateId as TemplateId) || 'professional'} compact /></Box>
+              <Box className={`resume-card-thumb preview-${resume.templateId}`}>
+                <TemplateThumbnail template={isTemplateId(resume.templateId) ? resume.templateId : 'professional'} compact />
+              </Box>
               <Stack direction="row" justifyContent="space-between" alignItems="start" gap={1}>
                 <Box minWidth={0}>
                   <Typography fontWeight={700} mt={2} noWrap>{resume.title}</Typography>
@@ -199,7 +218,8 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </Grid>)}</Grid>
-      </> : <Card className="dashboard-empty" variant="outlined" sx={{ p: { xs: 3, sm: 7 }, textAlign: 'center', borderStyle: 'dashed', bgcolor: 'transparent' }}>
+      </> : <Alert severity="info" sx={{ mb: 3 }}>No resumes match “{query}”. Try a different name or template.</Alert>
+      ) : <Card className="dashboard-empty" variant="outlined" sx={{ p: { xs: 3, sm: 7 }, textAlign: 'center', borderStyle: 'dashed', bgcolor: 'transparent' }}>
         <Box className="empty-state-icon"><Box className="empty-state-ring" /><Box className="empty-state-badge"><FileText size={26} /></Box></Box>
         <Typography variant="h6" fontWeight={750}>Your resume library is empty</Typography><Typography color="#626871" mb={2}>Start fresh, import an existing file, or browse templates.</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="center" spacing={1}><Button variant="contained" startIcon={<Plus size={17} />} onClick={() => create()}>Create your first resume</Button><Button variant="outlined" onClick={() => setTemplateDialog(true)}>Browse templates</Button></Stack>
@@ -214,9 +234,9 @@ export default function DashboardPage() {
       <MenuItem onClick={() => { if (actionResume) remove(actionResume); closeActions(); }} sx={{ color: 'error.main' }}><Trash2 size={15} />&nbsp; Delete</MenuItem>
     </Menu>
 
-    <Dialog open={templateDialog} onClose={() => setTemplateDialog(false)} fullWidth maxWidth="md">
+    <Dialog open={templateDialog} onClose={() => setTemplateDialog(false)} fullWidth maxWidth="lg">
       <DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><FileText size={16} /></Box>Choose a starting template</DialogTitle>
-      <DialogContent><Typography color="text.secondary" variant="body2" mb={2}>You can change the template and design controls at any time.</Typography><Grid container spacing={1.5}>{templates.map((template) => <Grid item xs={12} sm={6} md={4} key={template.id}><Card className="template-choice" variant="outlined" onClick={() => create(template.id)} sx={{ cursor: 'pointer', p: 1.25, height: '100%' }}><TemplateThumbnail template={template.id} compact /><Typography fontWeight={750} mt={1}>{template.label}</Typography><Typography variant="caption" color="text.secondary">{template.description}</Typography><Button size="small" sx={{ mt: 1 }} onClick={(event) => { event.stopPropagation(); create(template.id); }}>Use this template</Button></Card></Grid>)}</Grid></DialogContent>
+      <DialogContent><Typography color="text.secondary" variant="body2" mb={2}>You can change the template and design controls at any time.</Typography><Grid container spacing={1.5}>{TEMPLATE_CATALOG.map((template) => <Grid item xs={12} sm={6} md={3} key={template.id}><Card className="template-choice" variant="outlined" onClick={() => create(template.id)} sx={{ cursor: 'pointer', p: 1.25, height: '100%' }}><TemplateThumbnail template={template.id} compact /><Typography fontWeight={750} mt={1}>{template.label}</Typography><Typography variant="caption" color="text.secondary">{template.description}</Typography><Button size="small" sx={{ mt: 1 }} onClick={(event) => { event.stopPropagation(); create(template.id); }}>Use this template</Button></Card></Grid>)}</Grid></DialogContent>
       <DialogActions><Button onClick={() => setTemplateDialog(false)}>Cancel</Button></DialogActions>
     </Dialog>
     <Dialog open={Boolean(rename)} onClose={() => setRename(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><FileText size={16} /></Box>Rename resume</DialogTitle><DialogContent><TextField autoFocus fullWidth label="Resume title" value={renameValue} onChange={(e) => setRenameValue(e.target.value)} sx={{ mt: 1 }} /></DialogContent><DialogActions><Button onClick={() => setRename(null)}>Cancel</Button><Button variant="contained" onClick={submitRename} disabled={!renameValue.trim()}>Save name</Button></DialogActions></Dialog>

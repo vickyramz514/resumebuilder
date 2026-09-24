@@ -2,11 +2,13 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Resume, SectionType, TemplateId } from './types';
 import { emptyResume, sampleResume } from './templates/data';
+import { TEMPLATE_META } from './templates/catalog';
 
 interface ResumeStore {
   resumes: Resume[];
   activeId: string;
   selectedSection: SectionType | 'personal';
+  canUndo: boolean;
   setActive: (id: string) => void;
   setSelectedSection: (section: SectionType | 'personal') => void;
   addResume: () => void;
@@ -18,15 +20,34 @@ interface ResumeStore {
   setTemplate: (template: TemplateId) => void;
   setSections: (sections: SectionType[]) => void;
   reorderSections: (from: number, to: number) => void;
+  toggleSectionHidden: (section: SectionType) => void;
   replaceResume: (resume: Resume) => void;
+  undo: () => void;
 }
 
 const timestamp = () => new Date().toISOString();
+let previous: Resume | null = null;
+let groupingEdits = false;
+let groupTimer: ReturnType<typeof setTimeout> | undefined;
+
+const withActive = (state: { resumes: Resume[]; activeId: string }, updater: (resume: Resume) => Resume) => {
+  const active = state.resumes.find((resume) => resume.id === state.activeId);
+  if (!active) return {};
+  if (!groupingEdits) previous = structuredClone(active);
+  groupingEdits = true;
+  if (groupTimer) clearTimeout(groupTimer);
+  groupTimer = setTimeout(() => { groupingEdits = false; }, 1200);
+  return {
+    resumes: state.resumes.map((resume) => resume.id === active.id ? { ...updater(active), updatedAt: timestamp() } : resume),
+    canUndo: true
+  };
+};
 
 export const useResumeStore = create<ResumeStore>()(persist((set, get) => ({
   resumes: [sampleResume],
   activeId: sampleResume.id,
   selectedSection: 'personal',
+  canUndo: false,
   setActive: (id) => set({ activeId: id, selectedSection: 'personal' }),
   setSelectedSection: (selectedSection) => set({ selectedSection }),
   addResume: () => {
@@ -44,23 +65,53 @@ export const useResumeStore = create<ResumeStore>()(persist((set, get) => ({
     const fallback = remaining[0] ?? emptyResume();
     return { resumes: remaining.length ? remaining : [fallback], activeId: state.activeId === id ? fallback.id : state.activeId };
   }),
-  updateResume: (patch) => set((state) => ({ resumes: state.resumes.map((resume) => resume.id === state.activeId ? { ...resume, ...patch, updatedAt: timestamp() } : resume) })),
-  updatePersonal: (patch) => set((state) => ({ resumes: state.resumes.map((resume) => resume.id === state.activeId ? { ...resume, personal: { ...resume.personal, ...patch }, updatedAt: timestamp() } : resume) })),
-  updateContact: (patch) => set((state) => ({ resumes: state.resumes.map((resume) => resume.id === state.activeId ? { ...resume, personal: { ...resume.personal, contact: { ...resume.personal.contact, ...patch } }, updatedAt: timestamp() } : resume) })),
-  setTemplate: (template) => set((state) => ({ resumes: state.resumes.map((resume) => resume.id === state.activeId ? { ...resume, template, updatedAt: timestamp() } : resume) })),
-  setSections: (sections) => set((state) => ({ resumes: state.resumes.map((resume) => resume.id === state.activeId ? { ...resume, sections, updatedAt: timestamp() } : resume) })),
-  reorderSections: (from, to) => set((state) => {
-    const active = state.resumes.find((resume) => resume.id === state.activeId);
-    if (!active) return state;
-    const sections = [...active.sections];
+  updateResume: (patch) => set((state) => withActive(state, (resume) => ({ ...resume, ...patch }))),
+  updatePersonal: (patch) => set((state) => withActive(state, (resume) => ({ ...resume, personal: { ...resume.personal, ...patch } }))),
+  updateContact: (patch) => set((state) => withActive(state, (resume) => ({
+    ...resume,
+    personal: { ...resume.personal, contact: { ...resume.personal.contact, ...patch } }
+  }))),
+  setTemplate: (template) => set((state) => withActive(state, (resume) => ({
+    ...resume,
+    template,
+    accentColor: TEMPLATE_META[template]?.accent ?? resume.accentColor
+  }))),
+  setSections: (sections) => set((state) => withActive(state, (resume) => ({ ...resume, sections }))),
+  reorderSections: (from, to) => set((state) => withActive(state, (resume) => {
+    const sections = [...resume.sections];
     const [moved] = sections.splice(from, 1);
     sections.splice(to, 0, moved);
-    return { resumes: state.resumes.map((resume) => resume.id === active.id ? { ...resume, sections, updatedAt: timestamp() } : resume) };
-  }),
-  replaceResume: (resume) => set((state) => {
-    const exists = state.resumes.some((item) => item.id === resume.id);
-    return { resumes: exists ? state.resumes.map((item) => item.id === resume.id ? resume : item) : [...state.resumes, resume], activeId: resume.id, selectedSection: 'personal' };
+    return { ...resume, sections };
+  })),
+  toggleSectionHidden: (section) => set((state) => withActive(state, (resume) => {
+    const hidden = new Set(resume.hiddenSections ?? []);
+    if (hidden.has(section)) hidden.delete(section);
+    else hidden.add(section);
+    return { ...resume, hiddenSections: [...hidden] };
+  })),
+  replaceResume: (resume) => {
+    previous = null;
+    groupingEdits = false;
+    return set((state) => {
+      const exists = state.resumes.some((item) => item.id === resume.id);
+      return {
+        resumes: exists ? state.resumes.map((item) => item.id === resume.id ? resume : item) : [...state.resumes, resume],
+        activeId: resume.id,
+        selectedSection: 'personal',
+        canUndo: false
+      };
+    });
+  },
+  undo: () => set((state) => {
+    if (!previous) return state;
+    const restored = previous;
+    previous = null;
+    groupingEdits = false;
+    return {
+      resumes: state.resumes.map((resume) => resume.id === restored.id ? restored : resume),
+      canUndo: false
+    };
   })
-}), { name: 'resumeforge_resume' }));
+}), { name: 'resumeforge_resume', partialize: (state) => ({ resumes: state.resumes, activeId: state.activeId, selectedSection: state.selectedSection }) }));
 
 export const useActiveResume = () => useResumeStore((state) => state.resumes.find((resume) => resume.id === state.activeId) ?? state.resumes[0]);

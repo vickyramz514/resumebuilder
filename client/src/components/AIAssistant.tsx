@@ -3,6 +3,8 @@ import { Alert, Box, Button, Checkbox, CircularProgress, Divider, Drawer, FormCo
 import { Check, Sparkles } from 'lucide-react';
 import type { Resume } from '../types';
 import { generateProjectBullets, improveSummary, rewriteExperience, suggestSkills, tailorResume } from '../services/aiApi';
+import { ApiError } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 type Action = 'summary' | 'experience' | 'project' | 'tailor' | 'skills';
 export type AssistantResult = { kind: Action; targetId?: string; text?: string; bullets?: string[]; skills?: string[]; experienceBullets?: Array<{ experienceId?: string; bullets: string[] }> };
@@ -15,6 +17,7 @@ interface Props {
 }
 
 export function AIAssistant({ open, onClose, resume, onApply }: Props) {
+  const navigate = useNavigate();
   const [action, setAction] = useState<Action>('summary');
   const [targetRole, setTargetRole] = useState('');
   const [experienceId, setExperienceId] = useState(resume.experience[0]?.id ?? '');
@@ -49,7 +52,11 @@ export function AIAssistant({ open, onClose, resume, onApply }: Props) {
       }
       setSelected(true);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'AI writing failed. Please try again.');
+      if (cause instanceof ApiError && (cause.status === 402 || cause.code === 'PAYWALL')) {
+        setError('PDF export and AI writing are included on Starter and Pro. Subscribe to continue.');
+      } else {
+        setError(cause instanceof Error ? cause.message : 'AI writing failed. Please try again.');
+      }
     } finally { setLoading(false); }
   };
 
@@ -71,7 +78,10 @@ export function AIAssistant({ open, onClose, resume, onApply }: Props) {
         {action === 'project' && <Select size="small" value={projectId} onChange={(event) => setProjectId(event.target.value)} fullWidth displayEmpty>{resume.projects.length ? resume.projects.map((item) => <MenuItem key={item.id} value={item.id}>{item.name || 'Untitled project'}</MenuItem>) : <MenuItem value="">Add a project first</MenuItem>}</Select>}
         {(action === 'tailor' || action === 'skills') && <TextField label="Paste job description (optional for skills)" value={jobDescription} onChange={(event) => setJobDescription(event.target.value)} multiline minRows={6} inputProps={{ maxLength: 12000 }} helperText={`${jobDescription.length}/12000`} />}
         <Button variant="contained" startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <Sparkles size={16} />} onClick={run} disabled={loading || !hasTarget}>{loading ? 'Writing…' : 'Generate suggestion'}</Button>
-        {error && <Alert severity="error">{error}</Alert>}
+        {error && <>
+          <Alert severity={error.includes('Subscribe') || error.includes('Starter') ? 'info' : 'error'}>{error}</Alert>
+          {(error.includes('Subscribe') || error.includes('Starter')) && <Button variant="contained" onClick={() => { onClose(); navigate('/billing'); }}>Subscribe</Button>}
+        </>}
         {result && <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1.5, p: 1.5 }}>
           <Typography variant="overline" color="text.secondary">Preview — nothing has been changed</Typography>
           {result.text && <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', mt: 1 }}>{result.text}</Typography>}

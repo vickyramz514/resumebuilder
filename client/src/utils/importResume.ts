@@ -1,7 +1,8 @@
 import type { Contact, FontFamily, Resume, ResumeDesign, ResumeDensity, SectionType, TemplateId } from '../types';
+import { TEMPLATE_IDS } from '../templates/catalog';
 
 const sectionTypes: SectionType[] = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'];
-const templateIds: TemplateId[] = ['minimal', 'professional', 'modern', 'editorial', 'creative', 'compact'];
+const templateIds: TemplateId[] = TEMPLATE_IDS;
 const fontFamilies: FontFamily[] = ['inter', 'source-sans', 'georgia', 'ibm-plex', 'space-grotesk'];
 const densities: ResumeDensity[] = ['comfortable', 'compact', 'airy'];
 
@@ -71,6 +72,9 @@ export function normalizeImportedResume(input: unknown): Resume {
       id: asString(item.id, `certification-${index + 1}`),
       name: asString(item.name), issuer: asString(item.issuer), date: asString(item.date)
     })) : [],
-    sections: sections.length ? sections : sectionTypes
+    sections: sections.length ? sections : sectionTypes,
+    hiddenSections: Array.isArray(source.hiddenSections)
+      ? source.hiddenSections.filter((section): section is SectionType => typeof section === 'string' && sectionTypes.includes(section as SectionType))
+      : []
   };
 }

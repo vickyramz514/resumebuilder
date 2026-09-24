@@ -9,12 +9,14 @@ import { env } from '../config/env.js';
 
 const router = Router();
 const googleClient = env.googleClientId ? new OAuth2Client(env.googleClientId) : null;
-const publicUser = (user: { id: string; name: string; email: string; provider: string; googleId: string | null; avatar: string | null }) => ({
+const publicUser = (user: { id: string; name: string; email: string; provider: string; googleId: string | null; avatar: string | null; plan: string; planExpiresAt: Date | null }) => ({
   id: user.id,
   name: user.name,
   email: user.email,
   provider: user.provider,
-  avatar: user.avatar
+  avatar: user.avatar,
+  plan: user.plan,
+  planExpiresAt: user.planExpiresAt
 });
 const registerSchema = z.object({ name: z.string().trim().min(2), email: z.string().trim().toLowerCase().email(), password: z.string().min(8) });
 const loginSchema = z.object({ email: z.string().trim().toLowerCase().email(), password: z.string().min(1) });
@@ -101,7 +103,7 @@ router.post('/google', async (req, res, next) => {
 
 router.get('/me', requireAuth, async (req, res, next) => {
   try {
-    const user = await prisma.user.findUnique({ where: { id: req.user!.userId }, select: { id: true, name: true, email: true, provider: true, googleId: true, avatar: true } });
+    const user = await prisma.user.findUnique({ where: { id: req.user!.userId }, select: { id: true, name: true, email: true, provider: true, googleId: true, avatar: true, plan: true, planExpiresAt: true } });
     if (!user) return res.status(401).json({ error: { code: 'USER_NOT_FOUND', message: 'User no longer exists' } });
     return res.json({ user: publicUser(user) });
   } catch (error) { return next(error); }

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import * as authApi from '../services/authApi';
 
-export interface AuthUser { id: string; name: string; email: string; provider?: string; avatar?: string | null }
+export interface AuthUser { id: string; name: string; email: string; provider?: string; avatar?: string | null; plan?: string; planExpiresAt?: string | null }
 interface AuthStore {
   user: AuthUser | null;
   token: string | null;

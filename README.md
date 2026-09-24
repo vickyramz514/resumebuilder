@@ -37,7 +37,7 @@ Phase 3 adds an authenticated, server-only Gemini integration to the editor. The
 
 ```bash
 GEMINI_API_KEY="your-server-only-key"
-GEMINI_MODEL="gemini-2.0-flash" # optional
+GEMINI_MODEL="gemini-3.5-flash-lite" # optional
 ```
 
 Restart the server after changing environment variables. The **AI Assistant** button in the resume editor opens a review panel. Suggestions are previewed first and are only written to the Zustand resume model after the user clicks **Apply selected suggestion**; generated content never destructively overwrites the editor by itself.
@@ -50,7 +50,25 @@ Protected endpoints (all require the existing `Authorization: Bearer <JWT>` midd
 - `POST /api/ai/tailor` — `{ resume, jobDescription }` → optional `summary`, `experienceBullets`, and `skills`
 - `POST /api/ai/suggest-skills` — `{ resume, jobDescription? }` → `{ skills }`
 
-Requests and model output are validated with Zod and bounded by size/count limits. Missing configuration returns `AI_NOT_CONFIGURED`, provider failures/timeouts return a safe error, and malformed model output is rejected without changing the resume. Do not commit `.env` files or paste API keys into the frontend.
+Requests and model output are validated with Zod and bounded by size/count limits. Missing configuration returns `AI_NOT_CONFIGURED`, provider failures/timeouts return a safe error, and malformed model output is rejected without changing the resume. **PDF export and AI writing require an active Starter (or Pro) subscription.** Unpaid clicks in the editor open the same Razorpay plans used on Billing.
+
+## Billing (Razorpay / DataCaptain)
+
+ResumeForge uses the same Razorpay account, env names, checkout, and webhook flow as DataCaptain. Paid plans are Starter (`plan_TfKovTk3qxjBhH`) and Pro (`plan_TfjVh8pptWF8AG`). Copy `server/.env.example` and set:
+
+```bash
+RAZORPAY_KEY_ID="rzp_live_..."
+RAZORPAY_KEY_SECRET="..."
+RAZORPAY_WEBHOOK_SECRET="..."
+RAZORPAY_PLAN_STARTER="plan_TfKovTk3qxjBhH"
+RAZORPAY_PLAN_PRO="plan_TfjVh8pptWF8AG"
+# Set to false / disable / 0 to hide Pro without deleting the plan.
+RAZORPAY_PLAN_PRO_ENABLED=true
+```
+
+Webhook URL: `POST /api/payment/webhook` (legacy alias `POST /v1/payment/webhook`). After Standard Checkout, Razorpay POSTs to `/api/payment/razorpay-callback`, which redirects to `/billing`.
+
+Do not commit `.env` files or paste API keys into the frontend.
 
 ## Run locally
 
@@ -64,12 +82,14 @@ Open http://localhost:5173. The client proxies `/api` requests to the Express se
 
 ## Included in Phase 1
 
-- Sample resume with professional, minimal, and modern templates
+- Sample resume with 12 layouts, including classic, executive, technical, academic, swiss, and folio
 - Personal, profile, experience, education, skills, project, and certification editors
+- Resume strength checklist, click-to-edit preview, and section hide/show
 - Drag-and-drop section ordering
 - Multiple resumes with duplicate/delete/new actions
 - Zustand localStorage persistence and responsive editor/preview layout
 - Browser print fallback and Playwright-backed PDF export endpoint
+- JSON import/export and public sharing from the editor
 - Registration, login, protected multi-resume dashboard, autosave, duplicate/rename/delete, and public sharing
 
 For a production deployment, build both workspaces with `npm run build` and start the server with `npm start`.
