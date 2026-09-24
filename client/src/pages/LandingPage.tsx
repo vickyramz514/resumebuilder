@@ -45,7 +45,7 @@ const features = [
   { icon: WandSparkles, title: 'Writing help you approve', copy: 'On the paid plan, improve a summary, rewrite bullets, draft project points, or tailor the page to a job. Nothing is saved until you apply a suggestion.', tone: 'amber' },
   { icon: Layers, title: 'Seven free, nine Pro', copy: 'Start on Harbor, Professional, Minimal, and four more. Editorial, Folio, Lumen, Chronicle, and Velvet stay marked in gold until you subscribe.', tone: 'green' },
   { icon: PenLine, title: 'Type, color, and density', copy: 'Pick a font, an accent, a type size, line height, spacing, and a comfortable, compact, or airy density.', tone: 'ink' },
-  { icon: Download, title: 'A PDF that matches the page', copy: 'Subscribe to export the resume you see. The file follows the layout, type, and spacing in the preview.', tone: 'green' },
+  { icon: Download, title: 'Word for the application, PDF for the person', copy: 'Subscribe to download. Word keeps one column and real headings for systems that scan the file. PDF matches the layout in the preview.', tone: 'green' },
   { icon: Share2, title: 'Private until you share', copy: 'Keep the file in your library, or turn on a public link you can copy, open, and switch off again.', tone: 'amber' }
 ];
 
@@ -69,7 +69,7 @@ const assistantMoves = [
 const steps = [
   { icon: FileText, title: 'Choose a starting point', copy: 'Open a guided blank resume, pick a layout, or import a ResumeForge JSON export you already have.' },
   { icon: GripVertical, title: 'Shape the story', copy: 'Reorder sections, adjust the design, and use the assistant when a line needs to be clearer. You apply only the suggestions you want.' },
-  { icon: ArrowRight, title: 'Send the version that fits', copy: 'Export a PDF on the paid plan, keep extra versions in your library, and share a public link only when you are ready.' }
+  { icon: ArrowRight, title: 'Send the version that fits', copy: 'Download Word or PDF on the paid plan, keep extra versions in your library, and share a public link only when you are ready.' }
 ];
 
 const faqs = [
@@ -78,7 +78,7 @@ const faqs = [
   { q: 'What can I import?', a: 'A ResumeForge JSON export. The importer checks that the file has resume content, then keeps it ready so you can save it to your library.' },
   { q: 'Can I change the template later?', a: 'Yes. Your content stays in place when you switch layouts. Font, accent, spacing, and density live in the editor and can change at any time.' },
   { q: 'Who can see a shared resume?', a: 'Nobody, until you turn sharing on from the dashboard. A public link shows only that resume, and you can disable it whenever you want.' },
-  { q: 'Will an applicant tracking system be able to read it?', a: 'The templates use real text, clear headings, and a simple reading order so a person and a common parser can both follow the page.' }
+  { q: 'Will an applicant tracking system be able to read it?', a: 'The editor stores your resume as labeled sections: profile, experience, education, skills, projects, and certifications. The Word download is a single column with those headings, which is the file to upload when a form scans the document. The PDF is the designed page, for a person.' }
 ];
 
 export default function LandingPage() {
@@ -127,6 +127,7 @@ export default function LandingPage() {
         <Stack direction="row" alignItems="center" spacing={1.5} py={1.75}>
           <Box className="landing-brand" component="a" href="#top"><Box className="landing-brand-icon"><Sparkles size={17} fill="currentColor" /></Box><Typography fontWeight={850} letterSpacing="-0.8px">ResumeForge</Typography></Box>
           <Stack direction="row" spacing={2.5} sx={{ ml: 4, display: { xs: 'none', lg: 'flex' } }} className="landing-nav">
+            <a href="#ats">Why it works</a>
             <a href="#features">Features</a>
             <a href="#templates">Templates</a>
             <a href="#editor">Editor</a>
@@ -151,6 +152,7 @@ export default function LandingPage() {
         <IconButton onClick={closeMenu} aria-label="Close menu"><X size={18} /></IconButton>
       </Stack>
       <Stack component="nav" spacing={0.5} className="landing-drawer-nav">
+        <a href="#ats" onClick={closeMenu}>Why it works</a>
         <a href="#features" onClick={closeMenu}>Features</a>
         <a href="#templates" onClick={closeMenu}>Templates</a>
         <a href="#editor" onClick={closeMenu}>Editor</a>
@@ -173,9 +175,9 @@ export default function LandingPage() {
         <Container maxWidth="lg">
           <Box className="landing-hero-grid">
             <Box className="landing-hero-copy">
-              <Chip icon={<Sparkles size={14} />} label="Editor, templates, and writing help" className="landing-kicker" />
-              <Typography component="h1">Make your next move <Box component="span">look inevitable.</Box></Typography>
-              <Typography className="landing-lede">Build a resume with a live preview, seven free layouts, and Pro designs you can see before you subscribe.</Typography>
+              <Chip icon={<Sparkles size={14} />} label="A calm editor for an ATS-friendly resume" className="landing-kicker" />
+              <Typography component="h1">Write it simply. <Box component="span">Send a file they can read.</Box></Typography>
+              <Typography className="landing-lede">A guided editor with a live preview, so you are not learning a design tool. Download Word when an application scans the file, and PDF when you want the page you see.</Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} mt={4}>
                 <Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={() => startCreating()}>Create my resume</Button>
                 <Button variant="outlined" size="large" startIcon={<Upload size={17} />} onClick={() => inputRef.current?.click()} disabled={isImporting}>{isImporting ? 'Reading file…' : 'Import JSON resume'}</Button>
@@ -185,7 +187,7 @@ export default function LandingPage() {
               <Stack direction="row" spacing={2.5} mt={3} className="landing-proof">
                 <span><Check size={15} /> Free to start</span>
                 <span><Check size={15} /> No design skills needed</span>
-                <span><Check size={15} /> You approve every suggestion</span>
+                <span><Check size={15} /> Headings a parser can follow</span>
               </Stack>
             </Box>
             <Box className="landing-hero-art" aria-label="ResumeForge editor preview">
@@ -211,7 +213,7 @@ export default function LandingPage() {
                 </Box>
               </Paper>
               <Paper className="hero-floating-card hero-floating-top" elevation={0}><WandSparkles size={18} /><Box><Typography variant="caption">Suggestion ready</Typography><Typography fontWeight={800}>Apply it, or leave it.</Typography></Box></Paper>
-              <Paper className="hero-floating-card hero-floating-bottom" elevation={0}><Box className="hero-check"><Check size={14} /></Box><Box><Typography variant="caption">Clear headings</Typography><Typography variant="body2" fontWeight={750}>Easy for people to scan</Typography></Box></Paper>
+              <Paper className="hero-floating-card hero-floating-bottom" elevation={0}><Box className="hero-check"><Check size={14} /></Box><Box><Typography variant="caption">Word download</Typography><Typography variant="body2" fontWeight={750}>Headings a parser can follow</Typography></Box></Paper>
             </Box>
           </Box>
         </Container>
@@ -227,6 +229,33 @@ export default function LandingPage() {
               <Box><strong>Live</strong><span>preview</span></Box>
             </Stack>
           </Stack>
+        </Container>
+      </Box>
+
+      <Box component="section" id="ats" className="landing-section ats-section">
+        <Container maxWidth="lg">
+          <Box className="section-intro">
+            <Chip label="The reason to use it" />
+            <Typography variant="h2">Most resumes are rejected before a person opens them.</Typography>
+            <Typography>Applicant tracking systems scan the file first. ResumeForge keeps your story in labeled sections, then gives you a Word file with one reading order.</Typography>
+          </Box>
+          <Box className="feature-grid">
+            <Box className="feature-card">
+              <Box className="feature-icon tone-green"><PenLine size={18} /></Box>
+              <Typography variant="h6">A guided editor, not a blank canvas</Typography>
+              <Typography variant="body2">Profile, experience, education, skills, projects, and certifications are already on the page. You fill them in and drag the order the role needs.</Typography>
+            </Box>
+            <Box className="feature-card">
+              <Box className="feature-icon tone-ink"><FileText size={18} /></Box>
+              <Typography variant="h6">Headings a scanner expects</Typography>
+              <Typography variant="body2">The content stays as text under clear section names. Classic and the other single-column layouts are the safest pages to send when a form will parse the document.</Typography>
+            </Box>
+            <Box className="feature-card">
+              <Box className="feature-icon tone-amber"><Download size={18} /></Box>
+              <Typography variant="h6">Word for the form, PDF for the person</Typography>
+              <Typography variant="body2">Writing is free. On Starter, Word is the single-column file to upload. PDF is the designed page from the preview, including the Pro layouts.</Typography>
+            </Box>
+          </Box>
         </Container>
       </Box>
 
@@ -353,7 +382,7 @@ export default function LandingPage() {
         <Container maxWidth="lg">
           <Box className="section-intro">
             <Chip label="Simple plans" />
-            <Typography variant="h2">Start free. Subscribe for PDF and AI.</Typography>
+            <Typography variant="h2">Start free. Subscribe when the resume is ready to send.</Typography>
             <Typography>Checkout uses Razorpay. The free plan includes the editor, the cloud library, and seven layouts. Pro layouts unlock with a subscription.</Typography>
           </Box>
           <Box className="pricing-grid">
@@ -409,6 +438,7 @@ export default function LandingPage() {
           </Box>
           <Box>
             <Typography variant="overline">Product</Typography>
+            <a href="#ats">Why it works</a>
             <a href="#features">Features</a>
             <a href="#templates">Templates</a>
             <a href="#editor">Editor</a>

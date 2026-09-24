@@ -94,6 +94,7 @@ html:has(.landing-page) { scroll-behavior: smooth; }
 .pricing-grid p { color: #6c746f; line-height: 1.5; }
 .landing-cta { padding: 110px 0; background: #dcebe2; }.landing-cta h2 { max-width: 650px; margin-left: auto; margin-right: auto; }.landing-cta p { margin-bottom: 0; }.landing-cta .MuiButton-outlined { color: #1f4a3c; border-color: #8eae9f; background: #ffffff80; }
 .landing-footer { padding: 48px 0 28px; background: #fbfaf8; color: #69746e; border-top: 1px solid #e6e4de; }.landing-footer .landing-brand { color: #255c4b; }
+.ats-section { background: #f7f4ee; padding-top: 88px; padding-bottom: 88px; }
 .audience-section { background: #fbfaf8; padding-bottom: 36px; }
 .audience-grid, .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .audience-card, .feature-card { min-height: 148px; padding: 22px 22px 20px; border: 1px solid #dfdfd8; border-radius: 16px; background: #fff; }

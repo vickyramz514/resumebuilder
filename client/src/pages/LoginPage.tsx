@@ -45,7 +45,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
       </Link>
       <Box className="auth-brand-mid">
         <Typography component="h2">Build a resume that opens doors.</Typography>
-        <Typography component="p">A calm, guided editor with genuinely different templates, live preview, and one-click export — no design skills required.</Typography>
+        <Typography component="p">A calm, guided editor for an ATS-friendly resume. Live preview, no design skills, and Word or PDF when you are ready to send.</Typography>
         <Box component="ul" className="auth-feature-list">
           {FEATURES.map((feature) => <li key={feature}><span><Check size={13} /></span>{feature}</li>)}
         </Box>
