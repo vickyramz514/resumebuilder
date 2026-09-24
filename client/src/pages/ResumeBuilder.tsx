@@ -9,12 +9,12 @@ import {
 } from '@mui/material';
 import {
   Copy, Download, ExternalLink, Eye, EyeOff, FileJson, FilePlus2, FileText, Menu as MenuIcon, MoreVertical,
-  Palette, PanelLeftClose, PanelLeftOpen, Plus, Share2, Sparkles, Undo2, ZoomIn, ZoomOut
+  Lock, Palette, PanelLeftClose, PanelLeftOpen, Plus, Share2, Sparkles, Undo2, ZoomIn, ZoomOut
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ResumePreview } from '../templates/ResumePreview';
 import { useActiveResume, useResumeStore } from '../store';
-import { TEMPLATE_CATALOG } from '../templates/catalog';
+import { TEMPLATE_CATALOG, isPaidTemplate } from '../templates/catalog';
 import type { FontFamily, ResumeDesign, ResumeDensity, SectionType, TemplateId } from '../types';
 import { PersonalForm } from '../components/PersonalForm';
 import { CertificationsForm, EducationForm, ExperienceForm, ProjectsForm, SkillsForm, SummaryForm } from '../components/SectionForms';
@@ -82,7 +82,7 @@ function ResumeBuilder() {
   const [tab, setTab] = useState<'editor' | 'design'>('editor');
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [aiOpen, setAiOpen] = useState(false);
-  const [paywallReason, setPaywallReason] = useState<'pdf' | 'ai' | null>(null);
+  const [paywallReason, setPaywallReason] = useState<'pdf' | 'ai' | 'template' | null>(null);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [zoom, setZoom] = useState(100);
   const [toast, setToast] = useState('');
@@ -215,6 +215,10 @@ function ResumeBuilder() {
   };
 
   const paid = hasPaidPlan(user);
+  const chooseTemplate = (templateId: TemplateId) => {
+    if (isPaidTemplate(templateId) && !paid) { setPaywallReason('template'); return; }
+    setTemplate(templateId);
+  };
   const openAi = () => {
     if (!paid) { setPaywallReason('ai'); return; }
     setAiOpen(true);
@@ -318,13 +322,13 @@ function ResumeBuilder() {
       <Box className="form-scroll">
         <Typography variant="overline" color="text.secondary" className="design-section-label">Template gallery</Typography>
         <Box className="template-picker">{TEMPLATE_CATALOG.map((item) => (
-          <Box key={item.id} className={`template-picker-option ${resume.template === item.id ? 'selected' : ''}`} onClick={() => setTemplate(item.id)} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setTemplate(item.id); }}>
+          <Box key={item.id} className={`template-picker-option ${item.tier === 'paid' ? 'is-paid' : 'is-free'} ${resume.template === item.id ? 'selected' : ''}`} onClick={() => chooseTemplate(item.id)} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') chooseTemplate(item.id); }}>
             <TemplateThumbnail template={item.id} compact />
             <Box className="template-picker-copy">
               <Typography variant="body2" fontWeight={750}>{item.label}</Typography>
               <Typography variant="caption" color="text.secondary">{item.description}</Typography>
             </Box>
-            {resume.template === item.id && <Chip label="Selected" size="small" color="primary" />}
+            {resume.template === item.id ? <Chip label="Selected" size="small" color="primary" /> : item.tier === 'paid' && !paid ? <Chip icon={<Lock size={11} />} label="Pro" size="small" /> : <Chip label="Free" size="small" variant="outlined" />}
           </Box>
         ))}</Box>
         <Typography variant="overline" color="text.secondary" display="block" mt={3} className="design-section-label">Accent color</Typography>

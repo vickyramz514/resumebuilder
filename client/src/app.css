@@ -19,6 +19,8 @@ body { background: #f4f7fb; color: #172033; font-family: Inter, ui-sans-serif, s
 .template-picker-option { display: grid; grid-template-columns: 86px minmax(0, 1fr) auto; gap: 11px; align-items: center; padding: 8px; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; transition: border-color .15s, background .15s, box-shadow .15s, transform .15s; }
 .template-picker-option:hover { border-color: #79a38f; background: #f8fbf9; transform: translateX(2px); }
 .template-picker-option.selected { border-color: #3d8867; background: #e7f2ec; box-shadow: 0 3px 10px #255c4b14; }
+.template-picker-option.is-paid { border-color: #e7d7b4; background: linear-gradient(180deg, #fffdf8, #fff); }
+.template-picker-option.is-paid:hover { border-color: #c4a574; background: #fffaf2; }
 .template-picker-copy { min-width: 0; }.template-picker-copy .MuiTypography-caption { display: block; line-height: 1.25; }
 .template-picker-option .MuiChip-root { height: 19px; font-size: 9px; }
 .design-section-label { letter-spacing: .6px !important; font-weight: 750 !important; color: #255c4b !important; }

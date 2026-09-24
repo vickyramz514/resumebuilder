@@ -18,7 +18,7 @@ function formatMoney(cents: number, currency = 'INR') {
 
 interface Props {
   open: boolean;
-  reason: 'pdf' | 'ai';
+  reason: 'pdf' | 'ai' | 'template';
   onClose: () => void;
 }
 
@@ -51,10 +51,12 @@ export function PaywallDialog({ open, reason, onClose }: Props) {
     }
   };
 
-  const title = reason === 'pdf' ? 'Subscribe to export PDF' : 'Subscribe to use AI';
+  const title = reason === 'pdf' ? 'Subscribe to export PDF' : reason === 'template' ? 'Subscribe for Pro templates' : 'Subscribe to use AI';
   const blurb = reason === 'pdf'
     ? 'PDF download unlocks on Starter and Pro. Subscribe with Razorpay, then export in one click.'
-    : 'The AI assistant unlocks on Starter and Pro. Subscribe with Razorpay, then generate suggestions.';
+    : reason === 'template'
+      ? 'Seven layouts stay free. Editorial, Folio, Lumen, Chronicle, Velvet, and the other gold-framed layouts unlock on Starter and Pro.'
+      : 'The AI assistant unlocks on Starter and Pro. Subscribe with Razorpay, then generate suggestions.';
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">

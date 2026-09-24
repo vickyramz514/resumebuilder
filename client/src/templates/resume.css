@@ -125,6 +125,43 @@
 .template-folio .resume-main { grid-column: 2; padding: 0 14mm 16mm 12mm; }
 .template-folio .resume-monogram { display: none; }
 
+/* Harbor — free, tinted labels and a quiet left edge */
+.template-harbor { box-shadow: inset 7px 0 0 #255c4b; }
+.template-harbor .resume-header { border-bottom: 0; padding-bottom: 8px; }
+.template-harbor .resume-header h1 { font-weight: 650; letter-spacing: -1px; }
+.template-harbor .resume-section h2 { display: inline-block; border: 0; padding: 3px 8px; border-radius: 4px; background: #e7f2ec; color: #255c4b !important; letter-spacing: 1.2px; }
+
+/* Lumen — Pro, gradient masthead and a rounded sidebar */
+.template-lumen { background: linear-gradient(#fff, #fbf7f1 40%); }
+.template-lumen .resume-header { margin: -16mm -16mm 0; padding: 18mm 16mm 22px; background: linear-gradient(115deg, var(--accent, #0f766e), #1f4a3c 58%, #c4a574); border: 0; }
+.template-lumen .resume-header h1, .template-lumen .resume-header p { color: #fff; }
+.template-lumen .resume-monogram { background: transparent !important; border: 2px solid rgba(255,255,255,.8); }
+.template-lumen .resume-columns { margin-top: 22px; }
+.template-lumen .resume-aside { background: #fff; border: 1px solid #eadfce; border-radius: 18px; padding: 16px; box-shadow: 0 10px 24px #8a5a2b12; }
+.template-lumen .resume-aside .resume-section h2 { border: 0; letter-spacing: 1.4px; }
+.template-lumen .skill-list span { border: 0; border-radius: 999px; background: #f4efe6; }
+
+/* Chronicle — Pro, a gold timeline beside each section */
+.template-chronicle { padding-left: 20mm; }
+.template-chronicle .resume-header { border-bottom: 0; }
+.template-chronicle .resume-header h1 { font-size: 34px; letter-spacing: -1.2px; }
+.template-chronicle .resume-section { position: relative; padding-left: 18px; }
+.template-chronicle .resume-section:before { content: ""; position: absolute; left: 3px; top: 14px; bottom: 0; width: 1px; background: #e4d3b0; }
+.template-chronicle .resume-section h2 { border: 0; padding-left: 0; }
+.template-chronicle .resume-section h2:before { content: ""; position: absolute; left: 0; top: 4px; width: 7px; height: 7px; border-radius: 50%; background: #8a5a2b; }
+.template-chronicle .resume-entry { padding-left: 2px; }
+
+/* Velvet — Pro, charcoal masthead on warm paper */
+.template-velvet { background: #f6f0e7; font-family: Georgia, "Times New Roman", serif; }
+.template-velvet .resume-header { margin: -16mm -16mm 0; padding: 16mm; background: #1c1714; border: 0; }
+.template-velvet .resume-header h1 { color: #f6efe4; font-weight: 500; letter-spacing: 1.4px; text-transform: uppercase; font-size: 24px; }
+.template-velvet .resume-header p { color: #e4c98a; letter-spacing: 2px; text-transform: uppercase; font-size: 10px; font-family: var(--resume-font-family, Arial, sans-serif); }
+.template-velvet .resume-monogram { background: #e4c98a !important; color: #1c1714; }
+.template-velvet .resume-columns { margin-top: 20px; }
+.template-velvet .resume-aside .resume-section h2 { color: #8a5a2b !important; border-bottom: 1px solid #e4c98a; font-family: var(--resume-font-family, Arial, sans-serif); }
+.template-velvet .resume-main .resume-section h2 { border-bottom: 0; border-top: 1px solid #1c1714; padding-top: 6px; color: #1c1714 !important; font-family: var(--resume-font-family, Arial, sans-serif); }
+.template-velvet .skill-list span { border-radius: 0; border-color: #d9c7a3; background: transparent; }
+
 .density-compact .resume-section { margin-top: calc(var(--resume-spacing, 18px) * .7); }.density-compact .resume-entry { margin-bottom: 7px; }.density-compact .resume-header { padding-bottom: 11px; }.density-airy .resume-section { margin-top: calc(var(--resume-spacing, 18px) * 1.25); }.density-airy .resume-entry { margin-bottom: 16px; }
 .export-mode { box-shadow: none; width: 190mm; min-height: 277mm; }
 .resume-sheet.is-interactive .is-editable { cursor: pointer; border-radius: 8px; transition: background .15s ease, box-shadow .15s ease; }
@@ -135,7 +172,10 @@
   .resume-contact { justify-content: flex-start; max-width: none; }
   .entry-heading { flex-wrap: wrap; }
   .has-sidebar .resume-columns { grid-template-columns: 1fr; }
-  .template-modern .resume-header { margin: -34px -34px 0; padding: 34px 34px 20px; border-radius: 0 0 14px 14px; }
+  .template-modern .resume-header, .template-lumen .resume-header, .template-velvet .resume-header { margin: -34px -34px 0; padding: 34px 34px 20px; }
+  .template-modern .resume-header { border-radius: 0 0 14px 14px; }
+  .template-harbor { box-shadow: inset 5px 0 0 #255c4b; }
+  .template-chronicle { padding-left: 28px; }
   .template-folio { display: block; padding: 28px; }
   .template-folio .resume-header, .template-folio .resume-main { padding: 0; }
   .template-folio .resume-aside { min-height: 0; margin-bottom: 16px; padding: 18px; }

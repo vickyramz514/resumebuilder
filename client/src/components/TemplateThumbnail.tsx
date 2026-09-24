@@ -6,8 +6,9 @@ export function TemplateThumbnail({ template, compact = false }: { template: Tem
   const copy = TEMPLATE_META[template] ?? TEMPLATE_META.professional;
   const isSidebar = copy.layout === 'sidebar';
   const invertedAside = template === 'creative' || template === 'folio';
-  return <Box className={`template-thumbnail template-thumbnail-${template}${compact ? ' compact' : ''}`} aria-label={`${copy.label} template`}>
-    {(template === 'modern' || template === 'executive') && <Box className="template-thumb-band" sx={{ bgcolor: copy.accent }} />}
+  return <Box className={`template-thumbnail template-thumbnail-${template}${compact ? ' compact' : ''}${copy.tier === 'paid' ? ' is-paid' : ' is-free'}`} aria-label={`${copy.label} template, ${copy.tier === 'paid' ? 'Pro' : 'Free'}`}>
+    <Box className={`template-tier ${copy.tier}`}>{copy.tier === 'paid' ? 'Pro' : 'Free'}</Box>
+    {(template === 'modern' || template === 'executive' || template === 'lumen' || template === 'velvet') && <Box className={`template-thumb-band${template === 'lumen' ? ' is-gradient' : ''}${template === 'velvet' ? ' is-dark' : ''}`} sx={{ bgcolor: copy.accent }} />}
     <Box className={`template-thumb-top${template === 'classic' ? ' is-centered' : ''}`}>
       <Box className="template-thumb-avatar" sx={isSidebar ? { bgcolor: template === 'modern' ? '#fff8' : copy.accent } : undefined} />
       <Box flex={1} className="template-thumb-identity">

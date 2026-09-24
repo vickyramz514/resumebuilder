@@ -27,8 +27,8 @@ function formatMoney(cents: number, currency = 'INR') {
 }
 
 const FALLBACK_PRICING: Pick<SubscriptionPlan, 'slug' | 'name' | 'priceCents' | 'currency' | 'billingCycle' | 'description'>[] = [
-  { slug: 'free', name: 'Free', priceCents: 0, currency: 'INR', billingCycle: null, description: '12 templates, cloud library, and the editor. No card required.' },
-  { slug: 'starter', name: 'Starter', priceCents: 65000, currency: 'INR', billingCycle: 'monthly', description: 'PDF export, AI writing assistant, and job-tailored rewrites.' }
+  { slug: 'free', name: 'Free', priceCents: 0, currency: 'INR', billingCycle: null, description: '7 templates, cloud library, and the editor. No card required.' },
+  { slug: 'starter', name: 'Starter', priceCents: 65000, currency: 'INR', billingCycle: 'monthly', description: '9 Pro templates, PDF export, and the AI writing assistant.' }
 ];
 
 const audiences = [
@@ -43,7 +43,7 @@ const audiences = [
 const features = [
   { icon: Eye, title: 'Live preview', copy: 'The page updates as you type, so length, hierarchy, and spacing stay visible while you edit.', tone: 'green' },
   { icon: WandSparkles, title: 'Writing help you approve', copy: 'On the paid plan, improve a summary, rewrite bullets, draft project points, or tailor the page to a job. Nothing is saved until you apply a suggestion.', tone: 'amber' },
-  { icon: Layers, title: 'Twelve layouts, one resume', copy: 'Switch layouts without rewriting your content. The catalog runs from Professional and Minimal through Executive, Academic, Swiss, and Folio.', tone: 'green' },
+  { icon: Layers, title: 'Seven free, nine Pro', copy: 'Start on Harbor, Professional, Minimal, and four more. Editorial, Folio, Lumen, Chronicle, and Velvet stay marked in gold until you subscribe.', tone: 'green' },
   { icon: PenLine, title: 'Type, color, and density', copy: 'Pick a font, an accent, a type size, line height, spacing, and a comfortable, compact, or airy density.', tone: 'ink' },
   { icon: Download, title: 'A PDF that matches the page', copy: 'Subscribe to export the resume you see. The file follows the layout, type, and spacing in the preview.', tone: 'green' },
   { icon: Share2, title: 'Private until you share', copy: 'Keep the file in your library, or turn on a public link you can copy, open, and switch off again.', tone: 'amber' }
@@ -175,7 +175,7 @@ export default function LandingPage() {
             <Box className="landing-hero-copy">
               <Chip icon={<Sparkles size={14} />} label="Editor, templates, and writing help" className="landing-kicker" />
               <Typography component="h1">Make your next move <Box component="span">look inevitable.</Box></Typography>
-              <Typography className="landing-lede">Build a resume with a live preview, twelve layouts, and an assistant that only changes the lines you approve.</Typography>
+              <Typography className="landing-lede">Build a resume with a live preview, seven free layouts, and Pro designs you can see before you subscribe.</Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} mt={4}>
                 <Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={() => startCreating()}>Create my resume</Button>
                 <Button variant="outlined" size="large" startIcon={<Upload size={17} />} onClick={() => inputRef.current?.click()} disabled={isImporting}>{isImporting ? 'Reading file…' : 'Import JSON resume'}</Button>
@@ -222,12 +222,18 @@ export default function LandingPage() {
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={2}>
             <Typography><strong>One library</strong> for the draft, the tailored version, and the page you send.</Typography>
             <Stack direction="row" spacing={{ xs: 2, sm: 5 }}>
-              <Box><strong>12</strong><span>layouts</span></Box>
+              <Box><strong>7</strong><span>free layouts</span></Box>
+              <Box><strong>9</strong><span>Pro layouts</span></Box>
               <Box><strong>Live</strong><span>preview</span></Box>
-              <Box><strong>PDF</strong><span>on the paid plan</span></Box>
             </Stack>
           </Stack>
         </Container>
+      </Box>
+
+      <Box className="landing-marquee" aria-hidden="true">
+        <Box className="landing-marquee-track">
+          {[...TEMPLATE_CATALOG, ...TEMPLATE_CATALOG].map((template, index) => <span key={`${template.id}-${index}`} className={template.tier === 'paid' ? 'pro' : undefined}>{template.label}</span>)}
+        </Box>
       </Box>
 
       <Box component="section" className="landing-section audience-section">
@@ -271,19 +277,22 @@ export default function LandingPage() {
           <Box className="section-intro">
             <Chip label="Start with a strong foundation" />
             <Typography variant="h2">A template for the way you want to be read.</Typography>
-            <Typography>Every layout is built for a skim: clear headings, real text, and a rhythm you can still edit.</Typography>
+            <Typography>Free layouts are ready now. Pro layouts wear a gold frame so you can tell them apart before you subscribe.</Typography>
           </Box>
-          <Box className="template-showcase">
-            {TEMPLATE_CATALOG.map((template) => <Box key={template.id} className="showcase-card">
-              <TemplateThumbnail template={template.id} />
-              <Box className="showcase-card-copy">
-                <Typography variant="overline" className="showcase-best-for">{template.description}</Typography>
-                <Typography variant="h6">{template.label}</Typography>
-                <Typography variant="body2">{template.pitch}</Typography>
-                <Button size="small" endIcon={<ArrowRight size={15} />} onClick={() => startCreating(template.id)}>Use this template</Button>
-              </Box>
-            </Box>)}
-          </Box>
+          {(['free', 'paid'] as const).map((tier) => <Box key={tier} className="template-group">
+            <Typography variant="overline" className={`template-group-label ${tier}`}>{tier === 'free' ? 'Free to use' : 'Pro layouts'}</Typography>
+            <Box className="template-showcase">
+              {TEMPLATE_CATALOG.filter((template) => template.tier === tier).map((template) => <Box key={template.id} className={`showcase-card${template.tier === 'paid' ? ' is-paid' : ''}`}>
+                <TemplateThumbnail template={template.id} />
+                <Box className="showcase-card-copy">
+                  <Typography variant="overline" className="showcase-best-for">{template.description}</Typography>
+                  <Typography variant="h6">{template.label}</Typography>
+                  <Typography variant="body2">{template.pitch}</Typography>
+                  <Button size="small" endIcon={<ArrowRight size={15} />} onClick={() => startCreating(template.id)}>{template.tier === 'paid' ? 'Unlock this template' : 'Use this template'}</Button>
+                </Box>
+              </Box>)}
+            </Box>
+          </Box>)}
         </Container>
       </Box>
 
@@ -345,7 +354,7 @@ export default function LandingPage() {
           <Box className="section-intro">
             <Chip label="Simple plans" />
             <Typography variant="h2">Start free. Subscribe for PDF and AI.</Typography>
-            <Typography>Checkout uses Razorpay. The free plan includes the editor, the cloud library, and all twelve layouts.</Typography>
+            <Typography>Checkout uses Razorpay. The free plan includes the editor, the cloud library, and seven layouts. Pro layouts unlock with a subscription.</Typography>
           </Box>
           <Box className="pricing-grid">
             {pricingPlans.map((plan) => {

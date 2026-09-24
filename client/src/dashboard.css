@@ -43,6 +43,7 @@
 .user-chip:hover { background: #f1f5f2; }
 .template-choice { transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
 .template-choice:hover { border-color: #79a38f; box-shadow: 0 8px 18px #23463a12; transform: translateY(-2px); }
+.template-choice.is-paid { border-color: #e4c98a; background: #fffdf8; }
 .dialog-title-icon { display: flex; align-items: center; gap: 10px; }
 .dialog-icon-badge { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: #e7f2ec; color: #255c4b; flex-shrink: 0; }
 @keyframes dashboard-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
