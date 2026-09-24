@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /billing
+Disallow: /resume
+Disallow: /login
+Disallow: /register
+Disallow: /r/
+
+Sitemap: https://resume.datacaptain.in/sitemap.xml
