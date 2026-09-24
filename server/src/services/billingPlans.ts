@@ -27,7 +27,7 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
     isActive: true,
     adminOnly: false,
     sortOrder: 0,
-    metadata: { unlocksAtPaid: ['PDF export', 'AI writing assistant', 'Job-tailored rewrites'] }
+    metadata: { unlocksAtPaid: ['PDF and Word export', 'AI writing assistant', 'Job-tailored rewrites'] }
   },
   {
     name: 'Starter',
@@ -39,7 +39,7 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
     creditsPerMonth: 0,
     billingCycle: 'monthly',
     razorpayPlanId: starterPlanId(),
-    features: ['Everything in Free', '9 Pro templates', 'PDF export', 'Gemini AI assistant', 'Job-description tailoring'] as Prisma.InputJsonValue,
+    features: ['Everything in Free', '9 Pro templates', 'PDF and Word export', 'Gemini AI assistant', 'Job-description tailoring'] as Prisma.InputJsonValue,
     isActive: true,
     adminOnly: false,
     sortOrder: 1,
@@ -48,7 +48,7 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
   {
     name: 'Pro',
     slug: 'pro',
-    description: 'AI-assisted resumes, PDF export, and extra AI capacity',
+    description: 'AI-assisted resumes, PDF and Word export, and extra AI capacity',
     priceCents: 129900,
     currency: 'INR',
     credits: 0,

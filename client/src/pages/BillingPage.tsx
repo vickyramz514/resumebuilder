@@ -156,7 +156,7 @@ export default function BillingPage() {
               ) : (
                 <>
                   <Typography variant="h5" fontWeight={750} mt={1}>Free tier</Typography>
-                  <Typography color="text.secondary" mt={1}>Upgrade below to unlock PDF export and the AI assistant.</Typography>
+                  <Typography color="text.secondary" mt={1}>Upgrade below to unlock PDF and Word export and the AI assistant.</Typography>
                 </>
               )}
             </CardContent>

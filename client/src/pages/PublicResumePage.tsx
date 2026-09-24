@@ -3,6 +3,7 @@ import { Alert, Box, Button, CircularProgress, Stack, Typography } from '@mui/ma
 import { Download, Sparkles } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { ResumePreview } from '../templates/ResumePreview';
+import { apiUrl } from '../services/api';
 import type { Resume, TemplateId } from '../types';
 
 export default function PublicResumePage() {
@@ -12,7 +13,7 @@ export default function PublicResumePage() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/public/resumes/${slug}`)
+    fetch(apiUrl(`/api/public/resumes/${slug}`))
       .then((response) => response.ok ? response.json() : Promise.reject())
       .then((body) => {
         setResume({
@@ -41,7 +42,7 @@ export default function PublicResumePage() {
         <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
           <Stack direction="row" alignItems="center" spacing={1}><Sparkles size={16} /><Typography fontWeight={800}>ResumeForge</Typography></Stack>
         </Link>
-        {pdfExport && <Button startIcon={<Download size={16} />} onClick={() => window.open(`/api/public/resumes/${slug}/pdf`, '_blank')}>Download PDF</Button>}
+        {pdfExport && <Button startIcon={<Download size={16} />} onClick={() => window.open(apiUrl(`/api/public/resumes/${slug}/pdf`), '_blank')}>Download PDF</Button>}
       </Stack>
       <Box sx={{ p: { xs: 1, sm: 5 }, display: 'flex', justifyContent: 'center' }}>
         <ResumePreview resume={resume} />

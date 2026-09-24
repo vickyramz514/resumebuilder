@@ -21,7 +21,7 @@ export async function requirePaidPlan(req: Request, res: Response, next: NextFun
       return res.status(402).json({
         error: {
           code: 'PAYWALL',
-          message: 'PDF export and AI writing are included on Starter and Pro. Subscribe to continue.'
+          message: 'PDF and Word export, and AI writing, are included on Starter and Pro. Subscribe to continue.'
         }
       });
     }

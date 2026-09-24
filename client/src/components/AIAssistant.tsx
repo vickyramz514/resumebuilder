@@ -53,7 +53,7 @@ export function AIAssistant({ open, onClose, resume, onApply }: Props) {
       setSelected(true);
     } catch (cause) {
       if (cause instanceof ApiError && (cause.status === 402 || cause.code === 'PAYWALL')) {
-        setError('PDF export and AI writing are included on Starter and Pro. Subscribe to continue.');
+        setError('PDF and Word export, and AI writing, are included on Starter and Pro. Subscribe to continue.');
       } else {
         setError(cause instanceof Error ? cause.message : 'AI writing failed. Please try again.');
       }

@@ -25,6 +25,8 @@ import { PaywallDialog } from '../components/PaywallDialog';
 import { getResumeCompleteness } from '../utils/completeness';
 import { applyAiSuggestion } from '../utils/applyAiSuggestion';
 import { hasPaidPlan } from '../utils/entitlements';
+import { apiUrl } from '../services/api';
+import { buildResumeDocx } from '../services/docxExport';
 import { useAuthStore } from '../store/authStore';
 import {
   createResume, deleteResume as deleteCloudResume, duplicateResume as duplicateCloudResume, getResume,
@@ -83,7 +85,8 @@ function ResumeBuilder() {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [aiOpen, setAiOpen] = useState(false);
   const [paywallReason, setPaywallReason] = useState<'pdf' | 'ai' | 'template' | null>(null);
-  const [exportingPdf, setExportingPdf] = useState(false);
+  const [exporting, setExporting] = useState<'pdf' | 'docx' | null>(null);
+  const [downloadAnchor, setDownloadAnchor] = useState<HTMLElement | null>(null);
   const [zoom, setZoom] = useState(100);
   const [toast, setToast] = useState('');
   const [shareOpen, setShareOpen] = useState(false);
@@ -224,6 +227,15 @@ function ResumeBuilder() {
     setAiOpen(true);
   };
 
+  const downloadBlob = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const exportPdf = async () => {
     if (!resume) return;
     if (!paid) { setPaywallReason('pdf'); return; }
@@ -233,26 +245,33 @@ function ResumeBuilder() {
     const token = localStorage.getItem('resumeforge_token');
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers.Authorization = `Bearer ${token}`;
-    setExportingPdf(true);
+    setExporting('pdf');
     try {
-      const response = await fetch(routeId ? `/api/resumes/${routeId}/pdf` : '/api/pdf', {
+      const response = await fetch(apiUrl(routeId ? `/api/resumes/${routeId}/pdf` : '/api/pdf'), {
         method: 'POST',
         headers,
         body: JSON.stringify({ resume, html: `<html><head><style>${css}</style></head><body>${node.outerHTML}</body></html>` })
       });
       if (response.status === 402) { setPaywallReason('pdf'); return; }
       if (!response.ok) { setToast('Unable to export PDF. Try again in a moment.'); return; }
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${resume.personal.name || 'resume'}.pdf`;
-      link.click();
-      URL.revokeObjectURL(url);
+      downloadBlob(await response.blob(), `${resume.personal.name || 'resume'}.pdf`);
     } catch {
       setToast('Unable to export PDF. Try again in a moment.');
     } finally {
-      setExportingPdf(false);
+      setExporting(null);
+    }
+  };
+
+  const exportDocx = async () => {
+    if (!resume) return;
+    if (!paid) { setPaywallReason('pdf'); return; }
+    setExporting('docx');
+    try {
+      downloadBlob(await buildResumeDocx(resume), `${resume.personal.name || 'resume'}.docx`);
+    } catch {
+      setToast('Unable to export Word. Try again in a moment.');
+    } finally {
+      setExporting(null);
     }
   };
 
@@ -401,12 +420,16 @@ function ResumeBuilder() {
           <Tooltip title={paid ? 'Improve with AI' : 'Subscribe to use AI'}>
             <IconButton className="topbar-icon-btn" aria-label="Open AI assistant" onClick={openAi} sx={{ display: { xs: 'inline-flex', md: 'none' } }}><Sparkles size={18} /></IconButton>
           </Tooltip>
-          <Tooltip title={paid ? 'Download a PDF copy' : 'Subscribe to export PDF'}>
-            <Button onClick={exportPdf} startIcon={<Download size={17} />} variant="contained" size="small" disabled={exportingPdf}>
-              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{exportingPdf ? 'Exporting…' : 'Export PDF'}</Box>
-              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>{exportingPdf ? '…' : 'Export'}</Box>
+          <Tooltip title={paid ? 'Download PDF or Word' : 'Subscribe to download PDF or Word'}>
+            <Button onClick={(event) => { if (!paid) { setPaywallReason('pdf'); return; } setDownloadAnchor(event.currentTarget); }} startIcon={<Download size={17} />} variant="contained" size="small" disabled={Boolean(exporting)} aria-haspopup="menu" aria-expanded={Boolean(downloadAnchor)}>
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{exporting === 'pdf' ? 'Exporting PDF…' : exporting === 'docx' ? 'Exporting Word…' : 'Download'}</Box>
+              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>{exporting ? '…' : 'Download'}</Box>
             </Button>
           </Tooltip>
+          <Menu anchorEl={downloadAnchor} open={Boolean(downloadAnchor)} onClose={() => setDownloadAnchor(null)}>
+            <MenuItem onClick={() => { setDownloadAnchor(null); void exportPdf(); }}><FileText size={15} />&nbsp; PDF</MenuItem>
+            <MenuItem onClick={() => { setDownloadAnchor(null); void exportDocx(); }}><FileText size={15} />&nbsp; Word (.docx)</MenuItem>
+          </Menu>
           <Tooltip title="More resume actions">
             <IconButton className="topbar-icon-btn" aria-label="More resume actions" onClick={(e) => setMenuAnchor(e.currentTarget)}><MoreVertical size={19} /></IconButton>
           </Tooltip>

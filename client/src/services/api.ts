@@ -3,6 +3,10 @@ const apiBaseUrl = configuredApiUrl
   ? `${configuredApiUrl.startsWith('http://') || configuredApiUrl.startsWith('https://') ? '' : 'https://'}${configuredApiUrl}`.replace(/\/$/, '')
   : '';
 
+export function apiUrl(path: string) {
+  return `${apiBaseUrl}${path}`;
+}
+
 export class ApiError extends Error {
   status: number;
   code?: string;
@@ -20,7 +24,7 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
   headers.set('Content-Type', 'application/json');
   if (token) headers.set('Authorization', ['Bearer', token].join(' '));
 
-  const response = await fetch(`${apiBaseUrl}${path}`, { ...options, headers });
+  const response = await fetch(apiUrl(path), { ...options, headers });
   if (response.status === 204) return undefined as T;
 
   const body = await response.json().catch(() => ({}));

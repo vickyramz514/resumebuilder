@@ -6,7 +6,7 @@ import { useAuthStore } from '../store/authStore';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 import '../auth.css';
 
-const FEATURES = ['Twelve polished, genuinely different templates', 'Auto-save with real-time preview', 'PDF export and AI writing on Starter'];
+const FEATURES = ['Twelve polished, genuinely different templates', 'Auto-save with real-time preview', 'PDF and Word export, plus AI writing, on Starter'];
 
 export default function LoginPage() {
   const navigate = useNavigate(); const location = useLocation();

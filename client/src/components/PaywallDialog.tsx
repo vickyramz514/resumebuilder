@@ -51,9 +51,9 @@ export function PaywallDialog({ open, reason, onClose }: Props) {
     }
   };
 
-  const title = reason === 'pdf' ? 'Subscribe to export PDF' : reason === 'template' ? 'Subscribe for Pro templates' : 'Subscribe to use AI';
+  const title = reason === 'pdf' ? 'Subscribe to download your resume' : reason === 'template' ? 'Subscribe for Pro templates' : 'Subscribe to use AI';
   const blurb = reason === 'pdf'
-    ? 'PDF download unlocks on Starter and Pro. Subscribe with Razorpay, then export in one click.'
+    ? 'PDF and Word downloads unlock on Starter and Pro. Subscribe with Razorpay, then export in one click.'
     : reason === 'template'
       ? 'Seven layouts stay free. Editorial, Folio, Lumen, Chronicle, Velvet, and the other gold-framed layouts unlock on Starter and Pro.'
       : 'The AI assistant unlocks on Starter and Pro. Subscribe with Razorpay, then generate suggestions.';

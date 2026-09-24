@@ -28,7 +28,7 @@ function formatMoney(cents: number, currency = 'INR') {
 
 const FALLBACK_PRICING: Pick<SubscriptionPlan, 'slug' | 'name' | 'priceCents' | 'currency' | 'billingCycle' | 'description'>[] = [
   { slug: 'free', name: 'Free', priceCents: 0, currency: 'INR', billingCycle: null, description: '7 templates, cloud library, and the editor. No card required.' },
-  { slug: 'starter', name: 'Starter', priceCents: 65000, currency: 'INR', billingCycle: 'monthly', description: '9 Pro templates, PDF export, and the AI writing assistant.' }
+  { slug: 'starter', name: 'Starter', priceCents: 65000, currency: 'INR', billingCycle: 'monthly', description: '9 Pro templates, PDF and Word export, and the AI writing assistant.' }
 ];
 
 const audiences = [
@@ -73,7 +73,7 @@ const steps = [
 ];
 
 const faqs = [
-  { q: 'Do I need an account?', a: 'Saving to your library and sharing a link use an account. PDF export and the writing assistant are on the paid plan. This page sends you to create an account, or back to your dashboard if you are already signed in.' },
+  { q: 'Do I need an account?', a: 'Saving to your library and sharing a link use an account. PDF and Word downloads, plus the writing assistant, are on the paid plan. This page sends you to create an account, or back to your dashboard if you are already signed in.' },
   { q: 'Will the assistant overwrite my resume?', a: 'No. Suggestions open in a review panel. They are written into the resume only after you apply the ones you want.' },
   { q: 'What can I import?', a: 'A ResumeForge JSON export. The importer checks that the file has resume content, then keeps it ready so you can save it to your library.' },
   { q: 'Can I change the template later?', a: 'Yes. Your content stays in place when you switch layouts. Font, accent, spacing, and density live in the editor and can change at any time.' },
