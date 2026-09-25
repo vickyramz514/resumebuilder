@@ -126,3 +126,20 @@ model Payment {
   @@index([userId])
   @@index([provider, providerId])
 }
+
+model SeoPage {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  metaDescription String   @map("meta_description")
+  h1              String
+  content         String
+  keywords        String[]
+  canonicalUrl    String   @map("canonical_url")
+  published       Boolean  @default(false)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([published])
+  @@map("seo_pages")
+}

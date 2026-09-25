@@ -10,12 +10,14 @@ import publicRoutes from './routes/public.routes.js';
 import pdfRoutes from './routes/pdf.routes.js';
 import aiRoutes from './routes/ai.routes.js';
 import subscriptionRoutes from './routes/subscription.routes.js';
+import seoRoutes from './routes/seo.routes.js';
 import { handleRazorpayCallback, handleRazorpayWebhook } from './routes/payment.routes.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import { requireAuth } from './middleware/auth.middleware.js';
 import { requirePaidPlan } from './middleware/paid.middleware.js';
 import { renderPdf } from './services/pdf.service.js';
 import { ensureBillingPlans } from './services/billingPlans.js';
+import { ensureSeoPages, robotsTxt, seoHtml, seoNotFoundHtml, sitemapXml } from './services/seoPages.js';
 
 const app = express();
 const isAllowedOrigin = (origin?: string) => {
@@ -47,6 +49,27 @@ app.use('/api/public', publicRoutes);
 app.use('/api/resumes', pdfRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/seo', seoRoutes);
+app.get('/sitemap.xml', async (_req, res, next) => {
+  try {
+    const xml = await sitemapXml();
+    return res.set({ 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' }).send(xml);
+  } catch (error) { return next(error); }
+});
+app.get('/robots.txt', (_req, res) => {
+  return res.set({ 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' }).send(robotsTxt());
+});
+app.get('/resume-builder/:slug', async (req, res, next) => {
+  try {
+    const slug = String(req.params.slug ?? '');
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+      return res.status(404).set({ 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex' }).send(seoNotFoundHtml());
+    }
+    const page = await prisma.seoPage.findFirst({ where: { slug, published: true } });
+    if (!page) return res.status(404).set({ 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex' }).send(seoNotFoundHtml());
+    return res.set({ 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' }).send(seoHtml(page));
+  } catch (error) { return next(error); }
+});
 app.post('/api/pdf', requireAuth, requirePaidPlan, async (req, res, next) => {
   try {
     if (typeof req.body?.html !== 'string') return res.status(400).json({ error: { code: 'HTML_REQUIRED', message: 'html is required' } });
@@ -65,6 +88,7 @@ app.get('*', (_req, res) => res.sendFile(path.join(clientDist, 'index.html')));
 
 const server = app.listen(env.port, () => console.log(`ResumeForge API listening on http://localhost:${env.port}`));
 void ensureBillingPlans().catch((error) => console.error('Unable to seed billing plans', error));
+void ensureSeoPages().catch((error) => console.error('Unable to seed SEO pages', error));
 const shutdown = async () => { server.close(); await prisma.$disconnect(); };
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);

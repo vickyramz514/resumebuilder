@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import ResumeBuilder from './pages/ResumeBuilder';
 import PublicResumePage from './pages/PublicResumePage';
 import LandingPage from './pages/LandingPage';
+import SeoGuidePage from './pages/SeoGuidePage';
 import BillingPage from './pages/BillingPage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
@@ -28,6 +29,7 @@ function App() {
       <Route path="/resume/:id/edit" element={<ResumeBuilder />} />
     </Route>
     <Route path="/" element={<LandingPage />} />
+    <Route path="/resume-builder/:slug" element={<SeoGuidePage />} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes></BrowserRouter>;
   return googleClientId ? <GoogleOAuthProvider clientId={googleClientId}>{routes}</GoogleOAuthProvider> : routes;

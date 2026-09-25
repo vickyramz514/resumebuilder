@@ -1,8 +1,7 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/sitemap.xml", "destination": "https://apiv1.datacaptain.in/sitemap.xml" },
+    { "source": "/resume-builder/:slug", "destination": "https://apiv1.datacaptain.in/resume-builder/:slug" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

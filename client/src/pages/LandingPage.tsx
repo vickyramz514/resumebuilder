@@ -15,7 +15,9 @@ import { TemplateThumbnail } from '../components/TemplateThumbnail';
 import { TEMPLATE_CATALOG } from '../templates/catalog';
 import { listPlans, type SubscriptionPlan } from '../services/billingApi';
 import type { TemplateId } from '../types';
+import { SEO_GUIDES } from '../content/seoGuides';
 import '../landing.css';
+import '../seo-guide.css';
 
 function formatMoney(cents: number, currency = 'INR') {
   if (cents <= 0) return '₹0';
@@ -457,6 +459,12 @@ export default function LandingPage() {
               : <button type="button" onClick={() => navigate('/login')}>Sign in</button>}
             <button type="button" onClick={() => navigate(isAuthenticated ? '/billing' : '/register')}>Plans</button>
             <button type="button" onClick={() => inputRef.current?.click()}>Import JSON</button>
+          </Box>
+        </Box>
+        <Box className="footer-guides">
+          <Typography variant="overline">Guides</Typography>
+          <Box>
+            {SEO_GUIDES.map((guide) => <a key={guide.slug} href={`/resume-builder/${guide.slug}`}>{guide.label}</a>)}
           </Box>
         </Box>
         <Divider sx={{ my: 2.5 }} />

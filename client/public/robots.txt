@@ -1,10 +1,14 @@
 User-agent: *
 Allow: /
+Allow: /resume-builder/
 Disallow: /dashboard
 Disallow: /billing
-Disallow: /resume
+Disallow: /account
 Disallow: /login
 Disallow: /register
+Disallow: /signup
+Disallow: /resume/
 Disallow: /r/
+Disallow: /api
 
 Sitemap: https://resume.datacaptain.in/sitemap.xml
