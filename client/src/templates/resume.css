@@ -198,6 +198,42 @@
 .template-noir .skill-list span { border-color: #3a3428; color: #f6efe4; background: transparent; }
 .template-noir .resume-monogram { color: #121417; }
 
+/* Linen — free, cream paper and a dotted rule */
+.template-linen { background: #f7f1e8; }
+.template-linen .resume-header { border-bottom: 1px dotted #c4ad90; }
+.template-linen .resume-header h1 { font-family: Georgia, "Times New Roman", serif; font-weight: 500; font-size: 34px; letter-spacing: -.6px; color: #3b2a1a; }
+.template-linen .resume-header p { font-style: italic; color: #6b5430; }
+.template-linen .resume-section h2 { border-bottom: 1px dotted #c4ad90; color: #8a5a2b !important; letter-spacing: 2px; }
+.template-linen .skill-list span { border: 0; border-bottom: 1px solid #d7c4a8; border-radius: 0; background: transparent; }
+
+/* Grove — free, forest rail and small-cap headings */
+.template-grove { box-shadow: inset 10px 0 0 #1f6b45; }
+.template-grove .resume-header { border-bottom: 0; padding-bottom: 8px; }
+.template-grove .resume-header h1 { letter-spacing: 1.6px; text-transform: uppercase; font-size: 26px; font-weight: 700; color: #143d28; }
+.template-grove .resume-header p { letter-spacing: .4px; color: #1f6b45; }
+.template-grove .resume-section h2 { display: inline-block; border: 0; padding: 2px 0; letter-spacing: 2.2px; color: #1f6b45 !important; }
+.template-grove .resume-section h2:after { content: ""; display: block; width: 28px; height: 2px; margin-top: 3px; background: #1f6b45; }
+.template-grove .skill-list span { border: 0; background: #e5f2ea; color: #143d28; border-radius: 2px; }
+
+/* Aurora — Pro, a pale wash and a rounded sidebar */
+.template-aurora { background: linear-gradient(#f3faf6, #fff 28%); }
+.template-aurora .resume-header { margin: -16mm -16mm 0; padding: 18mm 16mm 20px; background: linear-gradient(120deg, #d7efe4, #f7f1e4 70%); border: 0; }
+.template-aurora .resume-header h1 { color: #143d32; letter-spacing: -1px; }
+.template-aurora .resume-header p { color: #3d6b58; }
+.template-aurora .resume-monogram { border-radius: 16px; }
+.template-aurora .resume-columns { margin-top: 20px; }
+.template-aurora .resume-aside { background: #fff; border: 1px solid #d5e7dc; border-radius: 18px; padding: 16px; }
+.template-aurora .resume-aside .resume-section h2 { border: 0; color: #0f766e !important; }
+.template-aurora .skill-list span { border: 0; border-radius: 999px; background: #e7f5ee; color: #145c45; }
+
+/* Ledger — Pro, each entry sits on a ruled row */
+.template-ledger .resume-header { align-items: flex-end; border-bottom: 2px solid var(--accent, #1e3a5f); }
+.template-ledger .resume-header h1 { font-size: 30px; letter-spacing: -.8px; color: #152238; }
+.template-ledger .resume-section h2 { border: 0; margin-bottom: 4px; letter-spacing: 1.8px; color: var(--accent, #1e3a5f) !important; }
+.template-ledger .resume-entry { margin: 0; padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+.template-ledger .resume-entry:last-child { border-bottom: 0; }
+.template-ledger .skill-list span { border-radius: 0; border-color: #c5d0dc; background: #f8fafc; }
+
 .density-compact .resume-section { margin-top: calc(var(--resume-spacing, 18px) * .7); }.density-compact .resume-entry { margin-bottom: 7px; }.density-compact .resume-header { padding-bottom: 11px; }.density-airy .resume-section { margin-top: calc(var(--resume-spacing, 18px) * 1.25); }.density-airy .resume-entry { margin-bottom: 16px; }
 .export-mode { box-shadow: none; width: 190mm; min-height: 277mm; }
 .resume-sheet.is-interactive .is-editable { cursor: pointer; border-radius: 8px; transition: background .15s ease, box-shadow .15s ease; }
@@ -208,7 +244,8 @@
   .resume-contact { justify-content: flex-start; max-width: none; }
   .entry-heading { flex-wrap: wrap; }
   .has-sidebar .resume-columns { grid-template-columns: 1fr; }
-  .template-modern .resume-header, .template-lumen .resume-header, .template-velvet .resume-header, .template-slate .resume-header { margin: -34px -34px 16px; padding: 34px 34px 20px; }
+  .template-modern .resume-header, .template-lumen .resume-header, .template-velvet .resume-header, .template-slate .resume-header, .template-aurora .resume-header { margin: -34px -34px 16px; padding: 34px 34px 20px; }
+  .template-grove { box-shadow: inset 6px 0 0 #1f6b45; }
   .template-meridian .resume-section { padding-left: 0; }
   .template-meridian .resume-section h2 { position: static; width: auto; margin-bottom: 6px; }
   .template-modern .resume-header { border-radius: 0 0 14px 14px; }

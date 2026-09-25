@@ -23,14 +23,21 @@ body { background: #f4f7fb; color: #172033; font-family: Inter, ui-sans-serif, s
 .completeness-row { display: flex; align-items: center; gap: 8px; padding: 5px 4px; border-radius: 6px; font-size: 12px; color: #475569; cursor: pointer; }
 .completeness-row:hover, .completeness-row:focus-visible { background: #e7f2ec; color: #255c4b; outline: none; }
 .completeness-row.done { color: #3d8867; }
-.template-picker { display: flex; flex-direction: column; gap: 10px; margin-top: 9px; }
-.template-picker-option { display: grid; grid-template-columns: 86px minmax(0, 1fr) auto; gap: 11px; align-items: center; padding: 8px; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; transition: border-color .15s, background .15s, box-shadow .15s, transform .15s; }
-.template-picker-option:hover { border-color: #79a38f; background: #f8fbf9; transform: translateX(2px); }
-.template-picker-option.selected { border-color: #3d8867; background: #e7f2ec; box-shadow: 0 3px 10px #255c4b14; }
-.template-picker-option.is-paid { border-color: #e7d7b4; background: linear-gradient(180deg, #fffdf8, #fff); }
-.template-picker-option.is-paid:hover { border-color: #c4a574; background: #fffaf2; }
-.template-picker-copy { min-width: 0; }.template-picker-copy .MuiTypography-caption { display: block; line-height: 1.25; }
-.template-picker-option .MuiChip-root { height: 19px; font-size: 9px; }
+.template-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.template-group-editor + .template-group-editor { margin-top: 14px; }
+.template-group-kicker { display: block; letter-spacing: .08em; font-weight: 800; }
+.template-group-kicker.free { color: #255c4b; }
+.template-group-kicker.paid { color: #8a5a2b; }
+.template-picker-option { display: flex; flex-direction: column; gap: 6px; padding: 6px; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; background: #fff; transition: border-color .15s, box-shadow .15s; }
+.template-picker-option:hover { border-color: #79a38f; }
+.template-picker-option.selected { border-color: #255c4b; box-shadow: 0 0 0 1px #255c4b; }
+.template-picker-option.is-paid { border-color: #eadcc0; }
+.template-picker-option.is-paid:hover { border-color: #c4a574; }
+.template-picker-option.is-paid.selected { border-color: #8a5a2b; box-shadow: 0 0 0 1px #8a5a2b; }
+.template-picker-copy { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 2px 2px; }
+.template-picker-copy .MuiTypography-body2 { font-size: 12px; line-height: 1.2; }
+.template-picker-copy svg { color: #8a5a2b; flex-shrink: 0; }
+.template-picked { color: #255c4b; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
 .design-section-label { letter-spacing: .6px !important; font-weight: 750 !important; color: #255c4b !important; }
 .design-slider { padding: 10px 12px; border-radius: 10px; background: #f7f9f7; border: 1px solid #edf1ee; }
 .accent-swatch { position: relative; width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer; padding: 0; box-shadow: inset 0 0 0 1px #00000014; transition: transform .15s ease, box-shadow .15s ease; }

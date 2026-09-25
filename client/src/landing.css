@@ -69,6 +69,16 @@ html:has(.landing-page) { scroll-behavior: smooth; }
 .template-thumbnail-noir { background: #121417; padding-top: 0; }
 .template-thumbnail-noir .template-thumb-name { background: #f6efe4; }
 .template-thumbnail-noir .template-thumb-line { background: #3a3428; }
+.template-thumbnail-linen { background: #f7f1e8; }
+.template-thumbnail-linen .template-thumb-avatar { display: none; }
+.template-thumbnail-linen .template-thumb-heading { background: #8a5a2b !important; }
+.template-thumbnail-grove { background: #f3f8f4; box-shadow: inset 8px 0 0 #1f6b45; }
+.template-thumbnail-grove .template-thumb-avatar { display: none; }
+.template-thumbnail-aurora { background: #f4faf6; padding-top: 0; }
+.template-thumbnail-ledger { background: #f8fafc; }
+.template-thumbnail-ledger .template-thumb-avatar { display: none; }
+.template-thumbnail-ledger .template-thumb-section { border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+.template-thumb-band.is-wash { background: linear-gradient(120deg, #d7efe4, #f7f1e4) !important; }
 .template-thumb-band.is-navy { background: #1e293b !important; }
 .template-thumb-band.is-gradient { background: linear-gradient(115deg, #0f766e, #1f4a3c 55%, #c4a574) !important; }
 .template-thumb-band.is-dark { background: #1c1714 !important; }

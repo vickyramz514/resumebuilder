@@ -343,17 +343,23 @@ function ResumeBuilder() {
         <Typography variant="body2" color="text.secondary">Make it yours</Typography>
       </Box>
       <Box className="form-scroll">
-        <Typography variant="overline" color="text.secondary" className="design-section-label">Template gallery</Typography>
-        <Box className="template-picker">{TEMPLATE_CATALOG.map((item) => (
-          <Box key={item.id} className={`template-picker-option ${item.tier === 'paid' ? 'is-paid' : 'is-free'} ${resume.template === item.id ? 'selected' : ''}`} onClick={() => chooseTemplate(item.id)} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') chooseTemplate(item.id); }}>
-            <TemplateThumbnail template={item.id} compact />
-            <Box className="template-picker-copy">
-              <Typography variant="body2" fontWeight={750}>{item.label}</Typography>
-              <Typography variant="caption" color="text.secondary">{item.description}</Typography>
+        <Typography variant="overline" color="text.secondary" className="design-section-label">Templates</Typography>
+        {(['free', 'paid'] as const).map((tier) => (
+          <Box key={tier} className="template-group-editor">
+            <Typography variant="overline" className={`template-group-kicker ${tier}`}>{tier === 'free' ? 'Free' : 'Pro'}</Typography>
+            <Box className="template-picker">
+              {TEMPLATE_CATALOG.filter((item) => item.tier === tier).map((item) => (
+                <Box key={item.id} className={`template-picker-option ${item.tier === 'paid' ? 'is-paid' : 'is-free'} ${resume.template === item.id ? 'selected' : ''}`} onClick={() => chooseTemplate(item.id)} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') chooseTemplate(item.id); }}>
+                  <TemplateThumbnail template={item.id} compact />
+                  <Box className="template-picker-copy">
+                    <Typography variant="body2" fontWeight={750}>{item.label}</Typography>
+                    {resume.template === item.id ? <span className="template-picked">On</span> : item.tier === 'paid' && !paid ? <Lock size={12} /> : null}
+                  </Box>
+                </Box>
+              ))}
             </Box>
-            {resume.template === item.id ? <Chip label="Selected" size="small" color="primary" /> : item.tier === 'paid' && !paid ? <Chip icon={<Lock size={11} />} label="Pro" size="small" /> : <Chip label="Free" size="small" variant="outlined" />}
           </Box>
-        ))}</Box>
+        ))}
         <Typography variant="overline" color="text.secondary" display="block" mt={3} className="design-section-label">Accent color</Typography>
         <Stack direction="row" spacing={1.4} mt={1.25} useFlexGap flexWrap="wrap">{colors.map((color) => <Box key={color} component="button" aria-label={`Use ${color} accent`} onClick={() => updateResume({ accentColor: color })} className={`accent-swatch ${resume.accentColor === color ? 'selected' : ''}`} sx={{ bgcolor: color, color }} />)}</Stack>
         <Typography variant="overline" color="text.secondary" display="block" mt={3} className="design-section-label">Typography</Typography>

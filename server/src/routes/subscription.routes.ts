@@ -79,7 +79,8 @@ router.get('/plans', async (_req, res, next) => {
       where: { isActive: true, adminOnly: false },
       orderBy: { sortOrder: 'asc' },
       select: publicPlanSelect
-    })).filter((plan) => plan.slug !== 'pro' || env.razorpay.proPlanEnabled);
+    })).filter((plan) => plan.slug !== 'pro' || env.razorpay.proPlanEnabled)
+      .filter((plan) => !(String(plan.currency).toUpperCase() === 'INR' && plan.priceCents === 100));
     return res.json({
       success: true,
       data: {
@@ -128,6 +129,9 @@ router.post('/create', requireAuth, async (req, res, next) => {
     const plan = await prisma.subscriptionPlan.findFirst({ where: { slug: planSlug, isActive: true } });
     if (!plan) throw new BillingError('Plan not found.', 404, 'PLAN_NOT_FOUND');
     if (plan.slug === 'pro' && !env.razorpay.proPlanEnabled) {
+      throw new BillingError('This plan is currently unavailable.', 404, 'PLAN_DISABLED');
+    }
+    if (String(plan.currency).toUpperCase() === 'INR' && plan.priceCents === 100) {
       throw new BillingError('This plan is currently unavailable.', 404, 'PLAN_DISABLED');
     }
     if (plan.adminOnly) throw new BillingError('This plan is only available to admin users', 403, 'FORBIDDEN');

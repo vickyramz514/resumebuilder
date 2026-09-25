@@ -27,7 +27,11 @@ export type UserSubscription = {
   plan: Pick<SubscriptionPlan, 'id' | 'name' | 'slug' | 'credits' | 'creditsPerMonth' | 'priceCents' | 'billingCycle' | 'currency'>;
 };
 
-export const listPlans = () => apiRequest<{ success: boolean; data: { plans: SubscriptionPlan[] } }>('/api/subscriptions/plans').then((body) => body.data.plans);
+const isHiddenRupeePlan = (plan: Pick<SubscriptionPlan, 'priceCents' | 'currency'>) =>
+  plan.currency.toUpperCase() === 'INR' && plan.priceCents === 100;
+
+export const listPlans = () => apiRequest<{ success: boolean; data: { plans: SubscriptionPlan[] } }>('/api/subscriptions/plans')
+  .then((body) => body.data.plans.filter((plan) => !isHiddenRupeePlan(plan)));
 export const getSubscriptionStatus = () => apiRequest<{ success: boolean; data: { subscription: UserSubscription | null } }>('/api/subscriptions/status').then((body) => body.data.subscription);
 export const createSubscription = (planSlug: string) =>
   apiRequest<{ success: boolean; data: { subscriptionId: string; checkoutUrl: string; razorpayKeyId: string | null; planId: string; planSlug: string } }>(
