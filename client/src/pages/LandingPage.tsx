@@ -27,8 +27,8 @@ function formatMoney(cents: number, currency = 'INR') {
 }
 
 const FALLBACK_PRICING: Pick<SubscriptionPlan, 'slug' | 'name' | 'priceCents' | 'currency' | 'billingCycle' | 'description'>[] = [
-  { slug: 'free', name: 'Free', priceCents: 0, currency: 'INR', billingCycle: null, description: '7 templates, cloud library, and the editor. No card required.' },
-  { slug: 'starter', name: 'Starter', priceCents: 65000, currency: 'INR', billingCycle: 'monthly', description: '9 Pro templates, PDF and Word export, and the AI writing assistant.' }
+  { slug: 'free', name: 'Free', priceCents: 0, currency: 'INR', billingCycle: null, description: '9 templates, cloud library, and the editor. No card required.' },
+  { slug: 'starter', name: 'Starter', priceCents: 65000, currency: 'INR', billingCycle: 'monthly', description: '11 Pro templates, PDF and Word export, and the AI writing assistant.' }
 ];
 
 const audiences = [
@@ -43,7 +43,7 @@ const audiences = [
 const features = [
   { icon: Eye, title: 'Live preview', copy: 'The page updates as you type, so length, hierarchy, and spacing stay visible while you edit.', tone: 'green' },
   { icon: WandSparkles, title: 'Writing help you approve', copy: 'On the paid plan, improve a summary, rewrite bullets, draft project points, or tailor the page to a job. Nothing is saved until you apply a suggestion.', tone: 'amber' },
-  { icon: Layers, title: 'Seven free, nine Pro', copy: 'Start on Harbor, Professional, Minimal, and four more. Editorial, Folio, Lumen, Chronicle, and Velvet stay marked in gold until you subscribe.', tone: 'green' },
+  { icon: Layers, title: 'Nine free, eleven Pro', copy: 'Start on Atlas, Harbor, Classic, and six more. Meridian, Noir, Folio, and the other gold-framed layouts unlock when you subscribe.', tone: 'green' },
   { icon: PenLine, title: 'Type, color, and density', copy: 'Pick a font, an accent, a type size, line height, spacing, and a comfortable, compact, or airy density.', tone: 'ink' },
   { icon: Download, title: 'Word for the application, PDF for the person', copy: 'Subscribe to download. Word keeps one column and real headings for systems that scan the file. PDF matches the layout in the preview.', tone: 'green' },
   { icon: Share2, title: 'Private until you share', copy: 'Keep the file in your library, or turn on a public link you can copy, open, and switch off again.', tone: 'amber' }
@@ -224,8 +224,8 @@ export default function LandingPage() {
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={2}>
             <Typography><strong>One library</strong> for the draft, the tailored version, and the page you send.</Typography>
             <Stack direction="row" spacing={{ xs: 2, sm: 5 }}>
-              <Box><strong>7</strong><span>free layouts</span></Box>
-              <Box><strong>9</strong><span>Pro layouts</span></Box>
+              <Box><strong>9</strong><span>free layouts</span></Box>
+              <Box><strong>11</strong><span>Pro layouts</span></Box>
               <Box><strong>Live</strong><span>preview</span></Box>
             </Stack>
           </Stack>

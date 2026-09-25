@@ -21,6 +21,8 @@ export const TEMPLATE_CATALOG: TemplateMeta[] = [
   { id: 'classic', label: 'Classic', description: 'Centered and traditional', pitch: 'A centered, ATS-safe layout hiring managers already know how to read.', accent: '#1f2937', layout: 'single', tier: 'free' },
   { id: 'technical', label: 'Technical', description: 'Left rail, sharp type', pitch: 'A precise engineer-friendly layout with a left accent rail and crisp chips.', accent: '#4338ca', layout: 'single', tier: 'free' },
   { id: 'harbor', label: 'Harbor', description: 'Soft rules, open type', pitch: 'A calm free layout with tinted section labels and a quiet left edge.', accent: '#255c4b', layout: 'single', tier: 'free' },
+  { id: 'atlas', label: 'Atlas', description: 'Plain text, one column', pitch: 'A plain single column with black rules, for forms that scan the file.', accent: '#111827', layout: 'single', tier: 'free' },
+  { id: 'slate', label: 'Slate', description: 'Navy name block', pitch: 'A dark name block and a quiet page, still one reading order.', accent: '#1e293b', layout: 'single', tier: 'free' },
   { id: 'editorial', label: 'Editorial', description: 'Refined and distinctive', pitch: 'A refined, story-forward layout with a considered rhythm.', accent: '#8a5a2b', layout: 'single', tier: 'paid' },
   { id: 'creative', label: 'Creative', description: 'Expressive and warm', pitch: 'Warm visual accents for portfolios and people-first roles.', accent: '#7a3e52', layout: 'sidebar', tier: 'paid' },
   { id: 'executive', label: 'Executive', description: 'Serif with a strong rule', pitch: 'Quiet authority for senior roles, board CVs, and leadership searches.', accent: '#1e3a5f', layout: 'single', tier: 'paid' },
@@ -29,7 +31,9 @@ export const TEMPLATE_CATALOG: TemplateMeta[] = [
   { id: 'folio', label: 'Folio', description: 'Full-bleed dark sidebar', pitch: 'A gallery-like panel layout with a dark left column for contact and skills.', accent: '#15232c', layout: 'sidebar', tier: 'paid' },
   { id: 'lumen', label: 'Lumen', description: 'Gradient header', pitch: 'A luminous header and rounded sidebar for roles that should feel designed.', accent: '#0f766e', layout: 'sidebar', tier: 'paid' },
   { id: 'chronicle', label: 'Chronicle', description: 'Timeline', pitch: 'Experience runs down a gold timeline, so a long career reads as a story.', accent: '#8a5a2b', layout: 'single', tier: 'paid' },
-  { id: 'velvet', label: 'Velvet', description: 'Dark masthead', pitch: 'A charcoal masthead and warm paper for creative and leadership pages.', accent: '#1c1714', layout: 'sidebar', tier: 'paid' }
+  { id: 'velvet', label: 'Velvet', description: 'Dark masthead', pitch: 'A charcoal masthead and warm paper for creative and leadership pages.', accent: '#1c1714', layout: 'sidebar', tier: 'paid' },
+  { id: 'meridian', label: 'Meridian', description: 'Labels in the margin', pitch: 'Section names sit in the left margin, so a long page stays easy to scan.', accent: '#1e3a5f', layout: 'single', tier: 'paid' },
+  { id: 'noir', label: 'Noir', description: 'Full dark page', pitch: 'A black page with warm type and a gold rule, for roles that should feel designed.', accent: '#e4c98a', layout: 'sidebar', tier: 'paid' }
 ];
 
 export const TEMPLATE_IDS: TemplateId[] = TEMPLATE_CATALOG.map((item) => item.id);

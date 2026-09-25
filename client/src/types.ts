@@ -75,4 +75,4 @@ export interface Resume {
   hiddenSections?: SectionType[];
 }
 
-export type TemplateId = 'minimal' | 'professional' | 'modern' | 'editorial' | 'creative' | 'compact' | 'classic' | 'executive' | 'technical' | 'academic' | 'swiss' | 'folio' | 'harbor' | 'lumen' | 'chronicle' | 'velvet';
+export type TemplateId = 'minimal' | 'professional' | 'modern' | 'editorial' | 'creative' | 'compact' | 'classic' | 'executive' | 'technical' | 'academic' | 'swiss' | 'folio' | 'harbor' | 'lumen' | 'chronicle' | 'velvet' | 'atlas' | 'slate' | 'meridian' | 'noir';

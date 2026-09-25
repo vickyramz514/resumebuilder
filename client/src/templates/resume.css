@@ -162,6 +162,42 @@
 .template-velvet .resume-main .resume-section h2 { border-bottom: 0; border-top: 1px solid #1c1714; padding-top: 6px; color: #1c1714 !important; font-family: var(--resume-font-family, Arial, sans-serif); }
 .template-velvet .skill-list span { border-radius: 0; border-color: #d9c7a3; background: transparent; }
 
+/* Atlas — free, plain single column for a parser */
+.template-atlas .resume-header { display: block; border-bottom: 2px solid #111827; padding-bottom: 10px; }
+.template-atlas .resume-header h1 { font-size: 22px; font-weight: 700; letter-spacing: 0; }
+.template-atlas .resume-header p { font-size: 12px; color: #374151; }
+.template-atlas .resume-contact { justify-content: flex-start; max-width: none; margin-top: 8px; font-size: 10px; color: #111827; }
+.template-atlas .resume-section h2 { border: 0; border-bottom: 1px solid #111827; color: #111827 !important; letter-spacing: .2px; text-transform: none; font-size: 13px; font-weight: 700; }
+.template-atlas .skill-list span { border: 0; border-radius: 0; padding: 0 10px 0 0; }
+
+/* Slate — free, navy name block, one column underneath */
+.template-slate .resume-header { margin: -16mm -16mm 18px; padding: 16mm 16mm 18px; background: #1e293b; border: 0; }
+.template-slate .resume-header h1, .template-slate .resume-header p { color: #f8fafc; }
+.template-slate .resume-header p { color: #cbd5e1; }
+.template-slate .resume-contact { color: #e2e8f0; }
+.template-slate .resume-contact a { color: #e2e8f0; }
+.template-slate .resume-section h2 { color: #1e293b !important; border-bottom: 1px solid #cbd5e1; }
+
+/* Meridian — Pro, section names live in the left margin */
+.template-meridian .resume-header { border-bottom: 1px solid #d7dde6; }
+.template-meridian .resume-header h1 { font-size: 32px; letter-spacing: -1px; color: #152238; }
+.template-meridian .resume-section { position: relative; padding-left: 96px; }
+.template-meridian .resume-section h2 { position: absolute; left: 0; top: 2px; width: 84px; border: 0; margin: 0; padding: 0; font-size: 9px; letter-spacing: 1.1px; color: var(--accent, #1e3a5f) !important; }
+.template-meridian .skill-list span { border-radius: 0; border-color: #c5ced8; }
+
+/* Noir — Pro, a full dark page with a warm sidebar */
+.template-noir { background: #121417; color: #eceae4; }
+.template-noir .resume-header { border-bottom: 1px solid #3a3428; }
+.template-noir .resume-header h1 { color: #f6efe4; }
+.template-noir .resume-header p { color: #e4c98a; }
+.template-noir .resume-contact, .template-noir .resume-contact a { color: #d6d1c7; }
+.template-noir .resume-summary, .template-noir .entry-subheading, .template-noir .entry-heading span, .template-noir .resume-entry small { color: #c8c4bb; }
+.template-noir .resume-section h2 { color: #e4c98a !important; border-bottom-color: #3a3428; }
+.template-noir .resume-aside { background: #1c1a17; border-radius: 12px; padding: 16px; }
+.template-noir .resume-aside .resume-section h2 { color: #e4c98a !important; }
+.template-noir .skill-list span { border-color: #3a3428; color: #f6efe4; background: transparent; }
+.template-noir .resume-monogram { color: #121417; }
+
 .density-compact .resume-section { margin-top: calc(var(--resume-spacing, 18px) * .7); }.density-compact .resume-entry { margin-bottom: 7px; }.density-compact .resume-header { padding-bottom: 11px; }.density-airy .resume-section { margin-top: calc(var(--resume-spacing, 18px) * 1.25); }.density-airy .resume-entry { margin-bottom: 16px; }
 .export-mode { box-shadow: none; width: 190mm; min-height: 277mm; }
 .resume-sheet.is-interactive .is-editable { cursor: pointer; border-radius: 8px; transition: background .15s ease, box-shadow .15s ease; }
@@ -172,7 +208,9 @@
   .resume-contact { justify-content: flex-start; max-width: none; }
   .entry-heading { flex-wrap: wrap; }
   .has-sidebar .resume-columns { grid-template-columns: 1fr; }
-  .template-modern .resume-header, .template-lumen .resume-header, .template-velvet .resume-header { margin: -34px -34px 0; padding: 34px 34px 20px; }
+  .template-modern .resume-header, .template-lumen .resume-header, .template-velvet .resume-header, .template-slate .resume-header { margin: -34px -34px 16px; padding: 34px 34px 20px; }
+  .template-meridian .resume-section { padding-left: 0; }
+  .template-meridian .resume-section h2 { position: static; width: auto; margin-bottom: 6px; }
   .template-modern .resume-header { border-radius: 0 0 14px 14px; }
   .template-harbor { box-shadow: inset 5px 0 0 #255c4b; }
   .template-chronicle { padding-left: 28px; }

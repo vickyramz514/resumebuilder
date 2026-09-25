@@ -3,7 +3,7 @@ import { closestCenter, DndContext, type DragEndEvent, PointerSensor, useSensor,
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  Alert, AppBar, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Drawer,
+  Alert, AppBar, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Drawer,
   FormControl, IconButton, InputLabel, Menu, MenuItem, Select, Slider, Snackbar, Stack, Tab, Tabs,
   TextField, Toolbar, Tooltip, Typography, useMediaQuery
 } from '@mui/material';
@@ -21,6 +21,7 @@ import { CertificationsForm, EducationForm, ExperienceForm, ProjectsForm, Skills
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
 import { AIAssistant, type AssistantResult } from '../components/AIAssistant';
 import { CompletenessCard } from '../components/CompletenessCard';
+import { ContentSuggestions } from '../components/ContentSuggestions';
 import { PaywallDialog } from '../components/PaywallDialog';
 import { getResumeCompleteness } from '../utils/completeness';
 import { applyAiSuggestion } from '../utils/applyAiSuggestion';
@@ -35,6 +36,7 @@ import {
 import '../app.css';
 
 const sectionLabels: Record<SectionType, string> = { summary: 'Profile', experience: 'Experience', education: 'Education', skills: 'Skills', projects: 'Projects', certifications: 'Certifications' };
+const shortLabels: Record<SectionType | 'personal', string> = { personal: 'Details', summary: 'Profile', experience: 'Work', education: 'School', skills: 'Skills', projects: 'Projects', certifications: 'Certs' };
 const sectionIcons: Record<SectionType, string> = { summary: '01', experience: '02', education: '03', skills: '04', projects: '05', certifications: '06' };
 const colors = ['#202124', '#626871', '#0f766e', '#8a5a2b', '#7a3e52', '#1e3a5f', '#4338ca', '#15232c', '#7c2d12', '#111827'];
 const fonts: { id: FontFamily; label: string }[] = [
@@ -90,6 +92,7 @@ function ResumeBuilder() {
   const [zoom, setZoom] = useState(100);
   const [toast, setToast] = useState('');
   const [shareOpen, setShareOpen] = useState(false);
+  const [showStrength, setShowStrength] = useState(false);
   const [shareInfo, setShareInfo] = useState<{ isPublic: boolean; publicSlug?: string | null }>({ isPublic: false });
   const [library, setLibrary] = useState<Array<{ id: string; title: string; updatedAt: string }>>([]);
   const isMobile = useMediaQuery('(max-width:900px)');
@@ -316,15 +319,16 @@ function ResumeBuilder() {
   const editorPanel = (
     <Box className="editor-panel">
       <Box className="editor-heading">
-        <Typography variant="h6">{selectedSection === 'personal' ? 'Personal details' : sectionLabels[selectedSection as SectionType]}</Typography>
-        <Typography variant="body2" color="text.secondary">Start here, then work through each step. Changes save automatically.</Typography>
-        <Stack direction="row" spacing={1} mt={1.25}>
-          <Button size="small" disabled={navIndex <= 0} onClick={() => selectSection(navSections[navIndex - 1])}>Back</Button>
-          <Button size="small" variant="outlined" disabled={navIndex >= navSections.length - 1} onClick={() => selectSection(navSections[navIndex + 1])}>Next section</Button>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+          <Typography variant="h6">{selectedSection === 'personal' ? 'Personal details' : sectionLabels[selectedSection as SectionType]}</Typography>
+          <Stack direction="row" spacing={0.5}>
+            <Button size="small" disabled={navIndex <= 0} onClick={() => selectSection(navSections[navIndex - 1])}>Back</Button>
+            <Button size="small" variant="outlined" disabled={navIndex >= navSections.length - 1} onClick={() => selectSection(navSections[navIndex + 1])}>Next</Button>
+          </Stack>
         </Stack>
+        <ContentSuggestions section={selectedSection} onApplied={setToast} />
       </Box>
       <Box className="form-scroll">
-        {selectedSection === 'personal' && <Alert severity="info" variant="outlined" sx={{ mb: 2 }}>Begin with your name and contact details. Then use the steps above to add the story behind your work.</Alert>}
         {sectionForm}
       </Box>
     </Box>
@@ -473,18 +477,19 @@ function ResumeBuilder() {
             </Tabs>
             {tab === 'editor' ? (
               <>
-                <Box className="section-nav">
-                  <CompletenessCard score={completeness.score} items={completeness.items} onSelect={selectSection} />
-                  <Typography variant="caption" color="text.secondary" sx={{ px: 1, display: 'block', mb: 0.75, mt: 1.5 }}>Build your resume step by step</Typography>
-                  <Box className={`section-nav-item ${selectedSection === 'personal' ? 'active' : ''}`} onClick={() => selectSection('personal')}><span className="section-number">00</span>Personal details</Box>
-                  <Divider />
-                  {resume.sections.map((section) => (
-                    <Box key={section} className={`section-nav-item ${selectedSection === section ? 'active' : ''} ${hiddenSections.includes(section) ? 'is-hidden' : ''}`} onClick={() => selectSection(section)}>
-                      <span className="section-number">{sectionIcons[section]}</span>
-                      {sectionLabels[section]}
-                      {hiddenSections.includes(section) && <Chip label="Hidden" size="small" sx={{ ml: 'auto', height: 18, fontSize: 10 }} />}
-                    </Box>
-                  ))}
+                <Box className="section-switch">
+                  <CompletenessCard score={completeness.score} items={completeness.items} expanded={showStrength} onToggle={() => setShowStrength((open) => !open)} onSelect={selectSection} />
+                  <Box className="section-pills">
+                    {navSections.map((section) => {
+                      const related = completeness.items.filter((item) => item.section === section);
+                      const done = related.length ? related.every((item) => item.done) : false;
+                      return (
+                        <button key={section} type="button" className={`section-pill${selectedSection === section ? ' active' : ''}${done ? ' done' : ''}${section !== 'personal' && hiddenSections.includes(section) ? ' is-hidden' : ''}`} onClick={() => selectSection(section)} aria-pressed={selectedSection === section}>
+                          {shortLabels[section]}
+                        </button>
+                      );
+                    })}
+                  </Box>
                 </Box>
                 {editorPanel}
               </>

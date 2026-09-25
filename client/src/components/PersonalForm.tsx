@@ -10,7 +10,7 @@ export function PersonalForm() {
   return (
     <Box>
       <Typography variant="overline" color="text.secondary">Resume setup</Typography>
-      <Stack spacing={2} mt={1}>
+      <Stack spacing={1.25} mt={0.5}>
         <TextField label="Resume title" size="small" value={resume.title} onChange={(event) => updateResume({ title: event.target.value })} />
         <TextField label="Full name" size="small" value={resume.personal.name} onChange={(event) => updatePersonal({ name: event.target.value })} autoComplete="name" />
         <TextField label="Professional headline" size="small" value={resume.personal.headline} onChange={(event) => updatePersonal({ headline: event.target.value })} placeholder="Product designer · 8 years building B2B tools" />
@@ -21,7 +21,6 @@ export function PersonalForm() {
         <TextField label="Website" size="small" value={contact.website} onChange={(event) => updateContact({ website: event.target.value })} placeholder="yourwebsite.com" />
         <TextField label="LinkedIn" size="small" value={contact.linkedin} onChange={(event) => updateContact({ linkedin: event.target.value })} placeholder="linkedin.com/in/..." />
         <TextField label="GitHub" size="small" value={contact.github} onChange={(event) => updateContact({ github: event.target.value })} placeholder="github.com/..." />
-        <Typography variant="caption" color="text.secondary">Changes save automatically</Typography>
       </Stack>
     </Box>
   );

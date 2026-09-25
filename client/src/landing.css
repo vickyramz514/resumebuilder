@@ -60,6 +60,16 @@ html:has(.landing-page) { scroll-behavior: smooth; }
 .template-thumbnail-chronicle .template-thumb-section { position: relative; padding-left: 12px; }
 .template-thumbnail-chronicle .template-thumb-section:before { content: ""; position: absolute; left: 0; top: 2px; width: 6px; height: 6px; border-radius: 50%; background: #8a5a2b; }
 .template-thumbnail-velvet { background: #f6f0e7; padding-top: 0; }
+.template-thumbnail-atlas { background: #fff; box-shadow: inset 0 0 0 1px #111827; }
+.template-thumbnail-atlas .template-thumb-avatar { display: none; }
+.template-thumbnail-slate { background: #e8eef5; padding-top: 0; }
+.template-thumbnail-slate .template-thumb-avatar { display: none; }
+.template-thumbnail-meridian .template-thumb-section { display: grid; grid-template-columns: 22px 1fr; column-gap: 8px; }
+.template-thumbnail-meridian .template-thumb-avatar { display: none; }
+.template-thumbnail-noir { background: #121417; padding-top: 0; }
+.template-thumbnail-noir .template-thumb-name { background: #f6efe4; }
+.template-thumbnail-noir .template-thumb-line { background: #3a3428; }
+.template-thumb-band.is-navy { background: #1e293b !important; }
 .template-thumb-band.is-gradient { background: linear-gradient(115deg, #0f766e, #1f4a3c 55%, #c4a574) !important; }
 .template-thumb-band.is-dark { background: #1c1714 !important; }
 .template-tier { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 3px 8px; border-radius: 999px; font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }

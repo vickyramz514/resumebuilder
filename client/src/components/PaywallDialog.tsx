@@ -55,7 +55,7 @@ export function PaywallDialog({ open, reason, onClose }: Props) {
   const blurb = reason === 'pdf'
     ? 'PDF and Word downloads unlock on Starter and Pro. Subscribe with Razorpay, then export in one click.'
     : reason === 'template'
-      ? 'Seven layouts stay free. Editorial, Folio, Lumen, Chronicle, Velvet, and the other gold-framed layouts unlock on Starter and Pro.'
+      ? 'Nine layouts stay free, including Atlas and Classic. Meridian, Noir, and the other gold-framed layouts unlock on Starter and Pro.'
       : 'The AI assistant unlocks on Starter and Pro. Subscribe with Razorpay, then generate suggestions.';
 
   return (
