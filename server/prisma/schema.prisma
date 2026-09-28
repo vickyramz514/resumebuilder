@@ -9,6 +9,7 @@ datasource db {
 
 enum UserPlan {
   FREE
+  BASIC
   STARTER
   PRO
   ULTRA

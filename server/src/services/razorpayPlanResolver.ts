@@ -3,7 +3,7 @@ import { inferRazorpayMode } from './billing.shared.js';
 
 function planMap() {
   const mode = inferRazorpayMode();
-  const map: Record<string, string> = { starter: env.razorpay.starterPlanId };
+  const map: Record<string, string> = { basic: env.razorpay.basicPlanId, starter: env.razorpay.starterPlanId };
   if (env.razorpay.proPlanId) map.pro = env.razorpay.proPlanId;
   return { mode, map };
 }
@@ -17,6 +17,7 @@ export function resolvePlanId(planSlug: string, fallbackPlanId?: string | null) 
 export function resolvePlanSlugByRazorpayId(razorpayPlanId: string) {
   const id = String(razorpayPlanId || '').trim();
   if (!id) return null;
+  if (id === env.razorpay.basicPlanId) return 'basic';
   if (id === env.razorpay.starterPlanId) return 'starter';
   if (id === env.razorpay.proPlanId) return 'pro';
   return null;

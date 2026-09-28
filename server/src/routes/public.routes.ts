@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../db.js';
 import { resumeSelect } from '../services/resume.service.js';
-import { userHasPaidEntitlement } from '../middleware/paid.middleware.js';
+import { templateDownloadBlock } from '../middleware/paid.middleware.js';
 import { publicResumeHtml, renderPdf } from '../services/pdf.service.js';
 
 const router = Router();
@@ -9,7 +9,7 @@ router.get('/resumes/:slug', async (req, res, next) => {
   try {
     const row = await prisma.resume.findFirst({ where: { publicSlug: req.params.slug, isPublic: true }, select: resumeSelect });
     if (!row) return res.status(404).json({ error: { code: 'PUBLIC_RESUME_NOT_FOUND', message: 'Resume not found' } });
-    const pdfExport = await userHasPaidEntitlement(row.userId);
+    const pdfExport = !(await templateDownloadBlock(row.userId, row.templateId));
     return res.json({
       resume: {
         id: row.id,
@@ -25,11 +25,10 @@ router.get('/resumes/:slug', async (req, res, next) => {
 });
 router.get('/resumes/:slug/pdf', async (req, res, next) => {
   try {
-    const resume = await prisma.resume.findFirst({ where: { publicSlug: req.params.slug, isPublic: true }, select: { data: true, userId: true } });
+    const resume = await prisma.resume.findFirst({ where: { publicSlug: req.params.slug, isPublic: true }, select: { data: true, userId: true, templateId: true } });
     if (!resume) return res.status(404).json({ error: { code: 'PUBLIC_RESUME_NOT_FOUND', message: 'Resume not found' } });
-    if (!await userHasPaidEntitlement(resume.userId)) {
-      return res.status(402).json({ error: { code: 'PAYWALL', message: 'PDF export is included on Starter and Pro.' } });
-    }
+    const block = await templateDownloadBlock(resume.userId, resume.templateId || (resume.data as { template?: string } | null)?.template);
+    if (block) return res.status(402).json({ error: { code: 'PAYWALL', message: block } });
     const pdf = await renderPdf(publicResumeHtml(resume.data));
     return res.set({ 'Content-Type': 'application/pdf', 'Content-Disposition': 'attachment; filename="ResumeForge_Resume.pdf"' }).send(pdf);
   } catch (error) { return next(error); }

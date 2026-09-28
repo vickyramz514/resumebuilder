@@ -51,12 +51,12 @@ export function PaywallDialog({ open, reason, onClose }: Props) {
     }
   };
 
-  const title = reason === 'pdf' ? 'Subscribe to download your resume' : reason === 'template' ? 'Subscribe for Pro templates' : 'Subscribe to use AI';
+  const title = reason === 'pdf' ? 'Subscribe to download your resume' : reason === 'template' ? 'This layout is on Starter' : 'Subscribe to use AI';
   const blurb = reason === 'pdf'
-    ? 'PDF and Word downloads unlock on Starter and Pro. Subscribe with Razorpay, then export in one click.'
+    ? 'PDF and Word unlock on the ₹100 plan for its layouts, and on Starter for every layout. Subscribe with Razorpay, then export in one click.'
     : reason === 'template'
-      ? 'You can design with every layout. PDF and Word download on Starter and Pro.'
-      : 'The AI assistant unlocks on Starter and Pro. Subscribe with Razorpay, then generate suggestions.';
+      ? 'You can keep editing this page. The ₹100 plan downloads eight designed layouts plus every free one. Starter downloads this layout and adds the AI assistant.'
+      : 'The AI assistant unlocks on Starter and Pro. The ₹100 plan includes downloads for its layouts, without AI.';
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">

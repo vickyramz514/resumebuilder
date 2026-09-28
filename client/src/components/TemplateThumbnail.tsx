@@ -6,8 +6,9 @@ export function TemplateThumbnail({ template, compact = false }: { template: Tem
   const copy = TEMPLATE_META[template] ?? TEMPLATE_META.professional;
   const isSidebar = copy.layout === 'sidebar';
   const invertedAside = template === 'creative' || template === 'folio' || template === 'coral' || template === 'ember';
-  return <Box className={`template-thumbnail template-thumbnail-${template}${compact ? ' compact' : ''}${copy.tier === 'paid' ? ' is-paid' : ' is-free'}`} aria-label={`${copy.label} template, ${copy.tier === 'paid' ? 'Pro' : 'Free'}`}>
-    <Box className={`template-tier ${copy.tier}`}>{copy.tier === 'paid' ? 'Pro' : 'Free'}</Box>
+  const tierLabel = copy.tier === 'paid' ? 'Pro' : copy.tier === 'plus' ? '₹100' : 'Free';
+  return <Box className={`template-thumbnail template-thumbnail-${template}${compact ? ' compact' : ''} is-${copy.tier}`} aria-label={`${copy.label} template, ${tierLabel}`}>
+    <Box className={`template-tier ${copy.tier}`}>{tierLabel}</Box>
     {(template === 'modern' || template === 'executive' || template === 'lumen' || template === 'velvet' || template === 'slate' || template === 'noir' || template === 'aurora' || template === 'iris' || template === 'horizon' || template === 'frost' || template === 'solstice') && <Box className={`template-thumb-band${template === 'lumen' || template === 'aurora' ? ' is-gradient' : ''}${template === 'velvet' || template === 'noir' ? ' is-dark' : ''}${template === 'slate' ? ' is-navy' : ''}${template === 'aurora' || template === 'solstice' ? ' is-wash' : ''}${template === 'iris' ? ' is-iris' : ''}${template === 'frost' ? ' is-frost' : ''}`} sx={{ bgcolor: copy.accent }} />}
     <Box className={`template-thumb-top${template === 'classic' ? ' is-centered' : ''}`}>
       <Box className="template-thumb-avatar" sx={isSidebar ? { bgcolor: template === 'modern' ? '#fff8' : copy.accent } : undefined} />

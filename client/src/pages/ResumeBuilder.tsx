@@ -14,7 +14,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import { ResumePreview } from '../templates/ResumePreview';
 import { useActiveResume, useResumeStore } from '../store';
-import { TEMPLATE_CATALOG } from '../templates/catalog';
+import { TEMPLATE_CATALOG, templateNeedsFullPlan } from '../templates/catalog';
 import type { FontFamily, ResumeDesign, ResumeDensity, SectionType, TemplateId } from '../types';
 import { PersonalForm } from '../components/PersonalForm';
 import { AwardsForm, CertificationsForm, CoverLetterForm, EducationForm, ExperienceForm, LanguagesForm, ProjectsForm, SkillsForm, SummaryForm, VolunteerForm } from '../components/SectionForms';
@@ -26,7 +26,7 @@ import { ContentSuggestions } from '../components/ContentSuggestions';
 import { PaywallDialog } from '../components/PaywallDialog';
 import { getResumeCompleteness } from '../utils/completeness';
 import { applyAiSuggestion } from '../utils/applyAiSuggestion';
-import { hasPaidPlan } from '../utils/entitlements';
+import { hasAiPlan, hasFullCatalog, hasPaidPlan } from '../utils/entitlements';
 import { apiUrl } from '../services/api';
 import { buildCoverLetterDocx, buildResumeDocx } from '../services/docxExport';
 import { useAuthStore } from '../store/authStore';
@@ -249,11 +249,14 @@ function ResumeBuilder() {
   };
 
   const paid = hasPaidPlan(user);
+  const fullCatalog = hasFullCatalog(user);
+  const ai = hasAiPlan(user);
+  const downloadAllowed = (templateId: TemplateId) => paid && (fullCatalog || !templateNeedsFullPlan(templateId));
   const chooseTemplate = (templateId: TemplateId) => {
     setTemplate(templateId);
   };
   const openAi = () => {
-    if (!paid) { setPaywallReason('ai'); return; }
+    if (!ai) { setPaywallReason('ai'); return; }
     setAiOpen(true);
   };
 
@@ -268,7 +271,7 @@ function ResumeBuilder() {
 
   const exportPdf = async () => {
     if (!resume) return;
-    if (!paid) { setPaywallReason('pdf'); return; }
+    if (!downloadAllowed(resume.template)) { setPaywallReason(paid ? 'template' : 'pdf'); return; }
     const node = document.querySelector('.resume-sheet');
     if (!node) return;
     const css = [...document.styleSheets].flatMap((sheet) => { try { return [...sheet.cssRules].map((rule) => rule.cssText); } catch { return []; } }).join('\n');
@@ -294,7 +297,7 @@ function ResumeBuilder() {
 
   const exportDocx = async () => {
     if (!resume) return;
-    if (!paid) { setPaywallReason('pdf'); return; }
+    if (!downloadAllowed(resume.template)) { setPaywallReason(paid ? 'template' : 'pdf'); return; }
     setExporting('docx');
     try {
       downloadBlob(await buildResumeDocx(resume), `${resume.personal.name || 'resume'}.docx`);
@@ -389,12 +392,12 @@ function ResumeBuilder() {
       </Box>
       <Box className="form-scroll">
         <Typography variant="overline" color="text.secondary" className="design-section-label">Templates</Typography>
-        {(['free', 'paid'] as const).map((tier) => (
+        {(['free', 'plus', 'paid'] as const).map((tier) => (
           <Box key={tier} className="template-group-editor">
-            <Typography variant="overline" className={`template-group-kicker ${tier}`}>{tier === 'free' ? 'Free' : 'Pro'}</Typography>
+            <Typography variant="overline" className={`template-group-kicker ${tier}`}>{tier === 'free' ? 'Free' : tier === 'plus' ? '₹100' : 'Pro'}</Typography>
             <Box className="template-picker">
               {TEMPLATE_CATALOG.filter((item) => item.tier === tier).map((item) => (
-                <Box key={item.id} className={`template-picker-option ${item.tier === 'paid' ? 'is-paid' : 'is-free'} ${resume.template === item.id ? 'selected' : ''}`} onClick={() => chooseTemplate(item.id)} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') chooseTemplate(item.id); }}>
+                <Box key={item.id} className={`template-picker-option is-${item.tier} ${resume.template === item.id ? 'selected' : ''}`} onClick={() => chooseTemplate(item.id)} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') chooseTemplate(item.id); }}>
                   <TemplateThumbnail template={item.id} compact />
                   <Box className="template-picker-copy">
                     <Typography variant="body2" fontWeight={750}>{item.label}</Typography>
@@ -469,14 +472,14 @@ function ResumeBuilder() {
           <Tooltip title="Undo last change">
             <span><IconButton className="topbar-icon-btn" aria-label="Undo last change" disabled={!canUndo} onClick={() => undo()}><Undo2 size={18} /></IconButton></span>
           </Tooltip>
-          <Tooltip title={paid ? 'Improve with AI' : 'Subscribe to use AI'}>
+          <Tooltip title={ai ? 'Improve with AI' : 'Subscribe to use AI'}>
             <Button onClick={openAi} startIcon={<Sparkles size={16} />} color="inherit" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>AI Assistant</Button>
           </Tooltip>
-          <Tooltip title={paid ? 'Improve with AI' : 'Subscribe to use AI'}>
+          <Tooltip title={ai ? 'Improve with AI' : 'Subscribe to use AI'}>
             <IconButton className="topbar-icon-btn" aria-label="Open AI assistant" onClick={openAi} sx={{ display: { xs: 'inline-flex', md: 'none' } }}><Sparkles size={18} /></IconButton>
           </Tooltip>
-          <Tooltip title={paid ? 'Download PDF or Word' : 'Subscribe to download PDF or Word'}>
-            <Button onClick={(event) => { if (!paid) { setPaywallReason('pdf'); return; } setDownloadAnchor(event.currentTarget); }} startIcon={<Download size={17} />} variant="contained" size="small" disabled={Boolean(exporting)} aria-haspopup="menu" aria-expanded={Boolean(downloadAnchor)}>
+          <Tooltip title={resume && downloadAllowed(resume.template) ? 'Download PDF or Word' : paid ? 'This layout downloads on Starter' : 'Subscribe to download PDF or Word'}>
+            <Button onClick={(event) => { if (!resume || !downloadAllowed(resume.template)) { setPaywallReason(paid ? 'template' : 'pdf'); return; } setDownloadAnchor(event.currentTarget); }} startIcon={<Download size={17} />} variant="contained" size="small" disabled={Boolean(exporting)} aria-haspopup="menu" aria-expanded={Boolean(downloadAnchor)}>
               <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{exporting === 'pdf' ? 'Exporting PDF…' : exporting === 'docx' ? 'Exporting Word…' : 'Download'}</Box>
               <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>{exporting ? '…' : 'Download'}</Box>
             </Button>

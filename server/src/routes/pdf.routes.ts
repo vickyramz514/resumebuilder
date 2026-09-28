@@ -2,14 +2,16 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../db.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
-import { requirePaidPlan } from '../middleware/paid.middleware.js';
+import { requirePaidPlan, templateDownloadBlock } from '../middleware/paid.middleware.js';
 import { renderPdf } from '../services/pdf.service.js';
 
 const router = Router();
 router.post('/:id/pdf', requireAuth, requirePaidPlan, async (req, res, next) => {
   try {
-    const resume = await prisma.resume.findFirst({ where: { id: String(req.params.id), userId: req.user!.userId }, select: { data: true } });
+    const resume = await prisma.resume.findFirst({ where: { id: String(req.params.id), userId: req.user!.userId }, select: { data: true, templateId: true } });
     if (!resume) return res.status(404).json({ error: { code: 'RESUME_NOT_FOUND', message: 'Resume not found' } });
+    const block = await templateDownloadBlock(req.user!.userId, resume.templateId || (resume.data as { template?: string } | null)?.template);
+    if (block) return res.status(402).json({ error: { code: 'PAYWALL', message: block } });
     const html = z.string().min(1).optional().parse(req.body?.html) ?? `<html><body><h1>${(resume.data as any).personal?.name ?? 'Resume'}</h1></body></html>`;
     const pdf = await renderPdf(html);
     return res.set({ 'Content-Type': 'application/pdf', 'Content-Disposition': 'attachment; filename="ResumeForge_Resume.pdf"' }).send(pdf);

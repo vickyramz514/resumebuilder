@@ -19,8 +19,9 @@ export function inferRazorpayMode() {
   return process.env.NODE_ENV === 'production' ? 'live' : 'test';
 }
 
-export function mapPlanSlugToUserPlan(slug: string): 'FREE' | 'STARTER' | 'PRO' | 'ULTRA' {
+export function mapPlanSlugToUserPlan(slug: string): 'FREE' | 'BASIC' | 'STARTER' | 'PRO' | 'ULTRA' {
   const key = String(slug || '').toLowerCase();
+  if (key === 'basic') return 'BASIC';
   if (key === 'starter' || key === 'starter-annual' || key === 'admin-test') return 'STARTER';
   if (key === 'pro') return 'PRO';
   if (key === 'ultra') return 'ULTRA';

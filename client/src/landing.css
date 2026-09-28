@@ -49,6 +49,8 @@ html:has(.landing-page) { scroll-behavior: smooth; }
 .showcase-card.is-paid:hover .template-thumbnail:after { animation: card-shine .9s ease; }
 .template-group-label { margin: 8px 0 14px; color: #c2410c; font-weight: 800; letter-spacing: .12em; }
 .template-group-label.free { color: #0f766e; }
+.template-group-label.plus { color: #c2410c; }
+.showcase-card.is-plus { border-color: #fdba74; background: linear-gradient(#fff, #fffaf5); }
 .template-group + .template-group { margin-top: 28px; }.showcase-card-copy { padding: 18px 20px 20px; }.showcase-card-copy h6 { font-weight: 800; }.showcase-best-for { display: block; margin-bottom: 4px; color: #c2410c; font-size: 10px; letter-spacing: .08em; font-weight: 800; }.showcase-card-copy p { min-height: 63px; margin: 6px 0 12px; color: #57534e; line-height: 1.45; }.showcase-card-copy button { padding-left: 0; color: #0f766e; font-weight: 750; }
 .template-thumbnail { position: relative; min-height: 284px; padding: 35px 36px 20px; overflow: hidden; background: #f3f7f3; }
 .template-thumbnail-minimal { background: #f5f3ef; }
@@ -130,6 +132,7 @@ html:has(.landing-page) { scroll-behavior: smooth; }
 .template-thumb-band.is-dark { background: #1c1714 !important; }
 .template-tier { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 3px 8px; border-radius: 999px; font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .template-tier.free { background: #ccfbf1; color: #0f766e; }
+.template-tier.plus { background: #ffedd5; color: #c2410c; }
 .template-tier.paid { color: #f6efe4; background: #1c1714; box-shadow: 0 0 0 1px #e4c98a; }
 .template-thumbnail.is-paid { box-shadow: inset 0 0 0 2px #e4c98a; }
 .template-thumbnail.compact .template-tier { top: 6px; left: 6px; padding: 1px 5px; font-size: 8px; }
@@ -209,8 +212,10 @@ html:has(.landing-page) { scroll-behavior: smooth; }
 .landing-marquee-track { display: flex; gap: 28px; width: max-content; padding: 13px 0; animation: marquee 42s linear infinite; }
 .landing-marquee:hover .landing-marquee-track { animation-play-state: paused; }
 .landing-marquee span { color: #6c746f; font-size: 12px; font-weight: 750; letter-spacing: .04em; white-space: nowrap; }
-.landing-marquee span.pro { color: #c2410c; }
-.landing-marquee span.pro:before { content: "Pro · "; font-size: 10px; letter-spacing: .08em; }
+.landing-marquee span.plus { color: #c2410c; }
+.landing-marquee span.plus:before { content: "₹100 · "; font-size: 10px; letter-spacing: .08em; }
+.landing-marquee span.paid { color: #6d28d9; }
+.landing-marquee span.paid:before { content: "Pro · "; font-size: 10px; letter-spacing: .08em; }
 @keyframes landing-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes hero-drift { 0%, 100% { transform: rotate(2.5deg) translateY(0); } 50% { transform: rotate(2.5deg) translateY(-8px); } }
 @keyframes hero-float { 0%, 100% { transform: rotate(4deg) translateY(0); } 50% { transform: rotate(4deg) translateY(-10px); } }

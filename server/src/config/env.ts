@@ -31,6 +31,7 @@ export const env = {
       webhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET,
       mode,
       declaredMode,
+      basicPlanId: process.env.RAZORPAY_PLAN_BASIC ?? 'plan_ThSBTP8SqSMNcy',
       starterPlanId: process.env.RAZORPAY_PLAN_STARTER ?? 'plan_TfKovTk3qxjBhH',
       proPlanId: process.env.RAZORPAY_PLAN_PRO ?? 'plan_TfjVh8pptWF8AG',
       // Flip RAZORPAY_PLAN_PRO_ENABLED to false/disable/0 to hide this plan without deleting it.

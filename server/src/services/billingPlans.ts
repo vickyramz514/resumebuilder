@@ -3,13 +3,14 @@ import { prisma } from '../db.js';
 import { env } from '../config/env.js';
 import { fetchPlan } from './razorpay.service.js';
 
+const basicPlanId = () => env.razorpay.basicPlanId;
 const starterPlanId = () => env.razorpay.starterPlanId;
 const proPlanId = () => env.razorpay.proPlanId;
 /** Flip `RAZORPAY_PLAN_PRO_ENABLED` (false / disable / 0) to hide Pro without deleting it. */
 export const isProPlanEnabled = () => env.razorpay.proPlanEnabled;
 
 function activeSlugs() {
-  return isProPlanEnabled() ? ['free', 'starter', 'pro'] : ['free', 'starter'];
+  return isProPlanEnabled() ? ['free', 'basic', 'starter', 'pro'] : ['free', 'basic', 'starter'];
 }
 
 export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
@@ -30,19 +31,35 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
     metadata: { unlocksAtPaid: ['PDF and Word export', 'AI writing assistant', 'Job-tailored rewrites'] }
   },
   {
+    name: 'Basic',
+    slug: 'basic',
+    description: 'Eight designed layouts, plus PDF and Word, for ₹100 a month',
+    priceCents: 10000,
+    currency: 'INR',
+    credits: 0,
+    creditsPerMonth: 0,
+    billingCycle: 'monthly',
+    razorpayPlanId: basicPlanId(),
+    features: ['Everything in Free', '8 designed layouts', 'PDF and Word export'] as Prisma.InputJsonValue,
+    isActive: true,
+    adminOnly: false,
+    sortOrder: 1,
+    metadata: { offerBadge: '₹100' }
+  },
+  {
     name: 'Starter',
     slug: 'starter',
-    description: 'AI-assisted resumes for active job searches',
+    description: 'Every layout, PDF and Word, and the AI writing assistant',
     priceCents: 65000,
     currency: 'INR',
     credits: 0,
     creditsPerMonth: 0,
     billingCycle: 'monthly',
     razorpayPlanId: starterPlanId(),
-    features: ['Everything in Free', '25 Pro templates', 'PDF and Word export', 'Gemini AI assistant', 'Job-description tailoring'] as Prisma.InputJsonValue,
+    features: ['Everything in Basic', 'The other 17 Pro layouts', 'PDF and Word export', 'Gemini AI assistant', 'Job-description tailoring'] as Prisma.InputJsonValue,
     isActive: true,
     adminOnly: false,
-    sortOrder: 1,
+    sortOrder: 2,
     metadata: { popular: true }
   },
   {
@@ -58,7 +75,7 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
     features: ['Everything in Starter', 'Higher AI usage', 'Priority support'] as Prisma.InputJsonValue,
     isActive: true,
     adminOnly: false,
-    sortOrder: 2,
+    sortOrder: 3,
     metadata: { flag: 'RAZORPAY_PLAN_PRO_ENABLED' }
   }
 ];
@@ -83,11 +100,13 @@ async function razorpayPricing(planId: string | null) {
 
 export async function ensureBillingPlans() {
   for (const plan of defaultBillingPlans) {
-    const razorpayPlanId = plan.slug === 'starter'
-      ? starterPlanId()
-      : plan.slug === 'pro'
-        ? proPlanId()
-        : plan.razorpayPlanId;
+    const razorpayPlanId = plan.slug === 'basic'
+      ? basicPlanId()
+      : plan.slug === 'starter'
+        ? starterPlanId()
+        : plan.slug === 'pro'
+          ? proPlanId()
+          : plan.razorpayPlanId;
     const isActive = plan.slug !== 'pro' || isProPlanEnabled();
     const remote = await razorpayPricing(razorpayPlanId ?? null);
     await prisma.subscriptionPlan.upsert({

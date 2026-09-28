@@ -14,7 +14,7 @@ import seoRoutes from './routes/seo.routes.js';
 import { handleRazorpayCallback, handleRazorpayWebhook } from './routes/payment.routes.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import { requireAuth } from './middleware/auth.middleware.js';
-import { requirePaidPlan } from './middleware/paid.middleware.js';
+import { requirePaidPlan, templateDownloadBlock } from './middleware/paid.middleware.js';
 import { renderPdf } from './services/pdf.service.js';
 import { ensureBillingPlans } from './services/billingPlans.js';
 import { ensureSeoPages, robotsTxt, seoHtml, seoNotFoundHtml, sitemapXml } from './services/seoPages.js';
@@ -73,6 +73,8 @@ app.get('/resume-builder/:slug', async (req, res, next) => {
 app.post('/api/pdf', requireAuth, requirePaidPlan, async (req, res, next) => {
   try {
     if (typeof req.body?.html !== 'string') return res.status(400).json({ error: { code: 'HTML_REQUIRED', message: 'html is required' } });
+    const block = await templateDownloadBlock(req.user!.userId, req.body?.resume?.template);
+    if (block) return res.status(402).json({ error: { code: 'PAYWALL', message: block } });
     const pdf = await renderPdf(req.body.html);
     const safeName = String(req.body.resume?.personal?.name || 'ResumeForge Resume').replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '');
     return res.set({ 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename="${safeName || 'ResumeForge_Resume'}.pdf"` }).send(pdf);
