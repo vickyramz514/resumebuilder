@@ -19,6 +19,26 @@
 .resume-card-thumb.preview-academic { background: #f6efe8; color: #7c2d12; }
 .resume-card-thumb.preview-swiss { background: #f4f4f2; color: #111827; }
 .resume-card-thumb.preview-folio { background: #e8eef2; color: #15232c; border-left: 7px solid #15232c; }
+.resume-card-thumb.preview-pebble { background: #f8fafc; color: #64748b; }
+.resume-card-thumb.preview-cobalt { background: #eff6ff; color: #1d4ed8; border-bottom: 6px solid #1d4ed8; }
+.resume-card-thumb.preview-signal { background: #ecfeff; color: #0e7490; border-left: 7px solid #0e7490; }
+.resume-card-thumb.preview-quartz { background: #f1f5f9; color: #475569; }
+.resume-card-thumb.preview-cedar { background: #fff7ed; color: #9a3412; border-left: 7px solid #9a3412; }
+.resume-card-thumb.preview-kite { background: #ecfdf5; color: #059669; }
+.resume-card-thumb.preview-index { background: #fff; color: #111827; }
+.resume-card-thumb.preview-summit { background: #f8fafc; color: #1e3a5f; border-top: 7px solid #1e3a5f; }
+.resume-card-thumb.preview-iris { background: #f5f3ff; color: #6d28d9; border-top: 7px solid #6d28d9; }
+.resume-card-thumb.preview-coral { background: #fff1f2; color: #e11d48; border-left: 7px solid #e11d48; }
+.resume-card-thumb.preview-ink { background: #fff; color: #111827; }
+.resume-card-thumb.preview-mosaic { background: #f0fdfa; color: #0d9488; }
+.resume-card-thumb.preview-horizon { background: #f0f9ff; color: #0369a1; border-top: 7px solid #0369a1; }
+.resume-card-thumb.preview-orchid { background: #fdf2f8; color: #9d174d; }
+.resume-card-thumb.preview-prism { background: #eef2ff; color: #4f46e5; }
+.resume-card-thumb.preview-canyon { background: #fff7ed; color: #c2410c; border-left: 7px solid #c2410c; }
+.resume-card-thumb.preview-frost { background: #f0f9ff; color: #0284c7; }
+.resume-card-thumb.preview-monarch { background: #f8fafc; color: #1e3a5f; border-bottom: 6px solid #1e3a5f; }
+.resume-card-thumb.preview-ember { background: #fff7ed; color: #7c2d12; border-left: 7px solid #7c2d12; }
+.resume-card-thumb.preview-solstice { background: #f0fdfa; color: #0f766e; border-top: 7px solid #0f766e; }
 .resume-card-meta { color: #7c8580; margin-top: 3px; }
 .card-menu-btn { color: #7c8580 !important; transition: background .15s ease, color .15s ease; }
 .card-menu-btn:hover { background: #f0fdfa !important; color: #0d9488 !important; }

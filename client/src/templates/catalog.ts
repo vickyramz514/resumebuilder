@@ -37,7 +37,27 @@ export const TEMPLATE_CATALOG: TemplateMeta[] = [
   { id: 'meridian', label: 'Meridian', description: 'Labels in the margin', pitch: 'Section names sit in the left margin, so a long page stays easy to scan.', accent: '#1e3a5f', layout: 'single', tier: 'paid' },
   { id: 'noir', label: 'Noir', description: 'Full dark page', pitch: 'A black page with warm type and a gold rule, for roles that should feel designed.', accent: '#e4c98a', layout: 'sidebar', tier: 'paid' },
   { id: 'aurora', label: 'Aurora', description: 'Soft wash, rounded side', pitch: 'A pale color wash and a rounded sidebar, lighter than the dark Pro layouts.', accent: '#0f766e', layout: 'sidebar', tier: 'paid' },
-  { id: 'ledger', label: 'Ledger', description: 'Ruled rows', pitch: 'Each role sits on a hairline row, with the date kept to the right.', accent: '#1e3a5f', layout: 'single', tier: 'paid' }
+  { id: 'ledger', label: 'Ledger', description: 'Ruled rows', pitch: 'Each role sits on a hairline row, with the date kept to the right.', accent: '#1e3a5f', layout: 'single', tier: 'paid' },
+  { id: 'pebble', label: 'Pebble', description: 'Rounded cards', pitch: 'Soft cards and a quiet sidebar, for a page that should feel approachable.', accent: '#64748b', layout: 'sidebar', tier: 'free' },
+  { id: 'cobalt', label: 'Cobalt', description: 'Blue name rule', pitch: 'A strong blue rule under the name, then a plain column a parser can follow.', accent: '#1d4ed8', layout: 'single', tier: 'free' },
+  { id: 'signal', label: 'Signal', description: 'Marked headings', pitch: 'Each heading carries a short color bar, so a long page stays easy to scan.', accent: '#0e7490', layout: 'single', tier: 'free' },
+  { id: 'quartz', label: 'Quartz', description: 'Boxed sections', pitch: 'Each section sits in its own box, for a page that should feel organized.', accent: '#475569', layout: 'single', tier: 'free' },
+  { id: 'cedar', label: 'Cedar', description: 'Warm left rail', pitch: 'A rust edge and small headings, still one column from top to bottom.', accent: '#9a3412', layout: 'single', tier: 'free' },
+  { id: 'kite', label: 'Kite', description: 'Mint sidebar', pitch: 'A light sidebar for skills and a clean main column for the story.', accent: '#059669', layout: 'sidebar', tier: 'free' },
+  { id: 'index', label: 'Index', description: 'Plain and strict', pitch: 'Black type and thin rules, the safest page to send to a form that scans the file.', accent: '#111827', layout: 'single', tier: 'free' },
+  { id: 'summit', label: 'Summit', description: 'Stripe and center', pitch: 'A color stripe and a centered name, then a single reading order.', accent: '#1e3a5f', layout: 'single', tier: 'free' },
+  { id: 'iris', label: 'Iris', description: 'Violet masthead', pitch: 'A violet header and a pale sidebar, for a page that should feel current.', accent: '#6d28d9', layout: 'sidebar', tier: 'paid' },
+  { id: 'coral', label: 'Coral', description: 'Color side panel', pitch: 'Contact and skills sit on a coral panel, with the story kept in the open column.', accent: '#e11d48', layout: 'sidebar', tier: 'paid' },
+  { id: 'ink', label: 'Ink', description: 'Oversized name', pitch: 'A huge name and a thin gold line, for a page that leads with the person.', accent: '#111827', layout: 'single', tier: 'paid' },
+  { id: 'mosaic', label: 'Mosaic', description: 'Skill tiles', pitch: 'Skills read as tiles, and the rest of the page stays in a clear column.', accent: '#0d9488', layout: 'sidebar', tier: 'paid' },
+  { id: 'horizon', label: 'Horizon', description: 'Full color band', pitch: 'The name sits on a full-width band, then the page returns to one column.', accent: '#0369a1', layout: 'single', tier: 'paid' },
+  { id: 'orchid', label: 'Orchid', description: 'Blush paper', pitch: 'Warm paper and a serif name, for creative and people-first roles.', accent: '#9d174d', layout: 'single', tier: 'paid' },
+  { id: 'prism', label: 'Prism', description: 'Corner accent', pitch: 'A sharp corner of color and a rounded sidebar, without crowding the type.', accent: '#4f46e5', layout: 'sidebar', tier: 'paid' },
+  { id: 'canyon', label: 'Canyon', description: 'Rust timeline', pitch: 'Experience runs down a rust line, so a long career reads in order.', accent: '#c2410c', layout: 'single', tier: 'paid' },
+  { id: 'frost', label: 'Frost', description: 'Icy side card', pitch: 'A cool header and a white side card, lighter than the dark Pro layouts.', accent: '#0284c7', layout: 'sidebar', tier: 'paid' },
+  { id: 'monarch', label: 'Monarch', description: 'Double rule', pitch: 'Two rules under the name, for senior roles that should feel formal.', accent: '#1e3a5f', layout: 'single', tier: 'paid' },
+  { id: 'ember', label: 'Ember', description: 'Dark side, warm page', pitch: 'A dark skills column and warm paper for the work itself.', accent: '#7c2d12', layout: 'sidebar', tier: 'paid' },
+  { id: 'solstice', label: 'Solstice', description: 'Split color wash', pitch: 'A soft wash behind the name, then a single column with clear headings.', accent: '#0f766e', layout: 'single', tier: 'paid' }
 ];
 
 export const TEMPLATE_IDS: TemplateId[] = TEMPLATE_CATALOG.map((item) => item.id);

@@ -234,6 +234,160 @@
 .template-ledger .resume-entry:last-child { border-bottom: 0; }
 .template-ledger .skill-list span { border-radius: 0; border-color: #c5d0dc; background: #f8fafc; }
 
+/* Pebble — free, rounded sidebar cards */
+.template-pebble .resume-aside { background: #f8fafc; border-radius: 16px; padding: 16px; }
+.template-pebble .resume-aside .resume-section h2 { border: 0; }
+.template-pebble .resume-main .resume-section h2 { border: 0; }
+.template-pebble .resume-main .resume-entry { background: #f8fafc; border-radius: 12px; padding: 10px 12px; }
+.template-pebble .skill-list span { border: 0; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px #e2e8f0; }
+.template-pebble .resume-monogram { border-radius: 14px; }
+
+/* Cobalt — free, a blue rule under the name */
+.template-cobalt .resume-header { border-bottom: 4px solid var(--accent, #1d4ed8); }
+.template-cobalt .resume-header h1 { color: #1e3a8a; letter-spacing: -1px; }
+.template-cobalt .resume-section h2 { color: #1d4ed8 !important; border-bottom: 1px solid #bfdbfe; letter-spacing: 1.4px; }
+.template-cobalt .skill-list span { border: 0; background: #eff6ff; color: #1e3a8a; border-radius: 4px; }
+
+/* Signal — free, a short bar beside each heading */
+.template-signal .resume-section h2 { border: 0; padding-left: 10px; border-left: 4px solid var(--accent, #0e7490); letter-spacing: 1.2px; }
+.template-signal .resume-header { border-bottom: 0; }
+.template-signal .resume-header h1 { color: #155e75; }
+.template-signal .skill-list span { border: 0; background: #ecfeff; color: #155e75; }
+
+/* Quartz — free, each section in a box */
+.template-quartz { background: #f8fafc; }
+.template-quartz .resume-header { background: #fff; margin: -4px -4px 0; padding: 8px 12px 14px; border: 1px solid #e2e8f0; border-radius: 12px; }
+.template-quartz .resume-section { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; }
+.template-quartz .resume-section h2 { border: 0; margin-bottom: 6px; }
+.template-quartz .skill-list span { border-color: #e2e8f0; background: #f8fafc; }
+
+/* Cedar — free, a rust rail */
+.template-cedar { box-shadow: inset 8px 0 0 #9a3412; }
+.template-cedar .resume-header { border-bottom: 0; }
+.template-cedar .resume-header h1 { color: #7c2d12; letter-spacing: -.6px; }
+.template-cedar .resume-section h2 { border: 0; color: #9a3412 !important; letter-spacing: 1.6px; }
+.template-cedar .resume-section h2:after { content: ""; display: block; width: 24px; height: 2px; margin-top: 3px; background: #fdba74; }
+.template-cedar .skill-list span { border: 0; background: #ffedd5; color: #7c2d12; }
+
+/* Kite — free, a mint sidebar */
+.template-kite .resume-aside { background: #ecfdf5; border-radius: 14px; padding: 16px; }
+.template-kite .resume-aside .resume-section h2 { border: 0; color: #047857 !important; }
+.template-kite .resume-main .resume-section h2 { border-bottom: 1px solid #a7f3d0; color: #065f46 !important; }
+.template-kite .skill-list span { border: 0; background: #fff; color: #065f46; border-radius: 8px; }
+.template-kite .resume-monogram { border-radius: 12px; }
+
+/* Index — free, strict black rules */
+.template-index .resume-header { display: block; border-bottom: 1px solid #111827; padding-bottom: 8px; }
+.template-index .resume-header h1 { font-size: 20px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; }
+.template-index .resume-contact { justify-content: flex-start; max-width: none; font-size: 10px; }
+.template-index .resume-section h2 { border-bottom: 1px solid #111827; color: #111827 !important; text-transform: uppercase; letter-spacing: 1px; font-size: 11px; }
+.template-index .skill-list span { border: 0; border-radius: 0; padding: 0 8px 0 0; }
+
+/* Summit — free, a top stripe and a centered name */
+.template-summit { border-top: 8px solid var(--accent, #1e3a5f); }
+.template-summit .resume-header { flex-direction: column; align-items: center; text-align: center; border-bottom: 0; }
+.template-summit .resume-contact { justify-content: center; max-width: none; }
+.template-summit .resume-header h1 { letter-spacing: 1.2px; text-transform: uppercase; font-size: 26px; color: #1e3a5f; }
+.template-summit .resume-section h2 { text-align: center; border-bottom: 1px solid #cbd5e1; letter-spacing: 2px; color: #1e3a5f !important; }
+.template-summit .skill-list { justify-content: center; }
+
+/* Iris — Pro, a violet masthead */
+.template-iris .resume-header { margin: -16mm -16mm 0; padding: 16mm; background: linear-gradient(120deg, #6d28d9, #4c1d95); border: 0; }
+.template-iris .resume-header h1, .template-iris .resume-header p { color: #fff; }
+.template-iris .resume-monogram { background: transparent !important; border: 2px solid #fff; }
+.template-iris .resume-columns { margin-top: 20px; }
+.template-iris .resume-aside { background: #f5f3ff; border-radius: 16px; padding: 16px; }
+.template-iris .resume-aside .resume-section h2 { border: 0; color: #5b21b6 !important; }
+.template-iris .skill-list span { border: 0; background: #fff; color: #5b21b6; border-radius: 999px; }
+
+/* Coral — Pro, a colored side panel */
+.template-coral .resume-aside { background: var(--accent, #e11d48); color: #fff; border-radius: 0 16px 16px 0; margin-left: -8px; padding: 18px 16px; }
+.template-coral .resume-aside a, .template-coral .resume-aside .resume-section h2 { color: #fff !important; }
+.template-coral .resume-aside .resume-section h2 { border-bottom: 1px solid rgba(255,255,255,.35); }
+.template-coral .resume-aside .entry-subheading, .template-coral .resume-aside .entry-heading span { color: rgba(255,255,255,.8); }
+.template-coral .resume-aside .skill-list span { border: 0; background: rgba(255,255,255,.18); color: #fff; }
+.template-coral .resume-monogram { background: #fff !important; color: #e11d48; }
+.template-coral .resume-main .resume-section h2 { border: 0; color: #be123c !important; }
+
+/* Ink — Pro, an oversized name */
+.template-ink .resume-header { display: block; border: 0; padding-bottom: 6px; }
+.template-ink .resume-header h1 { font-size: 42px; line-height: .92; letter-spacing: -1.8px; max-width: 14ch; }
+.template-ink .resume-header p { margin-top: 8px; letter-spacing: 1.4px; text-transform: uppercase; font-size: 11px; }
+.template-ink .resume-header:after { content: ""; display: block; width: 48px; height: 3px; margin-top: 12px; background: #e4c98a; }
+.template-ink .resume-contact { justify-content: flex-start; max-width: none; }
+.template-ink .resume-section h2 { border: 0; letter-spacing: 2.4px; font-size: 10px; }
+.template-ink .skill-list span { border: 0; background: #111827; color: #fff; border-radius: 0; }
+
+/* Mosaic — Pro, skills as tiles */
+.template-mosaic .resume-aside { background: #f0fdfa; border-radius: 12px; padding: 14px; }
+.template-mosaic .skill-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.template-mosaic .skill-list span { border: 0; background: #fff; border-radius: 8px; text-align: center; box-shadow: inset 0 0 0 1px #99f6e4; }
+.template-mosaic .resume-section h2 { border: 0; letter-spacing: 1.2px; }
+.template-mosaic .resume-monogram { border-radius: 8px; }
+
+/* Horizon — Pro, a full-width name band */
+.template-horizon .resume-header { margin: -16mm -16mm 18px; padding: 16mm; background: var(--accent, #0369a1); border: 0; }
+.template-horizon .resume-header h1, .template-horizon .resume-header p, .template-horizon .resume-contact, .template-horizon .resume-contact a { color: #fff; }
+.template-horizon .resume-section h2 { color: #0369a1 !important; border-bottom: 2px solid #bae6fd; }
+.template-horizon .skill-list span { border: 0; background: #e0f2fe; color: #0c4a6e; }
+
+/* Orchid — Pro, blush paper and a serif name */
+.template-orchid { background: #fdf2f8; font-family: Georgia, "Times New Roman", serif; }
+.template-orchid .resume-header { border-bottom: 1px solid #f9a8d4; }
+.template-orchid .resume-header h1 { font-weight: 500; font-size: 34px; color: #831843; letter-spacing: -.4px; }
+.template-orchid .resume-header p { font-style: italic; color: #9d174d; font-family: var(--resume-font-family, Arial, sans-serif); }
+.template-orchid .resume-section h2 { border: 0; color: #9d174d !important; letter-spacing: 1.8px; font-family: var(--resume-font-family, Arial, sans-serif); }
+.template-orchid .skill-list span { border: 0; border-bottom: 1px solid #f9a8d4; border-radius: 0; background: transparent; }
+
+/* Prism — Pro, a sharp corner of color */
+.template-prism { background: linear-gradient(135deg, #eef2ff 0 72px, #fff 72px); }
+.template-prism .resume-aside { background: #fff; border: 1px solid #c7d2fe; border-radius: 16px; padding: 16px; }
+.template-prism .resume-section h2 { border: 0; color: #4338ca !important; }
+.template-prism .skill-list span { border: 0; background: #eef2ff; color: #3730a3; border-radius: 6px; }
+.template-prism .resume-monogram { border-radius: 6px; }
+
+/* Canyon — Pro, a rust timeline */
+.template-canyon { padding-left: 20mm; }
+.template-canyon .resume-header { border: 0; }
+.template-canyon .resume-header h1 { color: #9a3412; }
+.template-canyon .resume-section { position: relative; padding-left: 16px; }
+.template-canyon .resume-section:before { content: ""; position: absolute; left: 2px; top: 16px; bottom: 0; width: 2px; background: #fdba74; }
+.template-canyon .resume-section h2 { border: 0; color: #c2410c !important; }
+.template-canyon .resume-section h2:before { content: ""; position: absolute; left: -1px; top: 4px; width: 8px; height: 8px; border-radius: 50%; background: #c2410c; }
+
+/* Frost — Pro, a cool header and a white side card */
+.template-frost .resume-header { margin: -16mm -16mm 0; padding: 16mm; background: linear-gradient(180deg, #e0f2fe, #fff); border: 0; }
+.template-frost .resume-header h1 { color: #0c4a6e; }
+.template-frost .resume-columns { margin-top: 8px; }
+.template-frost .resume-aside { background: #fff; border: 1px solid #bae6fd; border-radius: 18px; padding: 16px; box-shadow: 0 10px 24px #0284c714; }
+.template-frost .resume-section h2 { border: 0; color: #0369a1 !important; }
+.template-frost .skill-list span { border: 0; border-radius: 999px; background: #f0f9ff; color: #0c4a6e; }
+
+/* Monarch — Pro, two rules under the name */
+.template-monarch { font-family: Georgia, "Times New Roman", serif; }
+.template-monarch .resume-header { border-bottom: 3px double var(--accent, #1e3a5f); }
+.template-monarch .resume-header h1 { font-weight: 500; font-size: 32px; letter-spacing: .6px; color: #152238; }
+.template-monarch .resume-header p { font-family: var(--resume-font-family, Arial, sans-serif); letter-spacing: 1.6px; text-transform: uppercase; font-size: 10px; }
+.template-monarch .resume-section h2 { font-family: var(--resume-font-family, Arial, sans-serif); border-bottom: 1px solid #1e3a5f; letter-spacing: 1.6px; color: #1e3a5f !important; }
+.template-monarch .skill-list span { border-radius: 0; }
+
+/* Ember — Pro, a dark skills column */
+.template-ember { background: #fff7ed; }
+.template-ember .resume-aside { background: #431407; color: #ffedd5; border-radius: 12px; padding: 16px; }
+.template-ember .resume-aside a, .template-ember .resume-aside .resume-section h2 { color: #fdba74 !important; }
+.template-ember .resume-aside .resume-section h2 { border-bottom: 1px solid #7c2d12; }
+.template-ember .resume-aside .entry-subheading, .template-ember .resume-aside .entry-heading span { color: #fed7aa; }
+.template-ember .resume-aside .skill-list span { border: 0; background: #7c2d12; color: #ffedd5; }
+.template-ember .resume-monogram { background: #fdba74 !important; color: #431407; }
+.template-ember .resume-main .resume-section h2 { border: 0; color: #9a3412 !important; }
+
+/* Solstice — Pro, a wash behind the name */
+.template-solstice .resume-header { margin: -16mm -16mm 16px; padding: 18mm 16mm 16px; background: linear-gradient(100deg, #ccfbf1, #fef3c7 70%); border: 0; }
+.template-solstice .resume-header h1 { color: #134e4a; letter-spacing: -1px; }
+.template-solstice .resume-header p { color: #0f766e; }
+.template-solstice .resume-section h2 { border: 0; border-bottom: 1px solid #99f6e4; color: #0f766e !important; }
+.template-solstice .skill-list span { border: 0; background: #f0fdfa; color: #115e59; border-radius: 999px; }
+
 .density-compact .resume-section { margin-top: calc(var(--resume-spacing, 18px) * .7); }.density-compact .resume-entry { margin-bottom: 7px; }.density-compact .resume-header { padding-bottom: 11px; }.density-airy .resume-section { margin-top: calc(var(--resume-spacing, 18px) * 1.25); }.density-airy .resume-entry { margin-bottom: 16px; }
 .export-mode { box-shadow: none; width: 190mm; min-height: 277mm; }
 .resume-sheet.is-interactive .is-editable { cursor: pointer; border-radius: 8px; transition: background .15s ease, box-shadow .15s ease; }
@@ -244,7 +398,7 @@
   .resume-contact { justify-content: flex-start; max-width: none; }
   .entry-heading { flex-wrap: wrap; }
   .has-sidebar .resume-columns { grid-template-columns: 1fr; }
-  .template-modern .resume-header, .template-lumen .resume-header, .template-velvet .resume-header, .template-slate .resume-header, .template-aurora .resume-header { margin: -34px -34px 16px; padding: 34px 34px 20px; }
+  .template-modern .resume-header, .template-lumen .resume-header, .template-velvet .resume-header, .template-slate .resume-header, .template-aurora .resume-header, .template-iris .resume-header, .template-horizon .resume-header, .template-frost .resume-header, .template-solstice .resume-header { margin: -34px -34px 16px; padding: 34px 34px 20px; }
   .template-grove { box-shadow: inset 6px 0 0 #1f6b45; }
   .template-meridian .resume-section { padding-left: 0; }
   .template-meridian .resume-section h2 { position: static; width: auto; margin-bottom: 6px; }

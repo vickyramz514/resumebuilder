@@ -98,7 +98,33 @@ html:has(.landing-page) { scroll-behavior: smooth; }
 .template-thumbnail-ledger { background: #f8fafc; }
 .template-thumbnail-ledger .template-thumb-avatar { display: none; }
 .template-thumbnail-ledger .template-thumb-section { border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+.template-thumbnail-pebble { background: #f8fafc; }
+.template-thumbnail-cobalt { background: #eff6ff; box-shadow: inset 0 -6px 0 #1d4ed8; }
+.template-thumbnail-signal { background: #ecfeff; box-shadow: inset 6px 0 0 #0e7490; }
+.template-thumbnail-quartz { background: #f1f5f9; }
+.template-thumbnail-quartz .template-thumb-section { border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; }
+.template-thumbnail-cedar { background: #fff7ed; box-shadow: inset 8px 0 0 #9a3412; }
+.template-thumbnail-kite { background: #ecfdf5; }
+.template-thumbnail-index { background: #fff; box-shadow: inset 0 0 0 1px #111827; }
+.template-thumbnail-summit { background: #f8fafc; border-top: 8px solid #1e3a5f; text-align: center; }
+.template-thumbnail-iris { background: #f5f3ff; padding-top: 0; }
+.template-thumbnail-coral { background: #fff1f2; }
+.template-thumbnail-ink { background: #fff; }
+.template-thumbnail-ink .template-thumb-name { width: 120px; height: 14px; }
+.template-thumbnail-mosaic { background: #f0fdfa; }
+.template-thumbnail-horizon { background: #f0f9ff; padding-top: 0; }
+.template-thumbnail-orchid { background: #fdf2f8; }
+.template-thumbnail-prism { background: linear-gradient(135deg, #eef2ff 0 42px, #fff 42px); }
+.template-thumbnail-canyon { background: #fff7ed; }
+.template-thumbnail-canyon .template-thumb-section { padding-left: 12px; border-left: 2px solid #fdba74; }
+.template-thumbnail-frost { background: #f0f9ff; padding-top: 0; }
+.template-thumbnail-monarch { background: #f8fafc; box-shadow: inset 0 -4px 0 #1e3a5f, inset 0 -7px 0 #fff, inset 0 -8px 0 #1e3a5f; }
+.template-thumbnail-ember { background: #fff7ed; }
+.template-thumbnail-solstice { background: #fff; padding-top: 0; }
+.template-thumb-band.is-iris { background: linear-gradient(120deg, #6d28d9, #4c1d95) !important; }
+.template-thumb-band.is-frost { background: linear-gradient(#e0f2fe, #fff) !important; }
 .template-thumb-band.is-wash { background: linear-gradient(120deg, #d7efe4, #f7f1e4) !important; }
+.template-thumbnail-solstice .template-thumb-band.is-wash { background: linear-gradient(100deg, #ccfbf1, #fef3c7) !important; }
 .template-thumb-band.is-navy { background: #1e293b !important; }
 .template-thumb-band.is-gradient { background: linear-gradient(115deg, #0f766e, #1f4a3c 55%, #c4a574) !important; }
 .template-thumb-band.is-dark { background: #1c1714 !important; }
