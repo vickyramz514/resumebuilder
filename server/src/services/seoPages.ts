@@ -21,8 +21,14 @@ export function parseSeoBody(content: string): SeoBody {
 
 export async function ensureSeoPages() {
   for (const seed of SEO_SEEDS) {
-    const existing = await prisma.seoPage.findUnique({ where: { slug: seed.slug }, select: { id: true } });
-    if (existing) continue;
+    const existing = await prisma.seoPage.findUnique({ where: { slug: seed.slug }, select: { id: true, canonicalUrl: true } });
+    const canonicalUrl = canonicalForSlug(seed.slug);
+    if (existing) {
+      if (existing.canonicalUrl.startsWith('https://resume.datacaptain.in')) {
+        await prisma.seoPage.update({ where: { id: existing.id }, data: { canonicalUrl } });
+      }
+      continue;
+    }
     await prisma.seoPage.create({
       data: {
         slug: seed.slug,
@@ -31,7 +37,7 @@ export async function ensureSeoPages() {
         h1: seed.h1,
         content: JSON.stringify(seed.body),
         keywords: seed.keywords,
-        canonicalUrl: canonicalForSlug(seed.slug),
+        canonicalUrl,
         published: true
       }
     });

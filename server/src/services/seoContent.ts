@@ -1,4 +1,4 @@
-export const SITE_ORIGIN = 'https://resume.datacaptain.in';
+export const SITE_ORIGIN = 'https://careerresume.in';
 
 export type SeoSection = { heading: string; paragraphs: string[]; bullets?: string[] };
 export type SeoBody = { intro: string; sections: SeoSection[]; related: string[] };

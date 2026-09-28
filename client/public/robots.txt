@@ -11,4 +11,4 @@ Disallow: /resume/
 Disallow: /r/
 Disallow: /api
 
-Sitemap: https://resume.datacaptain.in/sitemap.xml
+Sitemap: https://careerresume.in/sitemap.xml

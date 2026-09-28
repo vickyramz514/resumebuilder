@@ -7,7 +7,7 @@ import { seoGuideLabel } from '../content/seoGuides';
 import SeoHead from '../components/SeoHead';
 import '../seo-guide.css';
 
-const SITE = 'https://resume.datacaptain.in';
+const SITE = 'https://careerresume.in';
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export default function SeoGuidePage() {

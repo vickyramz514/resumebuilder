@@ -1,2 +1,2 @@
-CLIENT_URL=https://resume.datacaptain.in
-ALLOWED_ORIGINS=https://resume.datacaptain.in,http://localhost:5173,http://127.0.0.1:5173
+CLIENT_URL=https://careerresume.in
+ALLOWED_ORIGINS=https://careerresume.in,http://localhost:5173,http://127.0.0.1:5173
