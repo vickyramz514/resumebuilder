@@ -5,9 +5,9 @@ import App from './App';
 
 const theme = createTheme({
   palette: {
-    primary: { main: '#255c4b', light: '#3d8867', dark: '#173f33' },
-    secondary: { main: '#b07a38' },
-    background: { default: '#f4f7f5' }
+    primary: { main: '#0d9488', light: '#2dd4bf', dark: '#0f766e' },
+    secondary: { main: '#ea580c' },
+    background: { default: '#f4f7fb' }
   },
   typography: {
     fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',

@@ -392,7 +392,7 @@ export default function LandingPage() {
               const paid = plan.priceCents > 0;
               const period = plan.billingCycle === 'yearly' ? '/yr' : paid ? '/mo' : '';
               return <Box key={plan.slug}>
-                <Typography variant="overline" color="#255c4b" fontWeight={800}>{plan.name}</Typography>
+                <Typography variant="overline" color="#0d9488" fontWeight={800}>{plan.name}</Typography>
                 <Typography variant="h6">{formatMoney(plan.priceCents, plan.currency)}{period}</Typography>
                 <Typography variant="body2">{plan.description}</Typography>
                 {paid

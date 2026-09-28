@@ -150,13 +150,13 @@ export default function DashboardPage() {
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .filter((resume) => !needle || resume.title.toLowerCase().includes(needle) || resume.templateId.toLowerCase().includes(needle));
 
-  return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#F7F7F5', color: '#202124' }}>
+  return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#f6f7fb', color: '#202124' }}>
     <AppBar position="static" elevation={0} className="dashboard-topbar" sx={{ bgcolor: '#fff', color: '#202124', borderBottom: '1px solid #e5e9e6' }}>
       <Toolbar sx={{ maxWidth: 1180, width: '100%', mx: 'auto' }}>
         <Box className="brand-mark"><Box className="brand-badge"><Sparkles size={16} fill="currentColor" /></Box><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
         <Box flex={1} />
         <Box className="user-chip" onClick={(event) => setUserMenuAnchor(event.currentTarget)}>
-          <Avatar sx={{ width: 30, height: 30, fontSize: 13, fontWeight: 700, bgcolor: '#255c4b' }}>{(user?.name || 'U').slice(0, 1).toUpperCase()}</Avatar>
+          <Avatar sx={{ width: 30, height: 30, fontSize: 13, fontWeight: 700, bgcolor: '#0d9488' }}>{(user?.name || 'U').slice(0, 1).toUpperCase()}</Avatar>
           <Typography variant="body2" fontWeight={650} sx={{ display: { xs: 'none', sm: 'inline' } }} noWrap maxWidth={140}>{user?.name}</Typography>
           <ChevronDown size={15} />
         </Box>
@@ -171,7 +171,7 @@ export default function DashboardPage() {
     <Box className="dashboard-content" maxWidth={1180} mx="auto" px={{ xs: 2, sm: 3 }} py={{ xs: 3, sm: 6 }}>
       <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={2} mb={3} className="dashboard-heading">
         <Box>
-          <Typography variant="overline" color="#255c4b" fontWeight={800}>Your workspace</Typography>
+          <Typography variant="overline" color="#0d9488" fontWeight={800}>Your workspace</Typography>
           <Typography variant="h3" fontWeight={750} letterSpacing="-1.5px">My Resumes</Typography>
           <Typography color="#626871">Choose a starting point, then build a resume you feel good sending.</Typography>
         </Box>

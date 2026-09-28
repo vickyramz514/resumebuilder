@@ -81,7 +81,7 @@ export function PaywallDialog({ open, reason, onClose }: Props) {
                 <Stack spacing={0.4} mt={1} mb={1.5}>
                   {(Array.isArray(plan.features) ? plan.features.map(String) : []).map((feature) => (
                     <Stack direction="row" spacing={1} key={feature} alignItems="flex-start">
-                      <Check size={14} color="#255c4b" />
+                      <Check size={14} color="#0d9488" />
                       <Typography variant="body2">{feature}</Typography>
                     </Stack>
                   ))}

@@ -110,14 +110,14 @@ export default function BillingPage() {
     }
   };
 
-  return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#F7F7F5', color: '#202124' }}>
+  return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#f6f7fb', color: '#202124' }}>
     <AppBar position="static" elevation={0} className="dashboard-topbar" sx={{ bgcolor: '#fff', color: '#202124', borderBottom: '1px solid #e5e9e6' }}>
       <Toolbar sx={{ maxWidth: 1180, width: '100%', mx: 'auto' }}>
         <Box className="brand-mark"><Box className="brand-badge"><Sparkles size={16} fill="currentColor" /></Box><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
         <Box flex={1} />
         <Button color="inherit" onClick={() => navigate('/dashboard')} sx={{ mr: 1 }}>My Resumes</Button>
         <Box className="user-chip" onClick={(event) => setUserMenuAnchor(event.currentTarget)}>
-          <Avatar sx={{ width: 30, height: 30, fontSize: 13, fontWeight: 700, bgcolor: '#255c4b' }}>{(user?.name || 'U').slice(0, 1).toUpperCase()}</Avatar>
+          <Avatar sx={{ width: 30, height: 30, fontSize: 13, fontWeight: 700, bgcolor: '#0d9488' }}>{(user?.name || 'U').slice(0, 1).toUpperCase()}</Avatar>
           <Typography variant="body2" fontWeight={650} sx={{ display: { xs: 'none', sm: 'inline' } }} noWrap maxWidth={140}>{user?.name}</Typography>
           <ChevronDown size={15} />
         </Box>
@@ -131,7 +131,7 @@ export default function BillingPage() {
 
     <Box className="dashboard-content" maxWidth={1180} mx="auto" px={{ xs: 2, sm: 3 }} py={{ xs: 3, sm: 6 }}>
       <Box className="dashboard-heading" mb={3}>
-        <Typography variant="overline" color="#255c4b" fontWeight={800}>Billing</Typography>
+        <Typography variant="overline" color="#0d9488" fontWeight={800}>Billing</Typography>
         <Typography variant="h3" fontWeight={750} letterSpacing="-1.5px">Plans & billing</Typography>
         <Typography color="#626871">Same Razorpay checkout as DataCaptain. Invoices go to your account email.</Typography>
       </Box>
@@ -191,7 +191,7 @@ export default function BillingPage() {
                   </Stack>
                   <Stack spacing={0.75} mt={2} mb={2}>
                     {featureList(plan).map((feature) => <Stack direction="row" spacing={1} key={feature} alignItems="flex-start">
-                      <Check size={15} color="#255c4b" /><Typography variant="body2">{feature}</Typography>
+                      <Check size={15} color="#0d9488" /><Typography variant="body2">{feature}</Typography>
                     </Stack>)}
                   </Stack>
                   {current ? <Button fullWidth disabled>Current plan</Button> : plan.priceCents <= 0 ? <Button fullWidth variant="outlined" onClick={() => navigate('/dashboard')}>Continue for free</Button> : (
