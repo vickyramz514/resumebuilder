@@ -374,7 +374,7 @@ function ResumeBuilder() {
         </Stack>
         {extra ? null : <ContentSuggestions section={selectedSection} onApplied={setToast} />}
       </Box>
-      <Box className="form-scroll">
+      <Box className="form-scroll" key={extra ?? String(selectedSection)}>
         {sectionForm}
       </Box>
     </Box>
