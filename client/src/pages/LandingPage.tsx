@@ -80,7 +80,7 @@ const faqs = [
   { q: 'What can I import?', a: 'A ResumeForge JSON export. The importer checks that the file has resume content, then keeps it ready so you can save it to your library.' },
   { q: 'Can I change the template later?', a: 'Yes. Your content stays in place when you switch layouts. Font, accent, spacing, and density live in the editor and can change at any time.' },
   { q: 'Who can see a shared resume?', a: 'Nobody, until you turn sharing on from the dashboard. A public link shows only that resume, and you can disable it whenever you want.' },
-  { q: 'Will an applicant tracking system be able to read it?', a: 'The editor stores your resume as labeled sections: profile, experience, education, skills, projects, and certifications. The Word download is a single column with those headings, which is the file to upload when a form scans the document. The PDF is the designed page, for a person.' }
+  { q: 'Will an applicant tracking system be able to read it?', a: 'The editor stores your resume as labeled sections: profile, experience, education, skills, projects, certifications, and the extra sections you choose to show. The Word download is a single column with those headings, which is the file to upload when a form scans the document. The PDF is the designed page, for a person. The ATS check compares a pasted job description with the words already on the page.' }
 ];
 
 export default function LandingPage() {
@@ -245,7 +245,7 @@ export default function LandingPage() {
             <Box className="feature-card">
               <Box className="feature-icon tone-green"><PenLine size={18} /></Box>
               <Typography variant="h6">A guided editor, not a blank canvas</Typography>
-              <Typography variant="body2">Profile, experience, education, skills, projects, and certifications are already on the page. You fill them in and drag the order the role needs.</Typography>
+              <Typography variant="body2">Profile, experience, education, skills, projects, and certifications are on the page. Languages, awards, and volunteer work sit in the same editor.</Typography>
             </Box>
             <Box className="feature-card">
               <Box className="feature-icon tone-ink"><FileText size={18} /></Box>

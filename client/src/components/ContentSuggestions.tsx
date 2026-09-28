@@ -168,6 +168,45 @@ export function ContentSuggestions({ section, onApplied }: { section: SectionTyp
     });
   }
 
+  if (section === 'languages') {
+    items.push({
+      label: 'Sample language',
+      apply: () => {
+        updateResume({ languages: [...resume.languages, { id: freshId(), name: 'English', level: 'Professional' }] });
+        onApplied('Sample language added. Change the name and the level.');
+      }
+    });
+  }
+
+  if (section === 'awards') {
+    items.push({
+      label: 'Sample award',
+      apply: () => {
+        updateResume({ awards: [...resume.awards, { id: freshId(), name: 'Award name', issuer: 'Who gave it', date: '2024' }] });
+        onApplied('Sample award added. Replace it with one you received.');
+      }
+    });
+  }
+
+  if (section === 'volunteer') {
+    items.push({
+      label: 'Sample volunteer role',
+      apply: () => {
+        updateResume({
+          volunteer: [...resume.volunteer, {
+            id: freshId(),
+            role: 'Volunteer',
+            organization: 'Organization',
+            startDate: '2023',
+            endDate: '2024',
+            summary: 'Say what you did and who it helped.'
+          }]
+        });
+        onApplied('Sample volunteer role added. Rewrite it with work you actually did.');
+      }
+    });
+  }
+
   if (!items.length) return null;
 
   return (

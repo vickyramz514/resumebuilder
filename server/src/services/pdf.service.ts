@@ -17,6 +17,15 @@ export function publicResumeHtml(data: any) {
   const section = (name: string, content: string) => content ? `<section><h2>${name}</h2>${content}</section>` : '';
   const experience = (data.experience ?? []).map((item: any) => `<article><strong>${escape(item.role)}</strong> — ${escape(item.company)}<p>${(item.bullets ?? []).map((bullet: string) => `<li>${escape(bullet)}</li>`).join('')}</p></article>`).join('');
   const projects = (data.projects ?? []).map((item: any) => `<article><strong>${escape(item.name)}</strong><p>${escape(item.description)}</p></article>`).join('');
-  const body = sections.map((name) => name === 'summary' ? section('Profile', `<p>${escape(data.summary)}</p>`) : name === 'experience' ? section('Experience', experience) : name === 'projects' ? section('Projects', projects) : name === 'skills' ? section('Skills', `<p>${(data.skills ?? []).map(escape).join(' · ')}</p>`) : '').join('');
+  const body = sections.map((name) => {
+    if (name === 'summary') return section('Profile', `<p>${escape(data.summary)}</p>`);
+    if (name === 'experience') return section('Experience', experience);
+    if (name === 'projects') return section('Projects', projects);
+    if (name === 'skills') return section('Skills', `<p>${(data.skills ?? []).map(escape).join(' · ')}</p>`);
+    if (name === 'languages') return section('Languages', `<p>${(data.languages ?? []).map((item: any) => escape(item.level ? `${item.name} (${item.level})` : item.name)).join(' · ')}</p>`);
+    if (name === 'awards') return section('Awards', (data.awards ?? []).map((item: any) => `<article><strong>${escape(item.name)}</strong> — ${escape(item.issuer)}</article>`).join(''));
+    if (name === 'volunteer') return section('Volunteer', (data.volunteer ?? []).map((item: any) => `<article><strong>${escape(item.role)}</strong> — ${escape(item.organization)}<p>${escape(item.summary)}</p></article>`).join(''));
+    return '';
+  }).join('');
   return `<html><head><style>body{font-family:Arial,sans-serif;padding:28px;color:#202124}h1{margin-bottom:4px}h2{border-bottom:1px solid #ccc;padding-bottom:4px;font-size:16px}section{margin-top:18px}article{margin:10px 0}li{margin:3px 0}</style></head><body><h1>${escape(data.personal?.name || 'Resume')}</h1><p>${escape(data.personal?.headline)}</p><p>${escape(data.personal?.contact?.email)} ${escape(data.personal?.contact?.phone)} ${escape(data.personal?.contact?.location)}</p>${body}</body></html>`;
 }

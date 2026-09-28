@@ -1,7 +1,8 @@
 import type { Contact, FontFamily, Resume, ResumeDesign, ResumeDensity, SectionType, TemplateId } from '../types';
 import { TEMPLATE_IDS } from '../templates/catalog';
+import { RESUME_SECTIONS } from './resumeDefaults';
 
-const sectionTypes: SectionType[] = ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'];
+const sectionTypes: SectionType[] = RESUME_SECTIONS;
 const templateIds: TemplateId[] = TEMPLATE_IDS;
 const fontFamilies: FontFamily[] = ['inter', 'source-sans', 'georgia', 'ibm-plex', 'space-grotesk'];
 const densities: ResumeDensity[] = ['comfortable', 'compact', 'airy'];
@@ -72,7 +73,21 @@ export function normalizeImportedResume(input: unknown): Resume {
       id: asString(item.id, `certification-${index + 1}`),
       name: asString(item.name), issuer: asString(item.issuer), date: asString(item.date)
     })) : [],
-    sections: sections.length ? sections : sectionTypes,
+    languages: Array.isArray(source.languages) ? source.languages.filter(isRecord).map((item, index) => ({
+      id: asString(item.id, `language-${index + 1}`),
+      name: asString(item.name), level: asString(item.level)
+    })) : [],
+    awards: Array.isArray(source.awards) ? source.awards.filter(isRecord).map((item, index) => ({
+      id: asString(item.id, `award-${index + 1}`),
+      name: asString(item.name), issuer: asString(item.issuer), date: asString(item.date)
+    })) : [],
+    volunteer: Array.isArray(source.volunteer) ? source.volunteer.filter(isRecord).map((item, index) => ({
+      id: asString(item.id, `volunteer-${index + 1}`),
+      role: asString(item.role), organization: asString(item.organization),
+      startDate: asString(item.startDate), endDate: asString(item.endDate), summary: asString(item.summary)
+    })) : [],
+    coverLetter: asString(source.coverLetter),
+    sections: sections.length ? [...sections, ...sectionTypes.filter((section) => !sections.includes(section))] : sectionTypes,
     hiddenSections: Array.isArray(source.hiddenSections)
       ? source.hiddenSections.filter((section): section is SectionType => typeof section === 'string' && sectionTypes.includes(section as SectionType))
       : []

@@ -25,7 +25,13 @@ export const SEO_LABELS: Record<string, string> = {
   'software-engineer': 'Software engineer',
   'senior-software-engineer': 'Senior software engineer',
   'ats-resume': 'ATS-friendly resume',
-  'fresher-resume': 'Fresher resume'
+  'fresher-resume': 'Fresher resume',
+  'product-manager': 'Product manager',
+  'data-analyst': 'Data analyst',
+  'data-scientist': 'Data scientist',
+  'devops-engineer': 'DevOps engineer',
+  'qa-engineer': 'QA engineer',
+  'ui-ux-designer': 'UI/UX designer'
 };
 
 export function relatedLabel(slug: string) {
@@ -397,6 +403,204 @@ export const SEO_SEEDS: SeoSeed[] = [
         }
       ],
       related: ['ats-resume', 'frontend-developer', 'software-engineer']
+    }
+  }),
+  page({
+    slug: 'product-manager',
+    title: 'Product Manager Resume: Decisions, Not a Feature List',
+    metaDescription: 'How to write a product manager resume that shows the problem, the decision, and what changed for customers.',
+    h1: 'Product manager resume: show the decision and the result',
+    keywords: ['product manager resume', 'pm resume', 'product manager resume example'],
+    body: {
+      intro: 'A product manager resume fails when it reads like a backlog. Hiring managers want the problem you chose, the constraint you accepted, and the change a customer or the business could see.',
+      sections: [
+        {
+          heading: 'Open with the kind of product',
+          paragraphs: [
+            'Say whether you owned a growth surface, an internal tool, or a platform other teams shipped on. Those are different jobs.',
+            'A headline such as "Product manager for billing and account settings" is more useful than "strategic product thinker".'
+          ]
+        },
+        {
+          heading: 'Bullets that survive a skim',
+          paragraphs: ['Start from the user or the metric, then the choice you made. Leave the ticket count out.'],
+          bullets: [
+            'Stopped a rewrite of checkout and fixed the two steps where people abandoned the form.',
+            'Wrote the rollout plan, including who would see the change first and how to turn it off.',
+            'Cut a weekly stakeholder meeting by replacing it with a one-page decision log.'
+          ]
+        },
+        {
+          heading: 'What to leave off',
+          paragraphs: ['A list of every framework the engineers used does not make you a stronger product manager. Name the ones you can discuss, and spend the rest of the line on the outcome.']
+        }
+      ],
+      related: ['software-engineer', 'ui-ux-designer', 'ats-resume']
+    }
+  }),
+  page({
+    slug: 'data-analyst',
+    title: 'Data Analyst Resume Guide',
+    metaDescription: 'Write a data analyst resume around the question you answered, the data you trusted, and the decision that followed.',
+    h1: 'Data analyst resume: the question, the data, and the decision',
+    keywords: ['data analyst resume', 'analytics resume', 'data analyst resume example'],
+    body: {
+      intro: 'Analyst resumes get skipped when they are a stack of tool names. The useful version names the question, where the data came from, and what someone did differently because of the answer.',
+      sections: [
+        {
+          heading: 'Lead with the decision',
+          paragraphs: [
+            'A dashboard is not the achievement. The achievement is that a team stopped guessing.',
+            'Mention SQL, a warehouse, or a notebook after the outcome, not instead of it.'
+          ]
+        },
+        {
+          heading: 'Bullets a reviewer can check',
+          paragraphs: ['Include the grain of the data and the mistake you avoided.'],
+          bullets: [
+            'Reconciled revenue in the warehouse with the billing system before the Monday report went out.',
+            'Replaced a spreadsheet that three people edited with a query the team could rerun.',
+            'Flagged a tracking change that had been double-counting signups for two weeks.'
+          ]
+        },
+        {
+          heading: 'Skills line',
+          paragraphs: ['SQL, the warehouse or database, and the way you share results: a sheet, a notebook, or a dashboard. Skip tools you opened once in a course.']
+        }
+      ],
+      related: ['data-scientist', 'product-manager', 'ats-resume']
+    }
+  }),
+  page({
+    slug: 'data-scientist',
+    title: 'Data Scientist Resume: Models That Someone Used',
+    metaDescription: 'A data scientist resume should show the model or analysis that shipped, how you judged it, and what you refused to claim.',
+    h1: 'Data scientist resume: a model someone actually used',
+    keywords: ['data scientist resume', 'machine learning resume', 'data science resume'],
+    body: {
+      intro: 'A data scientist resume that lists every algorithm reads like a syllabus. Reviewers want one model or study that left the notebook, how you knew it was good enough, and where it was wrong.',
+      sections: [
+        {
+          heading: 'Name the decision the model served',
+          paragraphs: [
+            'Ranking, forecasting, or a one-off analysis are different jobs. Say which one you owned.',
+            'If the work stayed in a notebook, say what question it answered. Do not imply it was in production.'
+          ]
+        },
+        {
+          heading: 'Proof that is more than accuracy',
+          paragraphs: ['Accuracy without a baseline is a weak line. A baseline, a failure mode, and a person who used the output are stronger.'],
+          bullets: [
+            'Beat the existing rules by a margin the support team could feel, then watched the error cases for a month.',
+            'Refused to ship a model that looked better only because the test set leaked future data.',
+            'Wrote the assumptions next to the chart so a product manager could challenge them.'
+          ]
+        },
+        {
+          heading: 'Tools',
+          paragraphs: ['Python or R, the data store, and how you evaluated the work. One library list is enough.']
+        }
+      ],
+      related: ['data-analyst', 'software-engineer', 'backend-developer']
+    }
+  }),
+  page({
+    slug: 'devops-engineer',
+    title: 'DevOps Engineer Resume: What You Kept Running',
+    metaDescription: 'Write a DevOps resume about deploys, incidents, and the path from a change to production, not a logo row of cloud products.',
+    h1: 'DevOps engineer resume: the path from a change to production',
+    keywords: ['devops resume', 'devops engineer resume', 'site reliability resume'],
+    body: {
+      intro: 'DevOps resumes collapse into tool lists. The page that gets read says how code reached production, what you watched, and what you changed after something broke.',
+      sections: [
+        {
+          heading: 'Describe the path, not the vendor',
+          paragraphs: [
+            'A pipeline, a cluster, or a set of servers is clearer than "worked on cloud".',
+            'Name who used that path. A team that could ship without asking you is a result.'
+          ]
+        },
+        {
+          heading: 'Incidents belong on the page',
+          paragraphs: ['One incident you handled, including what you changed afterward, is worth more than five product names.'],
+          bullets: [
+            'Added a rollback to the deploy so a bad release could be undone without a new build.',
+            'Moved a nightly job off the database that was already serving traffic.',
+            'Wrote the alert that fired before customers wrote in, and the note for what to do next.'
+          ]
+        },
+        {
+          heading: 'Keep the skills short',
+          paragraphs: ['The cloud you used, the way you deploy, and how you look at logs. Anything you cannot discuss for five minutes should stay off the line.']
+        }
+      ],
+      related: ['backend-developer', 'software-engineer', 'qa-engineer']
+    }
+  }),
+  page({
+    slug: 'qa-engineer',
+    title: 'QA Engineer Resume: Risk, Not a Test-Case Count',
+    metaDescription: 'A QA engineer resume should show which risks you caught, how you tested them, and what shipped because of that work.',
+    h1: 'QA engineer resume: the bugs that mattered',
+    keywords: ['qa resume', 'qa engineer resume', 'software tester resume'],
+    body: {
+      intro: 'A QA resume that says "wrote test cases" could describe any job. The stronger page names the risk, how you found it, and what would have happened if it had shipped.',
+      sections: [
+        {
+          heading: 'Say what you were protecting',
+          paragraphs: [
+            'Payments, permissions, and a mobile release are different risks. Pick the ones you owned.',
+            'Automation is a detail. The result is a release that did not repeat a known failure.'
+          ]
+        },
+        {
+          heading: 'Bullets with a consequence',
+          paragraphs: ['Include the environment and the user, not only the tool.'],
+          bullets: [
+            'Caught a billing bug that charged a second time when the network dropped mid-checkout.',
+            'Kept a regression list for the three flows support saw every week.',
+            'Added a check that ran before release so a missing translation could not reach production again.'
+          ]
+        },
+        {
+          heading: 'Tools in their place',
+          paragraphs: ['Name the runner, the browser or device, and whether you wrote code. A long grid of every testing product is harder to read than one sentence about the suite you maintained.']
+        }
+      ],
+      related: ['software-engineer', 'devops-engineer', 'frontend-developer']
+    }
+  }),
+  page({
+    slug: 'ui-ux-designer',
+    title: 'UI/UX Designer Resume: The Problem in the Interface',
+    metaDescription: 'How to write a UI and UX resume that shows the problem, the constraint, and what people could do after the change.',
+    h1: 'UI/UX designer resume: what people could do after the change',
+    keywords: ['ui ux resume', 'ux designer resume', 'product designer resume'],
+    body: {
+      intro: 'A design resume that is only a link to a portfolio still has to survive a skim and a parser. The page should say which problem you took, what you refused to add, and how you knew the new flow was clearer.',
+      sections: [
+        {
+          heading: 'Write the problem before the tool',
+          paragraphs: [
+            'Figma is assumed. The decision is not. Say what was confusing and for whom.',
+            'If you also built the interface, say so. If an engineer built it from your files, say that too.'
+          ]
+        },
+        {
+          heading: 'A bullet a hiring manager can picture',
+          paragraphs: ['Describe the before and after in one line.'],
+          bullets: [
+            'Rebuilt the empty and error states so a failed save told people what to do next.',
+            'Cut a settings page from four tabs to one, after watching five people miss the same control.',
+            'Set type and spacing in a shared file so later screens stopped inventing their own sizes.'
+          ]
+        },
+        {
+          heading: 'File format',
+          paragraphs: ['Keep this page in one column with ordinary headings when a form will scan it. Put the portfolio link in the contact line, as text, not only as a button in a picture.']
+        }
+      ],
+      related: ['product-manager', 'frontend-developer', 'ats-resume']
     }
   })
 ];

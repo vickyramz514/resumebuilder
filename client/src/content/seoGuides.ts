@@ -9,7 +9,13 @@ export const SEO_GUIDES = [
   { slug: 'software-engineer', label: 'Software engineer' },
   { slug: 'senior-software-engineer', label: 'Senior software engineer' },
   { slug: 'ats-resume', label: 'ATS-friendly resume' },
-  { slug: 'fresher-resume', label: 'Fresher resume' }
+  { slug: 'fresher-resume', label: 'Fresher resume' },
+  { slug: 'product-manager', label: 'Product manager' },
+  { slug: 'data-analyst', label: 'Data analyst' },
+  { slug: 'data-scientist', label: 'Data scientist' },
+  { slug: 'devops-engineer', label: 'DevOps engineer' },
+  { slug: 'qa-engineer', label: 'QA engineer' },
+  { slug: 'ui-ux-designer', label: 'UI/UX designer' }
 ] as const;
 
 export function seoGuideLabel(slug: string) {

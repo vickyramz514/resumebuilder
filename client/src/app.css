@@ -49,4 +49,7 @@ body { background: #f4f7fb; color: #172033; font-family: Inter, ui-sans-serif, s
 @media print { .topbar, .editor-side, .preview-toolbar { display: none !important; }.preview-area { overflow: visible; }.preview-scroll { padding: 0; }.preview-zoom { transform: none !important; margin-bottom: 0 !important; }.resume-sheet { box-shadow: none !important; } }
 @keyframes preview-in { from { opacity: 0; transform: translateY(8px) scale(.995); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes brand-spark { 0%, 100% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(7deg) scale(1.08); } }
-@media (prefers-reduced-motion: reduce) { .brand-mark svg, .preview-scroll .resume-sheet, .save-dot { animation: none; } }
+.ats-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.ats-chips span { padding: 4px 8px; border-radius: 999px; background: #f4ece4; color: #6b4a28; font-size: 13px; }
+.ats-chips.is-match span { background: #e7f2ec; color: #1f4d3d; }
+

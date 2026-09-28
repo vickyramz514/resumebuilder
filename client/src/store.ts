@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Resume, SectionType, TemplateId } from './types';
 import { emptyResume, sampleResume } from './templates/data';
 import { TEMPLATE_META } from './templates/catalog';
+import { withResumeDefaults } from './utils/resumeDefaults';
 
 interface ResumeStore {
   resumes: Resume[];
@@ -33,12 +35,13 @@ let groupTimer: ReturnType<typeof setTimeout> | undefined;
 const withActive = (state: { resumes: Resume[]; activeId: string }, updater: (resume: Resume) => Resume) => {
   const active = state.resumes.find((resume) => resume.id === state.activeId);
   if (!active) return {};
-  if (!groupingEdits) previous = structuredClone(active);
+  const current = withResumeDefaults(active);
+  if (!groupingEdits) previous = structuredClone(current);
   groupingEdits = true;
   if (groupTimer) clearTimeout(groupTimer);
   groupTimer = setTimeout(() => { groupingEdits = false; }, 1200);
   return {
-    resumes: state.resumes.map((resume) => resume.id === active.id ? { ...updater(active), updatedAt: timestamp() } : resume),
+    resumes: state.resumes.map((resume) => resume.id === current.id ? { ...updater(current), updatedAt: timestamp() } : resume),
     canUndo: true
   };
 };
@@ -114,4 +117,7 @@ export const useResumeStore = create<ResumeStore>()(persist((set, get) => ({
   })
 }), { name: 'resumeforge_resume', partialize: (state) => ({ resumes: state.resumes, activeId: state.activeId, selectedSection: state.selectedSection }) }));
 
-export const useActiveResume = () => useResumeStore((state) => state.resumes.find((resume) => resume.id === state.activeId) ?? state.resumes[0]);
+export function useActiveResume() {
+  const resume = useResumeStore((state) => state.resumes.find((item) => item.id === state.activeId) ?? state.resumes[0]);
+  return useMemo(() => (resume ? withResumeDefaults(resume) : resume), [resume]);
+}

@@ -17,7 +17,8 @@ import { useActiveResume, useResumeStore } from '../store';
 import { TEMPLATE_CATALOG, isPaidTemplate } from '../templates/catalog';
 import type { FontFamily, ResumeDesign, ResumeDensity, SectionType, TemplateId } from '../types';
 import { PersonalForm } from '../components/PersonalForm';
-import { CertificationsForm, EducationForm, ExperienceForm, ProjectsForm, SkillsForm, SummaryForm } from '../components/SectionForms';
+import { AwardsForm, CertificationsForm, CoverLetterForm, EducationForm, ExperienceForm, LanguagesForm, ProjectsForm, SkillsForm, SummaryForm, VolunteerForm } from '../components/SectionForms';
+import { AtsCheck } from '../components/AtsCheck';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
 import { AIAssistant, type AssistantResult } from '../components/AIAssistant';
 import { CompletenessCard } from '../components/CompletenessCard';
@@ -27,7 +28,7 @@ import { getResumeCompleteness } from '../utils/completeness';
 import { applyAiSuggestion } from '../utils/applyAiSuggestion';
 import { hasPaidPlan } from '../utils/entitlements';
 import { apiUrl } from '../services/api';
-import { buildResumeDocx } from '../services/docxExport';
+import { buildCoverLetterDocx, buildResumeDocx } from '../services/docxExport';
 import { useAuthStore } from '../store/authStore';
 import {
   createResume, deleteResume as deleteCloudResume, duplicateResume as duplicateCloudResume, getResume,
@@ -35,9 +36,9 @@ import {
 } from '../services/resumeApi';
 import '../app.css';
 
-const sectionLabels: Record<SectionType, string> = { summary: 'Profile', experience: 'Experience', education: 'Education', skills: 'Skills', projects: 'Projects', certifications: 'Certifications' };
-const shortLabels: Record<SectionType | 'personal', string> = { personal: 'Details', summary: 'Profile', experience: 'Work', education: 'School', skills: 'Skills', projects: 'Projects', certifications: 'Certs' };
-const sectionIcons: Record<SectionType, string> = { summary: '01', experience: '02', education: '03', skills: '04', projects: '05', certifications: '06' };
+const sectionLabels: Record<SectionType, string> = { summary: 'Profile', experience: 'Experience', education: 'Education', skills: 'Skills', projects: 'Projects', certifications: 'Certifications', languages: 'Languages', awards: 'Awards', volunteer: 'Volunteer' };
+const shortLabels: Record<SectionType | 'personal' | 'cover' | 'ats', string> = { personal: 'Details', summary: 'Profile', experience: 'Work', education: 'School', skills: 'Skills', projects: 'Projects', certifications: 'Certs', languages: 'Languages', awards: 'Awards', volunteer: 'Volunteer', cover: 'Letter', ats: 'ATS' };
+const sectionIcons: Record<SectionType, string> = { summary: '01', experience: '02', education: '03', skills: '04', projects: '05', certifications: '06', languages: '07', awards: '08', volunteer: '09' };
 const colors = ['#202124', '#626871', '#0f766e', '#8a5a2b', '#7a3e52', '#1e3a5f', '#4338ca', '#15232c', '#7c2d12', '#111827'];
 const fonts: { id: FontFamily; label: string }[] = [
   { id: 'inter', label: 'Inter · modern' },
@@ -87,8 +88,9 @@ function ResumeBuilder() {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [aiOpen, setAiOpen] = useState(false);
   const [paywallReason, setPaywallReason] = useState<'pdf' | 'ai' | 'template' | null>(null);
-  const [exporting, setExporting] = useState<'pdf' | 'docx' | null>(null);
+  const [exporting, setExporting] = useState<'pdf' | 'docx' | 'letter' | null>(null);
   const [downloadAnchor, setDownloadAnchor] = useState<HTMLElement | null>(null);
+  const [extra, setExtra] = useState<'cover' | 'ats' | null>(null);
   const [zoom, setZoom] = useState(100);
   const [toast, setToast] = useState('');
   const [shareOpen, setShareOpen] = useState(false);
@@ -184,6 +186,7 @@ function ResumeBuilder() {
   }, [saveState]);
 
   const selectSection = (section: SectionType | 'personal') => {
+    setExtra(null);
     setSelectedSection(section);
     setTab('editor');
     if (isMobile) setMobilePane('editor');
@@ -217,6 +220,31 @@ function ResumeBuilder() {
       else if (result.kind === 'project') selectSection('projects');
       else if (result.kind === 'skills') selectSection('skills');
       setToast('Suggestion applied — review it in the editor');
+    }
+  };
+
+  const saveTailoredCopy = async (result: AssistantResult) => {
+    if (!resume) return;
+    const patch = applyAiSuggestion(resume, result);
+    const title = `${resume.title.replace(/ · tailored$/, '')} · tailored`;
+    const copy = { ...resume, ...patch, title, updatedAt: new Date().toISOString() };
+    if (!authenticated) {
+      const local = { ...copy, id: `resume-${Date.now()}` };
+      useResumeStore.setState((state) => ({ resumes: [...state.resumes, local], activeId: local.id, selectedSection: 'summary' }));
+      setToast('Saved as a new resume. The original is unchanged.');
+      setAiOpen(false);
+      return;
+    }
+    try {
+      const created = await createResume({ title, data: { ...copy, id: '' }, templateId: resume.template });
+      skipSave.current = true;
+      replaceResume({ ...created.resume.data, id: created.resume.id, title: created.resume.title, template: created.resume.templateId as TemplateId, updatedAt: created.resume.updatedAt });
+      navigate(`/resume/${created.resume.id}/edit`);
+      setToast('Saved as a new resume. The original is unchanged.');
+      setAiOpen(false);
+      void refreshLibrary();
+    } catch {
+      setToast('Unable to save the tailored copy.');
     }
   };
 
@@ -278,6 +306,20 @@ function ResumeBuilder() {
     }
   };
 
+  const exportCoverLetter = async () => {
+    if (!resume) return;
+    if (!paid) { setPaywallReason('pdf'); return; }
+    if (!(resume.coverLetter ?? '').trim()) { setToast('Write the cover letter first.'); setExtra('cover'); setTab('editor'); return; }
+    setExporting('letter');
+    try {
+      downloadBlob(await buildCoverLetterDocx(resume), `${resume.personal.name || 'cover-letter'}-cover-letter.docx`);
+    } catch {
+      setToast('Unable to export the cover letter. Try again in a moment.');
+    } finally {
+      setExporting(null);
+    }
+  };
+
   const exportJson = () => {
     if (!resume) return;
     const blob = new Blob([JSON.stringify({ resume }, null, 2)], { type: 'application/json' });
@@ -315,18 +357,22 @@ function ResumeBuilder() {
     if (oldIndex >= 0 && newIndex >= 0) reorderSections(oldIndex, newIndex);
   };
 
-  const sectionForm = selectedSection === 'personal' ? <PersonalForm /> : selectedSection === 'summary' ? <SummaryForm /> : selectedSection === 'experience' ? <ExperienceForm /> : selectedSection === 'education' ? <EducationForm /> : selectedSection === 'skills' ? <SkillsForm /> : selectedSection === 'projects' ? <ProjectsForm /> : <CertificationsForm />;
+  const sectionForm = extra === 'cover'
+    ? <CoverLetterForm onDownload={() => { void exportCoverLetter(); }} downloading={exporting === 'letter'} />
+    : extra === 'ats'
+      ? <AtsCheck resume={resume} />
+      : selectedSection === 'personal' ? <PersonalForm /> : selectedSection === 'summary' ? <SummaryForm /> : selectedSection === 'experience' ? <ExperienceForm /> : selectedSection === 'education' ? <EducationForm /> : selectedSection === 'skills' ? <SkillsForm /> : selectedSection === 'projects' ? <ProjectsForm /> : selectedSection === 'languages' ? <LanguagesForm /> : selectedSection === 'awards' ? <AwardsForm /> : selectedSection === 'volunteer' ? <VolunteerForm /> : <CertificationsForm />;
   const editorPanel = (
     <Box className="editor-panel">
       <Box className="editor-heading">
         <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-          <Typography variant="h6">{selectedSection === 'personal' ? 'Personal details' : sectionLabels[selectedSection as SectionType]}</Typography>
+          <Typography variant="h6">{extra === 'cover' ? 'Cover letter' : extra === 'ats' ? 'ATS check' : selectedSection === 'personal' ? 'Personal details' : sectionLabels[selectedSection as SectionType]}</Typography>
           <Stack direction="row" spacing={0.5}>
             <Button size="small" disabled={navIndex <= 0} onClick={() => selectSection(navSections[navIndex - 1])}>Back</Button>
             <Button size="small" variant="outlined" disabled={navIndex >= navSections.length - 1} onClick={() => selectSection(navSections[navIndex + 1])}>Next</Button>
           </Stack>
         </Stack>
-        <ContentSuggestions section={selectedSection} onApplied={setToast} />
+        {extra ? null : <ContentSuggestions section={selectedSection} onApplied={setToast} />}
       </Box>
       <Box className="form-scroll">
         {sectionForm}
@@ -439,6 +485,7 @@ function ResumeBuilder() {
           <Menu anchorEl={downloadAnchor} open={Boolean(downloadAnchor)} onClose={() => setDownloadAnchor(null)}>
             <MenuItem onClick={() => { setDownloadAnchor(null); void exportPdf(); }}><FileText size={15} />&nbsp; PDF</MenuItem>
             <MenuItem onClick={() => { setDownloadAnchor(null); void exportDocx(); }}><FileText size={15} />&nbsp; Word (.docx)</MenuItem>
+            <MenuItem onClick={() => { setDownloadAnchor(null); void exportCoverLetter(); }}><FileText size={15} />&nbsp; Cover letter (.docx)</MenuItem>
           </Menu>
           <Tooltip title="More resume actions">
             <IconButton className="topbar-icon-btn" aria-label="More resume actions" onClick={(e) => setMenuAnchor(e.currentTarget)}><MoreVertical size={19} /></IconButton>
@@ -490,11 +537,13 @@ function ResumeBuilder() {
                       const related = completeness.items.filter((item) => item.section === section);
                       const done = related.length ? related.every((item) => item.done) : false;
                       return (
-                        <button key={section} type="button" className={`section-pill${selectedSection === section ? ' active' : ''}${done ? ' done' : ''}${section !== 'personal' && hiddenSections.includes(section) ? ' is-hidden' : ''}`} onClick={() => selectSection(section)} aria-pressed={selectedSection === section}>
+                        <button key={section} type="button" className={`section-pill${selectedSection === section && !extra ? ' active' : ''}${done ? ' done' : ''}${section !== 'personal' && hiddenSections.includes(section) ? ' is-hidden' : ''}`} onClick={() => selectSection(section)} aria-pressed={selectedSection === section && !extra}>
                           {shortLabels[section]}
                         </button>
                       );
                     })}
+                    <button type="button" className={`section-pill${extra === 'cover' ? ' active' : ''}`} onClick={() => { setExtra('cover'); setTab('editor'); }} aria-pressed={extra === 'cover'}>Letter</button>
+                    <button type="button" className={`section-pill${extra === 'ats' ? ' active' : ''}`} onClick={() => { setExtra('ats'); setTab('editor'); }} aria-pressed={extra === 'ats'}>ATS</button>
                   </Box>
                 </Box>
                 {editorPanel}
@@ -523,7 +572,7 @@ function ResumeBuilder() {
           </Box>
         )}
       </Box>
-      <AIAssistant open={aiOpen} onClose={() => setAiOpen(false)} resume={resume} onApply={applySuggestion} />
+      <AIAssistant open={aiOpen} onClose={() => setAiOpen(false)} resume={resume} onApply={applySuggestion} onSaveCopy={saveTailoredCopy} />
       <PaywallDialog open={Boolean(paywallReason)} reason={paywallReason ?? 'pdf'} onClose={() => setPaywallReason(null)} />
       <Dialog open={shareOpen} onClose={() => setShareOpen(false)}>
         <DialogTitle>Share resume</DialogTitle>

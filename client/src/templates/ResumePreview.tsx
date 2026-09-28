@@ -1,10 +1,11 @@
 import type { Resume, SectionType } from '../types';
+import { withResumeDefaults } from '../utils/resumeDefaults';
 import { Mail, MapPin, Phone, Globe, Linkedin, Github, type LucideIcon } from 'lucide-react';
 import { SIDEBAR_TEMPLATES } from './catalog';
 import './resume.css';
 
 /** Sections routed into the sidebar for two-column templates; everything else stays in the main column. */
-const SIDEBAR_SECTIONS = new Set<SectionType>(['skills', 'education', 'certifications']);
+const SIDEBAR_SECTIONS = new Set<SectionType>(['skills', 'education', 'certifications', 'languages']);
 
 function initials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -41,10 +42,14 @@ function renderSection(section: SectionType, resume: Resume, accent: string, onS
   if (section === 'skills' && resume.skills.length) return <Section key={section} title="Skills" accent={accent} onSelect={onSelect}><div className="skill-list">{resume.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></Section>;
   if (section === 'projects' && resume.projects.length) return <Section key={section} title="Projects" accent={accent} onSelect={onSelect}>{resume.projects.map((item) => { const bullets = item.description.split('\n').filter((line) => line.trim().startsWith('• ')); return <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.name}</strong>{item.url && <span><a href={item.url} target="_blank" rel="noreferrer">View project</a></span>}</div>{bullets.length === item.description.split('\n').filter(Boolean).length && bullets.length > 0 ? <ul>{bullets.map((bullet, index) => <li key={`${bullet}-${index}`}>{bullet.replace(/^•\s*/, '')}</li>)}</ul> : <p>{item.description}</p>}{item.technologies && <small>{item.technologies}</small>}</article>; })}</Section>;
   if (section === 'certifications' && resume.certifications.length) return <Section key={section} title="Certifications" accent={accent} onSelect={onSelect}>{resume.certifications.map((item) => <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.name}</strong><span>{item.date}</span></div><div className="entry-subheading">{item.issuer}</div></article>)}</Section>;
+  if (section === 'languages' && resume.languages.length) return <Section key={section} title="Languages" accent={accent} onSelect={onSelect}><div className="skill-list">{resume.languages.filter((item) => item.name.trim()).map((item) => <span key={item.id}>{item.level ? `${item.name} · ${item.level}` : item.name}</span>)}</div></Section>;
+  if (section === 'awards' && resume.awards.length) return <Section key={section} title="Awards" accent={accent} onSelect={onSelect}>{resume.awards.map((item) => <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.name}</strong><span>{item.date}</span></div><div className="entry-subheading">{item.issuer}</div></article>)}</Section>;
+  if (section === 'volunteer' && resume.volunteer.length) return <Section key={section} title="Volunteer" accent={accent} onSelect={onSelect}>{resume.volunteer.map((item) => <article className="resume-entry" key={item.id}><div className="entry-heading"><strong>{item.role}</strong><span>{[item.startDate, item.endDate].filter(Boolean).join(' - ')}</span></div><div className="entry-subheading">{item.organization}</div>{item.summary ? <p>{item.summary}</p> : null}</article>)}</Section>;
   return null;
 }
 
-export function ResumePreview({ resume, exportMode = false, onSelectSection }: { resume: Resume; exportMode?: boolean; onSelectSection?: (section: SectionType | 'personal') => void }) {
+export function ResumePreview({ resume: source, exportMode = false, onSelectSection }: { resume: Resume; exportMode?: boolean; onSelectSection?: (section: SectionType | 'personal') => void }) {
+  const resume = withResumeDefaults(source);
   const accent = resume.accentColor;
   const design = resume.design ?? { fontFamily: 'inter', fontSize: 11, lineHeight: 1.45, spacing: 18, density: 'comfortable' };
   const fontMap = { inter: 'Inter, Arial, sans-serif', 'source-sans': '"Source Sans 3", Arial, sans-serif', georgia: 'Georgia, serif', 'ibm-plex': '"IBM Plex Sans", Arial, sans-serif', 'space-grotesk': '"Space Grotesk", Arial, sans-serif' };

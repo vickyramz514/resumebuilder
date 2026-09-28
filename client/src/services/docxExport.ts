@@ -1,5 +1,6 @@
 import { BorderStyle, Document, Packer, Paragraph, TextRun } from 'docx';
 import type { Resume, SectionType } from '../types';
+import { withResumeDefaults } from '../utils/resumeDefaults';
 
 const sectionTitles: Record<SectionType, string> = {
   summary: 'Profile',
@@ -7,7 +8,10 @@ const sectionTitles: Record<SectionType, string> = {
   education: 'Education',
   skills: 'Skills',
   projects: 'Projects',
-  certifications: 'Certifications'
+  certifications: 'Certifications',
+  languages: 'Languages',
+  awards: 'Awards',
+  volunteer: 'Volunteer'
 };
 
 const font = 'Calibri';
@@ -40,7 +44,8 @@ function dates(start: string, end: string, current = false) {
   return [start, finish].filter(Boolean).join(' – ');
 }
 
-export async function buildResumeDocx(resume: Resume) {
+export async function buildResumeDocx(input: Resume) {
+  const resume = withResumeDefaults(input);
   const hidden = new Set(resume.hiddenSections ?? []);
   const contact = resume.personal.contact;
   const contactLine = [contact.email, contact.phone, contact.location, contact.website, contact.linkedin, contact.github].filter(Boolean).join('  ·  ');
@@ -91,8 +96,47 @@ export async function buildResumeDocx(resume: Resume) {
         children.push(line(item.date ? `${label}  (${item.date})` : label, { size: 21, before: 40, after: 20 }));
       }
     }
+    if (section === 'languages' && resume.languages.some((item) => item.name.trim())) {
+      children.push(heading(sectionTitles.languages), line(resume.languages.filter((item) => item.name.trim()).map((item) => item.level ? `${item.name} (${item.level})` : item.name).join('  ·  '), { size: 21, after: 80 }));
+    }
+    if (section === 'awards' && resume.awards.length) {
+      children.push(heading(sectionTitles.awards));
+      for (const item of resume.awards) {
+        const label = [item.name, item.issuer].filter(Boolean).join('  ·  ');
+        children.push(line(item.date ? `${label}  (${item.date})` : label, { size: 21, before: 40, after: 20 }));
+      }
+    }
+    if (section === 'volunteer' && resume.volunteer.length) {
+      children.push(heading(sectionTitles.volunteer));
+      for (const item of resume.volunteer) {
+        children.push(line([item.role, item.organization].filter(Boolean).join('  ·  '), { bold: true, size: 22, before: 80, after: 0 }));
+        const meta = [item.startDate, item.endDate].filter(Boolean).join(' – ');
+        if (meta) children.push(line(meta, { italics: true, size: 18, color: '666666', after: 40 }));
+        if (item.summary) children.push(line(item.summary, { size: 21, after: 40 }));
+      }
+    }
   }
 
+  const document = new Document({
+    sections: [{
+      properties: { page: { margin: { top: 720, right: 720, bottom: 720, left: 720 } } },
+      children
+    }]
+  });
+  return Packer.toBlob(document);
+}
+
+export async function buildCoverLetterDocx(input: Resume) {
+  const resume = withResumeDefaults(input);
+  const contact = resume.personal.contact;
+  const contactLine = [contact.email, contact.phone, contact.location].filter(Boolean).join('  ·  ');
+  const paragraphs = (resume.coverLetter ?? '').split(/\n{2,}/).map((part) => part.trim()).filter(Boolean);
+  const children: Paragraph[] = [
+    line(resume.personal.name || 'Resume', { bold: true, size: 32, after: 40 })
+  ];
+  if (contactLine) children.push(line(contactLine, { size: 18, color: '555555', after: 200 }));
+  for (const paragraph of paragraphs) children.push(line(paragraph, { size: 22, after: 160 }));
+  if (!paragraphs.length) children.push(line('Write the letter in the editor, then download it again.', { italics: true, size: 22 }));
   const document = new Document({
     sections: [{
       properties: { page: { margin: { top: 720, right: 720, bottom: 720, left: 720 } } },

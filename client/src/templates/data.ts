@@ -33,7 +33,11 @@ export const sampleResume: Resume = {
     { id: 'project-5', name: 'Ackumen', description: 'Industrial software product work.', url: '', technologies: 'React, APIs' }
   ],
   certifications: [],
-  sections: ['summary', 'experience', 'education', 'skills', 'projects', 'certifications']
+  languages: [],
+  awards: [],
+  volunteer: [],
+  coverLetter: '',
+  sections: ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'languages', 'awards', 'volunteer']
 };
 
 export const emptyResume = (): Resume => ({
@@ -47,7 +51,11 @@ export const emptyResume = (): Resume => ({
   education: [],
   projects: [],
   certifications: [],
-  sections: ['summary', 'experience', 'education', 'skills', 'projects', 'certifications'],
+  languages: [],
+  awards: [],
+  volunteer: [],
+  coverLetter: '',
+  sections: ['summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'languages', 'awards', 'volunteer'],
   hiddenSections: [],
   updatedAt: new Date().toISOString()
 });

@@ -14,9 +14,10 @@ interface Props {
   onClose: () => void;
   resume: Resume;
   onApply: (result: AssistantResult) => void;
+  onSaveCopy?: (result: AssistantResult) => void;
 }
 
-export function AIAssistant({ open, onClose, resume, onApply }: Props) {
+export function AIAssistant({ open, onClose, resume, onApply, onSaveCopy }: Props) {
   const navigate = useNavigate();
   const [action, setAction] = useState<Action>('summary');
   const [targetRole, setTargetRole] = useState('');
@@ -91,6 +92,7 @@ export function AIAssistant({ open, onClose, resume, onApply }: Props) {
           <Divider sx={{ my: 1.5 }} />
           <FormControlLabel control={<Checkbox checked={selected} onChange={(event) => setSelected(event.target.checked)} />} label="Apply this suggestion to my editor" />
           <Button fullWidth variant="outlined" startIcon={<Check size={16} />} onClick={apply} disabled={!selected}>Apply selected suggestion</Button>
+          {result.kind === 'tailor' && onSaveCopy ? <Button fullWidth variant="contained" sx={{ mt: 1 }} onClick={() => onSaveCopy(result)} disabled={!selected}>Save as a new resume</Button> : null}
         </Box>}
         <Typography variant="caption" color="text.secondary">AI suggestions can be imperfect. Verify facts, metrics, and skills before applying.</Typography>
       </Stack>

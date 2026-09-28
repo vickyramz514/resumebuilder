@@ -1,4 +1,4 @@
-export type SectionType = 'summary' | 'experience' | 'education' | 'skills' | 'projects' | 'certifications';
+export type SectionType = 'summary' | 'experience' | 'education' | 'skills' | 'projects' | 'certifications' | 'languages' | 'awards' | 'volunteer';
 
 export interface Contact {
   email: string;
@@ -44,6 +44,28 @@ export interface Certification {
   date: string;
 }
 
+export interface Language {
+  id: string;
+  name: string;
+  level: string;
+}
+
+export interface Award {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+}
+
+export interface VolunteerRole {
+  id: string;
+  role: string;
+  organization: string;
+  startDate: string;
+  endDate: string;
+  summary: string;
+}
+
 export type FontFamily = 'inter' | 'source-sans' | 'georgia' | 'ibm-plex' | 'space-grotesk';
 export type ResumeDensity = 'comfortable' | 'compact' | 'airy';
 
@@ -70,6 +92,11 @@ export interface Resume {
   education: Education[];
   projects: Project[];
   certifications: Certification[];
+  languages: Language[];
+  awards: Award[];
+  volunteer: VolunteerRole[];
+  /** Letter kept beside the resume. It is not printed on the resume page. */
+  coverLetter?: string;
   sections: SectionType[];
   /** Sections omitted from the preview without deleting their content. */
   hiddenSections?: SectionType[];

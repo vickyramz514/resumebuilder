@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Box, Button, Checkbox, Chip, FormControlLabel, IconButton, Stack, TextField, Typography } from '@mui/material';
 import { Plus, Trash2 } from 'lucide-react';
 import { useActiveResume, useResumeStore } from '../store';
-import type { Certification, Education, Experience, Project } from '../types';
+import type { Award, Certification, Education, Experience, Language, Project, VolunteerRole } from '../types';
 
 const id = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 const Field = ({ label, value, onChange, multiline = false, disabled = false, placeholder }: { label: string; value: string; onChange: (value: string) => void; multiline?: boolean; disabled?: boolean; placeholder?: string }) => (
@@ -177,6 +177,94 @@ export function CertificationsForm() {
           </Stack>
         </Box>
       ))}
+    </Stack>
+  );
+}
+
+export function LanguagesForm() {
+  const resume = useActiveResume();
+  const update = useResumeStore((s) => s.updateResume);
+  const add = () => update({ languages: [...resume.languages, { id: id(), name: '', level: '' }] });
+  const change = (index: number, patch: Partial<Language>) => update({ languages: resume.languages.map((item, i) => i === index ? { ...item, ...patch } : item) });
+  return (
+    <Stack spacing={2}>
+      <Header title="Languages" onAdd={add} />
+      {resume.languages.map((item, i) => (
+        <Box key={item.id} sx={{ p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1.5 }}>
+          <Stack spacing={1.5}>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography fontWeight={600} fontSize={14}>{item.name || 'New language'}</Typography>
+              <IconButton size="small" color="error" aria-label="Remove language" onClick={() => update({ languages: resume.languages.filter((_, j) => j !== i) })}><Trash2 size={16} /></IconButton>
+            </Stack>
+            <Field label="Language" value={item.name} onChange={(name) => change(i, { name })} />
+            <Field label="Level" value={item.level} onChange={(level) => change(i, { level })} placeholder="Professional, fluent, or conversational" />
+          </Stack>
+        </Box>
+      ))}
+    </Stack>
+  );
+}
+
+export function AwardsForm() {
+  const resume = useActiveResume();
+  const update = useResumeStore((s) => s.updateResume);
+  const add = () => update({ awards: [...resume.awards, { id: id(), name: '', issuer: '', date: '' }] });
+  const change = (index: number, patch: Partial<Award>) => update({ awards: resume.awards.map((item, i) => i === index ? { ...item, ...patch } : item) });
+  return (
+    <Stack spacing={2}>
+      <Header title="Awards" onAdd={add} />
+      {resume.awards.map((item, i) => (
+        <Box key={item.id} sx={{ p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1.5 }}>
+          <Stack spacing={1.5}>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography fontWeight={600} fontSize={14}>{item.name || 'New award'}</Typography>
+              <IconButton size="small" color="error" aria-label="Remove award" onClick={() => update({ awards: resume.awards.filter((_, j) => j !== i) })}><Trash2 size={16} /></IconButton>
+            </Stack>
+            <Field label="Award" value={item.name} onChange={(name) => change(i, { name })} />
+            <Field label="Issuer" value={item.issuer} onChange={(issuer) => change(i, { issuer })} />
+            <Field label="Date" value={item.date} onChange={(date) => change(i, { date })} />
+          </Stack>
+        </Box>
+      ))}
+    </Stack>
+  );
+}
+
+export function VolunteerForm() {
+  const resume = useActiveResume();
+  const update = useResumeStore((s) => s.updateResume);
+  const add = () => update({ volunteer: [...resume.volunteer, { id: id(), role: '', organization: '', startDate: '', endDate: '', summary: '' }] });
+  const change = (index: number, patch: Partial<VolunteerRole>) => update({ volunteer: resume.volunteer.map((item, i) => i === index ? { ...item, ...patch } : item) });
+  return (
+    <Stack spacing={2}>
+      <Header title="Volunteer work" onAdd={add} />
+      {resume.volunteer.map((item, i) => (
+        <Box key={item.id} sx={{ p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1.5 }}>
+          <Stack spacing={1.5}>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography fontWeight={600} fontSize={14}>{item.role || 'New volunteer role'}</Typography>
+              <IconButton size="small" color="error" aria-label="Remove volunteer role" onClick={() => update({ volunteer: resume.volunteer.filter((_, j) => j !== i) })}><Trash2 size={16} /></IconButton>
+            </Stack>
+            <Field label="Role" value={item.role} onChange={(role) => change(i, { role })} />
+            <Field label="Organization" value={item.organization} onChange={(organization) => change(i, { organization })} />
+            <Field label="Start" value={item.startDate} onChange={(startDate) => change(i, { startDate })} />
+            <Field label="End" value={item.endDate} onChange={(endDate) => change(i, { endDate })} />
+            <Field label="What you did" value={item.summary} onChange={(summary) => change(i, { summary })} multiline />
+          </Stack>
+        </Box>
+      ))}
+    </Stack>
+  );
+}
+
+export function CoverLetterForm({ onDownload, downloading }: { onDownload: () => void; downloading: boolean }) {
+  const resume = useActiveResume();
+  const update = useResumeStore((s) => s.updateResume);
+  return (
+    <Stack spacing={2}>
+      <Typography variant="body2" color="text.secondary">This letter stays with the resume and downloads as its own Word file. It does not appear on the resume page.</Typography>
+      <Field label="Cover letter" value={resume.coverLetter ?? ''} onChange={(coverLetter) => update({ coverLetter })} multiline placeholder="Dear hiring manager," />
+      <Button variant="contained" onClick={onDownload} disabled={downloading || !(resume.coverLetter ?? '').trim()}>Download Word</Button>
     </Stack>
   );
 }
