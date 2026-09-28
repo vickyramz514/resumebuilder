@@ -1,6 +1,9 @@
 import type { Contact, FontFamily, Resume, ResumeDesign, ResumeDensity, SectionType, TemplateId } from '../types';
 import { TEMPLATE_IDS } from '../templates/catalog';
 import { RESUME_SECTIONS } from './resumeDefaults';
+import { resumeDraftFromPdf } from './pdfResume';
+
+export const IMPORT_ACCEPT = 'application/pdf,.pdf,application/json,.json';
 
 const sectionTypes: SectionType[] = RESUME_SECTIONS;
 const templateIds: TemplateId[] = TEMPLATE_IDS;
@@ -92,4 +95,18 @@ export function normalizeImportedResume(input: unknown): Resume {
       ? source.hiddenSections.filter((section): section is SectionType => typeof section === 'string' && sectionTypes.includes(section as SectionType))
       : []
   };
+}
+
+export async function importResumeFile(file: File) {
+  const name = file.name.toLowerCase();
+  const isPdf = name.endsWith('.pdf') || file.type === 'application/pdf';
+  if (isPdf) return normalizeImportedResume(await resumeDraftFromPdf(file));
+  const isJson = name.endsWith('.json') || file.type === 'application/json' || file.type === 'text/json';
+  if (!isJson) throw new Error('Choose a PDF resume or a ResumeForge JSON file.');
+  try {
+    return normalizeImportedResume(JSON.parse(await file.text()));
+  } catch (error) {
+    if (error instanceof SyntaxError) throw new Error('That JSON file could not be read.');
+    throw error;
+  }
 }

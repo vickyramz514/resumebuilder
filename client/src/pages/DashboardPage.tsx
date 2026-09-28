@@ -10,7 +10,7 @@ import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
 import { createResume, deleteResume, duplicateResume, listResumes, renameResume, shareResume, type CloudResume } from '../services/resumeApi';
 import { ApiError } from '../services/api';
-import { normalizeImportedResume } from '../utils/importResume';
+import { IMPORT_ACCEPT, importResumeFile } from '../utils/importResume';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
 import { TEMPLATE_CATALOG, isPaidTemplate, isTemplateId } from '../templates/catalog';
 import { PaywallDialog } from '../components/PaywallDialog';
@@ -95,12 +95,12 @@ export default function DashboardPage() {
     setImporting(true);
     setError('');
     try {
-      const resume = normalizeImportedResume(JSON.parse(await file.text()));
+      const resume = await importResumeFile(file);
       replaceResume(resume);
       sessionStorage.setItem('resumeforge_pending_import', resume.id);
       setImportResume(resume);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'We could not read that JSON file.');
+      setError(e instanceof Error ? e.message : 'We could not read that file.');
     } finally {
       setImporting(false);
     }
@@ -188,7 +188,7 @@ export default function DashboardPage() {
             {importing ? 'Reading file…' : 'Import existing'}
           </Button>
           <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => create()}>New resume</Button>
-          <input ref={inputRef} type="file" accept="application/json,.json" hidden onChange={handleImport} />
+          <input ref={inputRef} type="file" accept={IMPORT_ACCEPT} hidden onChange={handleImport} />
         </Stack>
       </Stack>
 
@@ -198,7 +198,7 @@ export default function DashboardPage() {
           <Typography variant="body2" color="text.secondary" mb={2}>Not sure where to begin? Pick the path that fits you best.</Typography>
           <Grid container spacing={1.5}>
             <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" onClick={() => create()}><Box className="quick-action-icon icon-scratch"><Plus size={18} /></Box><Box textAlign="left"><strong>Start from scratch</strong><small>A guided blank canvas</small></Box></Button></Grid>
-            <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" onClick={() => inputRef.current?.click()}><Box className="quick-action-icon icon-import"><FolderOpen size={18} /></Box><Box textAlign="left"><strong>Bring an existing resume</strong><small>Import a ResumeForge JSON file</small></Box></Button></Grid>
+            <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" onClick={() => inputRef.current?.click()}><Box className="quick-action-icon icon-import"><FolderOpen size={18} /></Box><Box textAlign="left"><strong>Bring an existing resume</strong><small>Import a PDF or ResumeForge JSON file</small></Box></Button></Grid>
             <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" onClick={() => setTemplateDialog(true)}><Box className="quick-action-icon icon-browse"><FileText size={18} /></Box><Box textAlign="left"><strong>Browse templates</strong><small>Find a layout that fits your story</small></Box></Button></Grid>
           </Grid>
         </CardContent>
@@ -250,6 +250,6 @@ export default function DashboardPage() {
     <Dialog open={Boolean(rename)} onClose={() => setRename(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><FileText size={16} /></Box>Rename resume</DialogTitle><DialogContent><TextField autoFocus fullWidth label="Resume title" value={renameValue} onChange={(e) => setRenameValue(e.target.value)} sx={{ mt: 1 }} /></DialogContent><DialogActions><Button onClick={() => setRename(null)}>Cancel</Button><Button variant="contained" onClick={submitRename} disabled={!renameValue.trim()}>Save name</Button></DialogActions></Dialog>
     <Dialog open={Boolean(share)} onClose={() => setShare(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><Share2 size={16} /></Box>Share resume</DialogTitle><DialogContent>{share?.isPublic ? <Stack spacing={2} pt={1}><Typography variant="body2">Anyone with this link can view your resume.</Typography><TextField fullWidth value={shareUrl} InputProps={{ readOnly: true }} /><Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}><Button startIcon={<Copy size={15} />} onClick={() => navigator.clipboard.writeText(shareUrl)}>Copy link</Button><Button startIcon={<ExternalLink size={15} />} onClick={() => window.open(shareUrl, '_blank')}>Open resume</Button></Stack></Stack> : <Typography py={1}>Your resume is private. Enable sharing to create a public link.</Typography>}</DialogContent><DialogActions><Button onClick={() => setShare(null)}>Close</Button><Button variant="contained" onClick={toggleShare}>{share?.isPublic ? 'Disable sharing' : 'Enable sharing'}</Button></DialogActions></Dialog>
     <PaywallDialog open={paywallReason === 'template'} reason="template" onClose={() => setPaywallReason(null)} />
-    <Dialog open={Boolean(importResume)} onClose={() => setImportResume(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><Upload size={16} /></Box>Resume ready to import</DialogTitle><DialogContent><Typography>Save <strong>{importResume?.title}</strong> to your cloud resume library so you can keep editing it anywhere?</Typography></DialogContent><DialogActions><Button onClick={() => { sessionStorage.removeItem('resumeforge_pending_import'); if (importResume) sessionStorage.setItem('resumeforge_dismissed_import', importResume.id); setImportResume(null); }}>Not now</Button><Button variant="contained" onClick={async () => { if (!importResume) return; try { const result = await createResume({ title: importResume.title, data: importResume, templateId: importResume.template }); setResumes((items) => [result.resume, ...items]); sessionStorage.removeItem('resumeforge_pending_import'); sessionStorage.removeItem('resumeforge_dismissed_import'); setImportResume(null); } catch (e) { setError(e instanceof ApiError ? e.message : 'Unable to import resume'); } }}>Import to My Resumes</Button></DialogActions></Dialog>
+    <Dialog open={Boolean(importResume)} onClose={() => setImportResume(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><Upload size={16} /></Box>Resume ready to import</DialogTitle><DialogContent><Typography>Save <strong>{importResume?.title}</strong> to your library. It is laid out on the {TEMPLATE_CATALOG.find((item) => item.id === importResume?.template)?.label ?? 'Modern'} template, ready to edit.</Typography></DialogContent><DialogActions><Button onClick={() => { sessionStorage.removeItem('resumeforge_pending_import'); if (importResume) sessionStorage.setItem('resumeforge_dismissed_import', importResume.id); setImportResume(null); }}>Not now</Button><Button variant="contained" onClick={async () => { if (!importResume) return; try { const result = await createResume({ title: importResume.title, data: importResume, templateId: importResume.template }); setResumes((items) => [result.resume, ...items]); sessionStorage.removeItem('resumeforge_pending_import'); sessionStorage.removeItem('resumeforge_dismissed_import'); setImportResume(null); } catch (e) { setError(e instanceof ApiError ? e.message : 'Unable to import resume'); } }}>Import to My Resumes</Button></DialogActions></Dialog>
   </Box>;
 }

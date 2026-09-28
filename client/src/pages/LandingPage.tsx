@@ -10,7 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
-import { normalizeImportedResume } from '../utils/importResume';
+import { IMPORT_ACCEPT, importResumeFile } from '../utils/importResume';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
 import { TEMPLATE_CATALOG } from '../templates/catalog';
 import { listPlans, type SubscriptionPlan } from '../services/billingApi';
@@ -69,7 +69,7 @@ const assistantMoves = [
 ];
 
 const steps = [
-  { icon: FileText, title: 'Choose a starting point', copy: 'Open a guided blank resume, pick a layout, or import a ResumeForge JSON export you already have.' },
+  { icon: FileText, title: 'Choose a starting point', copy: 'Open a guided blank resume, pick a layout, or import a PDF or ResumeForge JSON file you already have.' },
   { icon: GripVertical, title: 'Shape the story', copy: 'Reorder sections, adjust the design, and use the assistant when a line needs to be clearer. You apply only the suggestions you want.' },
   { icon: ArrowRight, title: 'Send the version that fits', copy: 'Download Word or PDF on the paid plan, keep extra versions in your library, and share a public link only when you are ready.' }
 ];
@@ -77,7 +77,7 @@ const steps = [
 const faqs = [
   { q: 'Do I need an account?', a: 'Saving to your library and sharing a link use an account. PDF and Word downloads, plus the writing assistant, are on the paid plan. This page sends you to create an account, or back to your dashboard if you are already signed in.' },
   { q: 'Will the assistant overwrite my resume?', a: 'No. Suggestions open in a review panel. They are written into the resume only after you apply the ones you want.' },
-  { q: 'What can I import?', a: 'A ResumeForge JSON export. The importer checks that the file has resume content, then keeps it ready so you can save it to your library.' },
+  { q: 'What can I import?', a: 'A PDF resume, or a ResumeForge JSON export. A PDF is read into labeled sections and laid out on the Modern template so you can see a finished page right away. A scanned image with no text cannot be read.' },
   { q: 'Can I change the template later?', a: 'Yes. Your content stays in place when you switch layouts. Font, accent, spacing, and density live in the editor and can change at any time.' },
   { q: 'Who can see a shared resume?', a: 'Nobody, until you turn sharing on from the dashboard. A public link shows only that resume, and you can disable it whenever you want.' },
   { q: 'Will an applicant tracking system be able to read it?', a: 'The editor stores your resume as labeled sections: profile, experience, education, skills, projects, certifications, and the extra sections you choose to show. The Word download is a single column with those headings, which is the file to upload when a form scans the document. The PDF is the designed page, for a person. The ATS check compares a pasted job description with the words already on the page.' }
@@ -110,12 +110,12 @@ export default function LandingPage() {
     setImportError('');
     setIsImporting(true);
     try {
-      const resume = normalizeImportedResume(JSON.parse(await file.text()));
+      const resume = await importResumeFile(file);
       replaceResume(resume);
       sessionStorage.setItem('resumeforge_pending_import', resume.id);
       navigate(isAuthenticated ? '/dashboard' : '/register', { state: { from: '/dashboard' } });
     } catch (error) {
-      setImportError(error instanceof Error ? error.message : 'We could not read that JSON file.');
+      setImportError(error instanceof Error ? error.message : 'We could not read that file.');
     } finally {
       setIsImporting(false);
     }
@@ -182,8 +182,8 @@ export default function LandingPage() {
               <Typography className="landing-lede">A guided editor with a live preview, so you are not learning a design tool. Download Word when an application scans the file, and PDF when you want the page you see.</Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} mt={4}>
                 <Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={() => startCreating()}>Create my resume</Button>
-                <Button variant="outlined" size="large" startIcon={<Upload size={17} />} onClick={() => inputRef.current?.click()} disabled={isImporting}>{isImporting ? 'Reading file…' : 'Import JSON resume'}</Button>
-                <input ref={inputRef} type="file" accept="application/json,.json" hidden onChange={handleImport} />
+                <Button variant="outlined" size="large" startIcon={<Upload size={17} />} onClick={() => inputRef.current?.click()} disabled={isImporting}>{isImporting ? 'Reading file…' : 'Import a resume'}</Button>
+                <input ref={inputRef} type="file" accept={IMPORT_ACCEPT} hidden onChange={handleImport} />
               </Stack>
               {importError && <Alert severity="error" onClose={() => setImportError('')} sx={{ mt: 2, maxWidth: 520 }}>{importError}</Alert>}
               <Stack direction="row" spacing={2.5} mt={3} className="landing-proof">
@@ -421,7 +421,7 @@ export default function LandingPage() {
         <Container maxWidth="md">
           <Box textAlign="center">
             <Typography variant="h2">Your next chapter deserves a better first page.</Typography>
-            <Typography>Start with a layout, import a JSON export, or open the resume you already saved.</Typography>
+            <Typography>Start with a layout, import a PDF or JSON resume, or open the one you already saved.</Typography>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="center" mt={3}>
               <Button variant="contained" size="large" endIcon={<ArrowRight size={18} />} onClick={() => startCreating()}>{isAuthenticated ? 'Go to my resumes' : 'Start building for free'}</Button>
               <Button variant="outlined" size="large" onClick={() => navigate(isAuthenticated ? '/dashboard' : '/login')}>{isAuthenticated ? 'Open the editor' : 'I already have an account'}</Button>
@@ -458,7 +458,7 @@ export default function LandingPage() {
               ? <button type="button" onClick={() => navigate('/dashboard')}>My resumes</button>
               : <button type="button" onClick={() => navigate('/login')}>Sign in</button>}
             <button type="button" onClick={() => navigate(isAuthenticated ? '/billing' : '/register')}>Plans</button>
-            <button type="button" onClick={() => inputRef.current?.click()}>Import JSON</button>
+            <button type="button" onClick={() => inputRef.current?.click()}>Import a resume</button>
           </Box>
         </Box>
         <Box className="footer-guides">
