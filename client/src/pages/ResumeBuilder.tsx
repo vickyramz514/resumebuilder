@@ -9,12 +9,12 @@ import {
 } from '@mui/material';
 import {
   Copy, Download, ExternalLink, Eye, EyeOff, FileJson, FilePlus2, FileText, Menu as MenuIcon, MoreVertical,
-  Lock, Palette, PanelLeftClose, PanelLeftOpen, Plus, Share2, Sparkles, Undo2, ZoomIn, ZoomOut
+  Palette, PanelLeftClose, PanelLeftOpen, Plus, Share2, Sparkles, Undo2, ZoomIn, ZoomOut
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ResumePreview } from '../templates/ResumePreview';
 import { useActiveResume, useResumeStore } from '../store';
-import { TEMPLATE_CATALOG, isPaidTemplate } from '../templates/catalog';
+import { TEMPLATE_CATALOG } from '../templates/catalog';
 import type { FontFamily, ResumeDesign, ResumeDensity, SectionType, TemplateId } from '../types';
 import { PersonalForm } from '../components/PersonalForm';
 import { AwardsForm, CertificationsForm, CoverLetterForm, EducationForm, ExperienceForm, LanguagesForm, ProjectsForm, SkillsForm, SummaryForm, VolunteerForm } from '../components/SectionForms';
@@ -250,7 +250,6 @@ function ResumeBuilder() {
 
   const paid = hasPaidPlan(user);
   const chooseTemplate = (templateId: TemplateId) => {
-    if (isPaidTemplate(templateId) && !paid) { setPaywallReason('template'); return; }
     setTemplate(templateId);
   };
   const openAi = () => {
@@ -399,7 +398,7 @@ function ResumeBuilder() {
                   <TemplateThumbnail template={item.id} compact />
                   <Box className="template-picker-copy">
                     <Typography variant="body2" fontWeight={750}>{item.label}</Typography>
-                    {resume.template === item.id ? <span className="template-picked">On</span> : item.tier === 'paid' && !paid ? <Lock size={12} /> : null}
+                    {resume.template === item.id ? <span className="template-picked">On</span> : null}
                   </Box>
                 </Box>
               ))}

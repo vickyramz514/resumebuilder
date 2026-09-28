@@ -45,7 +45,7 @@ const audiences = [
 const features = [
   { icon: Eye, title: 'Live preview', copy: 'The page updates as you type, so length, hierarchy, and spacing stay visible while you edit.', tone: 'green' },
   { icon: WandSparkles, title: 'Writing help you approve', copy: 'On the paid plan, improve a summary, rewrite bullets, draft project points, or tailor the page to a job. Nothing is saved until you apply a suggestion.', tone: 'amber' },
-  { icon: Layers, title: 'Nineteen free, twenty-five Pro', copy: 'Start on Linen, Grove, Kite, and sixteen more. Aurora, Iris, Solstice, and the other gold-framed layouts unlock when you subscribe.', tone: 'green' },
+  { icon: Layers, title: 'Nineteen free, twenty-five Pro', copy: 'Use any layout while you write, including the gold-framed Pro pages. Download stays on Starter and Pro.', tone: 'green' },
   { icon: PenLine, title: 'Type, color, and density', copy: 'Pick a font, an accent, a type size, line height, spacing, and a comfortable, compact, or airy density.', tone: 'ink' },
   { icon: Download, title: 'Word for the application, PDF for the person', copy: 'Subscribe to download. Word keeps one column and real headings for systems that scan the file. PDF matches the layout in the preview.', tone: 'green' },
   { icon: Share2, title: 'Private until you share', copy: 'Keep the file in your library, or turn on a public link you can copy, open, and switch off again.', tone: 'amber' }
@@ -308,7 +308,7 @@ export default function LandingPage() {
           <Box className="section-intro">
             <Chip label="Start with a strong foundation" />
             <Typography variant="h2">A template for the way you want to be read.</Typography>
-            <Typography>Free layouts are ready now. Pro layouts wear a gold frame so you can tell them apart before you subscribe.</Typography>
+            <Typography>Every layout is available while you edit. Gold-framed Pro pages still need a subscription to download.</Typography>
           </Box>
           {(['free', 'paid'] as const).map((tier) => <Box key={tier} className="template-group">
             <Typography variant="overline" className={`template-group-label ${tier}`}>{tier === 'free' ? 'Free to use' : 'Pro layouts'}</Typography>
@@ -319,7 +319,7 @@ export default function LandingPage() {
                   <Typography variant="overline" className="showcase-best-for">{template.description}</Typography>
                   <Typography variant="h6">{template.label}</Typography>
                   <Typography variant="body2">{template.pitch}</Typography>
-                  <Button size="small" endIcon={<ArrowRight size={15} />} onClick={() => startCreating(template.id)}>{template.tier === 'paid' ? 'Unlock this template' : 'Use this template'}</Button>
+                  <Button size="small" endIcon={<ArrowRight size={15} />} onClick={() => startCreating(template.id)}>Use this template</Button>
                 </Box>
               </Box>)}
             </Box>
