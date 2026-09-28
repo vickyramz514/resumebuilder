@@ -56,29 +56,6 @@ export function ContentSuggestions({ section, onApplied }: { section: SectionTyp
     }
   }
 
-  if (section === 'skills') {
-    const packs = [
-      ['Product set', ['Research', 'Roadmaps', 'Writing', 'Stakeholder updates', 'SQL']],
-      ['Engineering set', ['TypeScript', 'APIs', 'PostgreSQL', 'Testing', 'Code review']],
-      ['Design set', ['Figma', 'Prototypes', 'Design systems', 'User interviews']]
-    ] as const;
-    for (const [label, skills] of packs) {
-      items.push({
-        label,
-        apply: () => {
-          const have = new Set(resume.skills.map((skill) => skill.toLowerCase()));
-          const next = skills.filter((skill) => !have.has(skill.toLowerCase()));
-          if (!next.length) {
-            onApplied('Those skills are already on the page.');
-            return;
-          }
-          updateResume({ skills: [...resume.skills, ...next] });
-          onApplied('Sample skills added. Delete any that are not yours.');
-        }
-      });
-    }
-  }
-
   if (section === 'experience') {
     items.push({
       label: 'Sample role',

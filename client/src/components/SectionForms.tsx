@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box, Button, Checkbox, Chip, FormControlLabel, IconButton, Stack, TextField, Typography } from '@mui/material';
 import { Plus, Trash2 } from 'lucide-react';
 import { useActiveResume, useResumeStore } from '../store';
+import { matchTechSkills, TECH_STACKS } from '../content/techStacks';
 import type { Award, Certification, Education, Experience, Language, Project, VolunteerRole } from '../types';
 
 const id = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -35,20 +36,54 @@ export function SkillsForm() {
   const resume = useActiveResume();
   const update = useResumeStore((s) => s.updateResume);
   const [value, setValue] = useState('');
-  const add = () => {
-    const skill = value.trim();
-    if (skill && !resume.skills.some((item) => item.toLowerCase() === skill.toLowerCase())) update({ skills: [...resume.skills, skill] });
+  const [stackId, setStackId] = useState(TECH_STACKS[0].id);
+  const taken = new Set(resume.skills.map((skill) => skill.toLowerCase()));
+  const addSkill = (raw: string) => {
+    const skill = raw.trim();
+    if (!skill || taken.has(skill.toLowerCase())) return;
+    update({ skills: [...resume.skills, skill] });
+  };
+  const addTyped = () => {
+    addSkill(value);
     setValue('');
   };
+  const query = value.trim();
+  const matches = matchTechSkills(query, taken);
+  const stack = TECH_STACKS.find((item) => item.id === stackId) ?? TECH_STACKS[0];
+  const stackSkills = stack.skills.filter((skill) => !taken.has(skill.toLowerCase()));
   return (
     <Stack spacing={2}>
       <Typography variant="overline" color="text.secondary">Skills</Typography>
       <Stack direction="row" spacing={1}>
-        <TextField label="Add a skill" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), add())} size="small" fullWidth />
-        <Button onClick={add} variant="contained">Add</Button>
+        <TextField label="Add a skill" value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTyped())} size="small" fullWidth placeholder="Type React, Python, AWS…" />
+        <Button onClick={addTyped} variant="contained">Add</Button>
       </Stack>
+      {query ? (
+        <Stack spacing={0.75}>
+          <Typography variant="caption" color="text.secondary">Matching tech</Typography>
+          {matches.length ? (
+            <Stack direction="row" gap={0.75} flexWrap="wrap">
+              {matches.map((skill) => <Chip key={skill} label={skill} size="small" variant="outlined" onClick={() => { addSkill(skill); setValue(''); }} />)}
+            </Stack>
+          ) : (
+            <Typography variant="caption" color="text.secondary">No match in the list. Add “{query}” to use your own wording.</Typography>
+          )}
+        </Stack>
+      ) : (
+        <Stack spacing={1}>
+          <Typography variant="caption" color="text.secondary">Pick a stack, then select the tools you use</Typography>
+          <Stack direction="row" gap={0.75} flexWrap="wrap">
+            {TECH_STACKS.map((item) => (
+              <Chip key={item.id} label={item.label} size="small" color={item.id === stack.id ? 'primary' : 'default'} variant={item.id === stack.id ? 'filled' : 'outlined'} onClick={() => setStackId(item.id)} />
+            ))}
+          </Stack>
+          <Stack direction="row" gap={0.75} flexWrap="wrap">
+            {stackSkills.map((skill) => <Chip key={skill} className="skill-option" label={skill} size="small" variant="outlined" onClick={() => addSkill(skill)} />)}
+          </Stack>
+        </Stack>
+      )}
       <Stack direction="row" gap={1} flexWrap="wrap">
-        {resume.skills.map((skill) => <Chip key={skill} label={skill} onDelete={() => update({ skills: resume.skills.filter((item) => item !== skill) })} />)}
+        {resume.skills.map((skill) => <Chip key={skill} label={skill} color="primary" variant="outlined" onDelete={() => update({ skills: resume.skills.filter((item) => item !== skill) })} />)}
       </Stack>
     </Stack>
   );
