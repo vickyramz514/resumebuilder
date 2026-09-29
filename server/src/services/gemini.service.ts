@@ -50,7 +50,7 @@ export async function generateJson<T>(prompt: string): Promise<T> {
       signal: controller.signal,
       body: JSON.stringify({
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.7, responseMimeType: 'application/json' }
+        generationConfig: { responseMimeType: 'application/json' }
       })
     });
     const payload = await response.json().catch(() => ({})) as GeminiResponse;
@@ -62,7 +62,8 @@ export async function generateJson<T>(prompt: string): Promise<T> {
           402
         );
       }
-      throw new AiServiceError(payload.error?.message || 'The AI provider could not complete that request');
+      const providerMessage = payload.error?.message || 'The AI provider could not complete that request';
+      throw new AiServiceError(providerMessage, 'AI_PROVIDER_ERROR', response.status === 429 || response.status === 503 ? 503 : 502);
     }
     const text = payload.candidates?.[0]?.content?.parts?.map((part) => part.text ?? '').join('').trim();
     if (!text) throw new AiServiceError('The AI provider returned an empty response', 'AI_INVALID_RESPONSE');
