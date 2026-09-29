@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { prisma } from '../db.js';
+import { env } from '../config/env.js';
 import { templateNeedsFullPlan } from '../services/templateAccess.js';
 
 const FULL_SLUGS = new Set(['starter', 'starter-annual', 'pro', 'ultra', 'admin-test']);
@@ -9,9 +10,9 @@ export type DownloadTier = 'none' | 'basic' | 'full';
 export async function downloadTierForUser(userId: string): Promise<DownloadTier> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { plan: true, planExpiresAt: true, role: true }
+    select: { plan: true, planExpiresAt: true, role: true, email: true }
   });
-  if (user?.role === 'ADMIN') return 'full';
+  if (user?.role === 'ADMIN' || user?.email?.toLowerCase() === env.adminEmail) return 'full';
   const active = await prisma.userSubscription.findFirst({
     where: { userId, status: 'ACTIVE' },
     select: { plan: { select: { slug: true } } }

@@ -4,18 +4,22 @@ import { hashPassword } from '../utils/password.js';
 
 export async function ensureAdminAccount() {
   const email = env.adminEmail;
-  const password = env.adminPassword;
-  if (!email || !password) {
-    console.warn('Admin account was not created. Set ADMIN_EMAIL and ADMIN_PASSWORD on the API host.');
-    return;
-  }
-  const passwordHash = await hashPassword(password);
+  const passwordHash = env.adminPassword ? await hashPassword(env.adminPassword) : null;
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
     await prisma.user.update({
       where: { id: existing.id },
-      data: { role: 'ADMIN', plan: 'ULTRA', planExpiresAt: null, passwordHash }
+      data: {
+        role: 'ADMIN',
+        plan: 'ULTRA',
+        planExpiresAt: null,
+        ...(passwordHash ? { passwordHash } : {})
+      }
     });
+    return;
+  }
+  if (!passwordHash) {
+    console.warn('Admin account was not created. Set ADMIN_PASSWORD on the API host.');
     return;
   }
   await prisma.user.create({

@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useAuthStore } from '../store/authStore';
+import { isAdminUser } from '../utils/entitlements';
 
 export function ProtectedRoute() {
   const authenticated = useAuthStore((state) => state.isAuthenticated);
@@ -15,10 +16,10 @@ export function ProtectedRoute() {
 
 export function AdminRoute() {
   const user = useAuthStore((state) => state.user);
-  if (!user?.role) {
+  if (!user) {
     return <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', color: '#626871' }}>Loading your workspace…</Box>;
   }
-  return user.role === 'ADMIN' ? <Outlet /> : <Navigate to="/dashboard" replace />;
+  return isAdminUser(user) ? <Outlet /> : <Navigate to="/dashboard" replace />;
 }
 
 export default ProtectedRoute;

@@ -12,6 +12,7 @@ import {
   type SubscriptionPlan, type UserSubscription
 } from '../services/billingApi';
 import { startPlanCheckout } from '../lib/razorpayCheckout';
+import { isAdminUser } from '../utils/entitlements';
 import '../dashboard.css';
 import '../billing.css';
 
@@ -116,6 +117,7 @@ export default function BillingPage() {
         <Box className="brand-mark"><Box className="brand-badge"><Sparkles size={16} fill="currentColor" /></Box><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
         <Box flex={1} />
         <Button color="inherit" onClick={() => navigate('/dashboard')} sx={{ mr: 1 }}>My Resumes</Button>
+        {isAdminUser(user) && <Button color="inherit" onClick={() => navigate('/admin')} sx={{ mr: 1 }}>Track</Button>}
         <Box className="user-chip" onClick={(event) => setUserMenuAnchor(event.currentTarget)}>
           <Avatar sx={{ width: 30, height: 30, fontSize: 13, fontWeight: 700, bgcolor: '#0d9488' }}>{(user?.name || 'U').slice(0, 1).toUpperCase()}</Avatar>
           <Typography variant="body2" fontWeight={650} sx={{ display: { xs: 'none', sm: 'inline' } }} noWrap maxWidth={140}>{user?.name}</Typography>
@@ -123,7 +125,7 @@ export default function BillingPage() {
         </Box>
         <Menu anchorEl={userMenuAnchor} open={Boolean(userMenuAnchor)} onClose={() => setUserMenuAnchor(null)} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
           <Box px={2} py={1.25} sx={{ borderBottom: '1px solid #eef1ee' }}><Typography variant="body2" fontWeight={700} noWrap>{user?.name}</Typography><Typography variant="caption" color="text.secondary" noWrap>{user?.email}</Typography></Box>
-          {user?.role === 'ADMIN' && <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/admin'); }}>Admin</MenuItem>}
+          {isAdminUser(user) && <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/admin'); }}>Track</MenuItem>}
           <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/billing'); }}><CreditCard size={15} />&nbsp; Billing</MenuItem>
           <MenuItem onClick={() => { logout(); navigate('/login'); }} sx={{ color: 'error.main', gap: 1 }}><LogOut size={15} /> Sign out</MenuItem>
         </Menu>
