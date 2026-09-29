@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
-import ProtectedRoute from './routes/ProtectedRoute';
+import ProtectedRoute, { AdminRoute } from './routes/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -10,6 +10,7 @@ import PublicResumePage from './pages/PublicResumePage';
 import LandingPage from './pages/LandingPage';
 import SeoGuidePage from './pages/SeoGuidePage';
 import BillingPage from './pages/BillingPage';
+import AdminPage from './pages/AdminPage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const googleClientId = import.meta.env.GOOGLE_CLIENT_ID ?? import.meta.env.VITE_GOOGLE_CLIENT_ID ?? '';
@@ -24,6 +25,9 @@ function App() {
     <Route element={<ProtectedRoute />}>
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/billing" element={<BillingPage />} />
+      <Route element={<AdminRoute />}>
+        <Route path="/admin" element={<AdminPage />} />
+      </Route>
       <Route path="/resume/new" element={<ResumeBuilder />} />
       <Route path="/resume/:id" element={<ResumeBuilder />} />
       <Route path="/resume/:id/edit" element={<ResumeBuilder />} />

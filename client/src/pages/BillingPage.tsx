@@ -123,6 +123,7 @@ export default function BillingPage() {
         </Box>
         <Menu anchorEl={userMenuAnchor} open={Boolean(userMenuAnchor)} onClose={() => setUserMenuAnchor(null)} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
           <Box px={2} py={1.25} sx={{ borderBottom: '1px solid #eef1ee' }}><Typography variant="body2" fontWeight={700} noWrap>{user?.name}</Typography><Typography variant="caption" color="text.secondary" noWrap>{user?.email}</Typography></Box>
+          {user?.role === 'ADMIN' && <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/admin'); }}>Admin</MenuItem>}
           <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/billing'); }}><CreditCard size={15} />&nbsp; Billing</MenuItem>
           <MenuItem onClick={() => { logout(); navigate('/login'); }} sx={{ color: 'error.main', gap: 1 }}><LogOut size={15} /> Sign out</MenuItem>
         </Menu>

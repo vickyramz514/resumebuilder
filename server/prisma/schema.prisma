@@ -15,6 +15,11 @@ enum UserPlan {
   ULTRA
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 enum SubscriptionStatus {
   ACTIVE
   CANCELLED
@@ -41,6 +46,7 @@ model User {
   googleId        String?            @unique
   avatar          String?
   plan            UserPlan           @default(FREE)
+  role            UserRole           @default(USER)
   planExpiresAt   DateTime?
   resumes         Resume[]
   subscriptions   UserSubscription[]

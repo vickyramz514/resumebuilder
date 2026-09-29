@@ -16,7 +16,9 @@ import { errorMiddleware } from './middleware/error.middleware.js';
 import { requireAuth } from './middleware/auth.middleware.js';
 import { requirePaidPlan, templateDownloadBlock } from './middleware/paid.middleware.js';
 import { renderPdf } from './services/pdf.service.js';
+import adminRoutes from './routes/admin.routes.js';
 import { ensureBillingPlans } from './services/billingPlans.js';
+import { ensureAdminAccount } from './services/adminAccount.js';
 import { ensureSeoPages, robotsTxt, seoHtml, seoNotFoundHtml, sitemapXml } from './services/seoPages.js';
 
 const app = express();
@@ -49,6 +51,7 @@ app.use('/api/public', publicRoutes);
 app.use('/api/resumes', pdfRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/seo', seoRoutes);
 app.get('/sitemap.xml', async (_req, res, next) => {
   try {
@@ -90,6 +93,7 @@ app.get('*', (_req, res) => res.sendFile(path.join(clientDist, 'index.html')));
 
 const server = app.listen(env.port, () => console.log(`ResumeForge API listening on http://localhost:${env.port}`));
 void ensureBillingPlans().catch((error) => console.error('Unable to seed billing plans', error));
+void ensureAdminAccount().catch((error) => console.error('Unable to create the admin account', error));
 void ensureSeoPages().catch((error) => console.error('Unable to seed SEO pages', error));
 const shutdown = async () => { server.close(); await prisma.$disconnect(); };
 process.on('SIGINT', shutdown);

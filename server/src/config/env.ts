@@ -20,6 +20,8 @@ export const env = {
   publicApiUrl: (process.env.PUBLIC_API_URL ?? process.env.CLIENT_URL ?? 'http://localhost:5173').replace(/\/$/, ''),
   supportEmail: process.env.SUPPORT_EMAIL ?? 'support@datacaptain.in',
   seoWriteToken: process.env.SEO_WRITE_TOKEN?.trim() || '',
+  adminEmail: process.env.ADMIN_EMAIL?.trim().toLowerCase() || '',
+  adminPassword: process.env.ADMIN_PASSWORD || '',
   razorpay: (() => {
     const keyId = process.env.RAZORPAY_KEY_ID;
     const raw = process.env.RAZORPAY_MODE?.toLowerCase()?.trim();

@@ -9,8 +9,9 @@ export type DownloadTier = 'none' | 'basic' | 'full';
 export async function downloadTierForUser(userId: string): Promise<DownloadTier> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { plan: true, planExpiresAt: true }
+    select: { plan: true, planExpiresAt: true, role: true }
   });
+  if (user?.role === 'ADMIN') return 'full';
   const active = await prisma.userSubscription.findFirst({
     where: { userId, status: 'ACTIVE' },
     select: { plan: { select: { slug: true } } }

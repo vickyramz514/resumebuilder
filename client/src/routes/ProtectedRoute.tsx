@@ -13,4 +13,12 @@ export function ProtectedRoute() {
   return authenticated ? <Outlet /> : <Navigate to="/login" replace state={{ from: location.pathname }} />;
 }
 
+export function AdminRoute() {
+  const user = useAuthStore((state) => state.user);
+  if (!user?.role) {
+    return <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', color: '#626871' }}>Loading your workspace…</Box>;
+  }
+  return user.role === 'ADMIN' ? <Outlet /> : <Navigate to="/dashboard" replace />;
+}
+
 export default ProtectedRoute;
