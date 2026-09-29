@@ -57,7 +57,13 @@ export const TEMPLATE_CATALOG: TemplateMeta[] = [
   { id: 'frost', label: 'Frost', description: 'Icy side card', pitch: 'A cool header and a white side card, lighter than the dark Pro layouts.', accent: '#0284c7', layout: 'sidebar', tier: 'plus' },
   { id: 'monarch', label: 'Monarch', description: 'Double rule', pitch: 'Two rules under the name, for senior roles that should feel formal.', accent: '#1e3a5f', layout: 'single', tier: 'paid' },
   { id: 'ember', label: 'Ember', description: 'Dark side, warm page', pitch: 'A dark skills column and warm paper for the work itself.', accent: '#7c2d12', layout: 'sidebar', tier: 'paid' },
-  { id: 'solstice', label: 'Solstice', description: 'Split color wash', pitch: 'A soft wash behind the name, then a single column with clear headings.', accent: '#0f766e', layout: 'single', tier: 'paid' }
+  { id: 'solstice', label: 'Solstice', description: 'Split color wash', pitch: 'A soft wash behind the name, then a single column with clear headings.', accent: '#0f766e', layout: 'single', tier: 'paid' },
+  { id: 'gazette', label: 'Gazette', description: 'Newspaper column', pitch: 'A serif name, a drop cap, and rules between roles, like a printed column.', accent: '#1c1917', layout: 'single', tier: 'free' },
+  { id: 'metro', label: 'Metro', description: 'Numbered stops', pitch: 'Each section is a numbered stop, so a long page reads in order.', accent: '#b45309', layout: 'single', tier: 'free' },
+  { id: 'vellum', label: 'Vellum', description: 'Manuscript page', pitch: 'Indented lines and small-cap headings, for a page that should feel written.', accent: '#3f3f46', layout: 'single', tier: 'plus' },
+  { id: 'ribbon', label: 'Ribbon', description: 'Bookmark edge', pitch: 'A color ribbon beside the name, then a plain column underneath.', accent: '#be123c', layout: 'single', tier: 'plus' },
+  { id: 'atelier', label: 'Atelier', description: 'Studio poster', pitch: 'An oversized name and square skill marks, for design-led roles.', accent: '#111827', layout: 'single', tier: 'paid' },
+  { id: 'nocturne', label: 'Nocturne', description: 'Indigo page', pitch: 'A deep indigo sheet with cream type, distinct from the black sidebar layouts.', accent: '#c4b5fd', layout: 'single', tier: 'paid' }
 ];
 
 export const TEMPLATE_IDS: TemplateId[] = TEMPLATE_CATALOG.map((item) => item.id);

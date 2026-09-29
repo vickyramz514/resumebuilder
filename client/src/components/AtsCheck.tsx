@@ -38,7 +38,7 @@ export function AtsCheck({ resume }: { resume: Resume }) {
   return (
     <Stack spacing={2}>
       <Typography variant="body2" color="text.secondary">
-        Paste a job description. This compares its tools, phrases, and other terms with the text already on your resume. It does not send the description anywhere.
+        Paste a job description. This compares its tools, phrases, and equivalent names (front-end and frontend, Node.js and Node) with the text already on your resume. It also checks that an email and role dates are present. It does not send the description anywhere.
       </Typography>
       <TextField
         label="Job description"

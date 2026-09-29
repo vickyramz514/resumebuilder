@@ -108,6 +108,13 @@ html:has(.landing-page) { scroll-behavior: smooth; }
 .template-thumbnail-cedar { background: #fff7ed; box-shadow: inset 8px 0 0 #9a3412; }
 .template-thumbnail-kite { background: #ecfdf5; }
 .template-thumbnail-index { background: #fff; box-shadow: inset 0 0 0 1px #111827; }
+.template-thumbnail-gazette { background: #faf7f2; }
+.template-thumbnail-metro { background: #fff7ed; border-top: 6px solid #b45309; }
+.template-thumbnail-vellum { background: #f6f1e7; }
+.template-thumbnail-ribbon { background: #fff; box-shadow: inset 8px 0 0 #be123c; }
+.template-thumbnail-atelier { background: #fafafa; }
+.template-thumbnail-nocturne { background: #1e1b4b; color: #e0e7ff; }
+.template-thumbnail-nocturne .template-thumb-line, .template-thumbnail-nocturne .template-thumb-name, .template-thumbnail-nocturne .template-thumb-subtitle { background: #4338ca; }
 .template-thumbnail-summit { background: #f8fafc; border-top: 8px solid #1e3a5f; text-align: center; }
 .template-thumbnail-iris { background: #f5f3ff; padding-top: 0; }
 .template-thumbnail-coral { background: #fff1f2; }

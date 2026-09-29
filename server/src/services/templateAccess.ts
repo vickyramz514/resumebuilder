@@ -7,7 +7,9 @@ export const PLUS_TEMPLATES = new Set([
   'ledger',
   'iris',
   'horizon',
-  'frost'
+  'frost',
+  'vellum',
+  'ribbon'
 ]);
 
 /** Layouts that stay on Starter and Pro. */
@@ -28,7 +30,9 @@ const FULL_TEMPLATES = new Set([
   'canyon',
   'monarch',
   'ember',
-  'solstice'
+  'solstice',
+  'atelier',
+  'nocturne'
 ]);
 
 export function templateNeedsFullPlan(templateId: string | null | undefined) {

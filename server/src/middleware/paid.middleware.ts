@@ -45,7 +45,7 @@ export async function templateDownloadBlock(userId: string, templateId: string |
   const tier = await downloadTierForUser(userId);
   if (tier === 'none') return 'PDF and Word export are included on the ₹100 plan and on Pro.';
   if (tier === 'basic' && templateNeedsFullPlan(templateId)) {
-    return 'This layout is included on Pro. The ₹100 plan can download its eight designed layouts and every free layout.';
+    return 'This layout is included on Pro. The ₹100 plan can download its ten designed layouts and every free layout.';
   }
   return null;
 }

@@ -29,8 +29,8 @@ function formatMoney(cents: number, currency = 'INR') {
 }
 
 const FALLBACK_PRICING: Pick<SubscriptionPlan, 'slug' | 'name' | 'priceCents' | 'currency' | 'billingCycle' | 'description'>[] = [
-  { slug: 'free', name: 'Free', priceCents: 0, currency: 'INR', billingCycle: null, description: '19 templates, cloud library, and the editor. No card required.' },
-  { slug: 'basic', name: 'Basic', priceCents: 10000, currency: 'INR', billingCycle: 'monthly', description: 'Eight designed layouts, plus PDF and Word, for ₹100 a month.' },
+  { slug: 'free', name: 'Free', priceCents: 0, currency: 'INR', billingCycle: null, description: '21 templates, cloud library, and the editor. No card required.' },
+  { slug: 'basic', name: 'Basic', priceCents: 10000, currency: 'INR', billingCycle: 'monthly', description: 'Ten designed layouts, plus PDF and Word, for ₹100 a month.' },
   { slug: 'starter', name: 'Pro', priceCents: 65000, currency: 'INR', billingCycle: 'monthly', description: 'Every layout, PDF and Word, and the AI writing assistant.' }
 ];
 
@@ -46,7 +46,7 @@ const audiences = [
 const features = [
   { icon: Eye, title: 'Live preview', copy: 'The page updates as you type, so length, hierarchy, and spacing stay visible while you edit.', tone: 'green' },
   { icon: WandSparkles, title: 'Writing help you approve', copy: 'On the paid plan, improve a summary, rewrite bullets, draft project points, or tailor the page to a job. Nothing is saved until you apply a suggestion.', tone: 'amber' },
-  { icon: Layers, title: 'Nineteen free, eight for ₹100', copy: 'Edit any layout before you pay. The ₹100 plan downloads eight designed pages. Pro downloads the rest and adds AI.', tone: 'green' },
+  { icon: Layers, title: 'Twenty-one free, ten for ₹100', copy: 'Edit any layout before you pay. The ₹100 plan downloads ten designed pages. Pro downloads the rest and adds AI.', tone: 'green' },
   { icon: PenLine, title: 'Type, color, and density', copy: 'Pick a font, an accent, a type size, line height, spacing, and a comfortable, compact, or airy density.', tone: 'ink' },
   { icon: Download, title: 'Word for the application, PDF for the person', copy: 'Subscribe to download. Word keeps one column and real headings for systems that scan the file. PDF matches the layout in the preview.', tone: 'green' },
   { icon: Share2, title: 'Private until you share', copy: 'Keep the file in your library, or turn on a public link you can copy, open, and switch off again.', tone: 'amber' }
@@ -309,7 +309,7 @@ export default function LandingPage() {
           <Box className="section-intro">
             <Chip label="Start with a strong foundation" />
             <Typography variant="h2">A template for the way you want to be read.</Typography>
-            <Typography>Every layout is available while you edit. The ₹100 plan downloads eight designed pages. Gold-framed layouts download on Pro.</Typography>
+            <Typography>Every layout is available while you edit. The ₹100 plan downloads ten designed pages. Gold-framed layouts download on Pro.</Typography>
           </Box>
           {(['free', 'plus', 'paid'] as const).map((tier) => <Box key={tier} className="template-group">
             <Typography variant="overline" className={`template-group-label ${tier}`}>{tier === 'free' ? 'Free to use' : tier === 'plus' ? '₹100 layouts' : 'Pro layouts'}</Typography>
@@ -386,7 +386,7 @@ export default function LandingPage() {
           <Box className="section-intro">
             <Chip label="Simple plans" />
             <Typography variant="h2">Start free. Subscribe when the resume is ready to send.</Typography>
-            <Typography>Checkout uses Razorpay. Free includes the editor and 19 layouts. ₹100 adds eight designed layouts and downloads. Pro adds the remaining layouts and AI.</Typography>
+            <Typography>Checkout uses Razorpay. Free includes the editor and 21 layouts. ₹100 adds ten designed layouts and downloads. Pro adds the remaining layouts and AI.</Typography>
           </Box>
           <Box className="pricing-grid">
             {pricingPlans.map((plan) => {

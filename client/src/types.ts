@@ -102,4 +102,4 @@ export interface Resume {
   hiddenSections?: SectionType[];
 }
 
-export type TemplateId = 'minimal' | 'professional' | 'modern' | 'editorial' | 'creative' | 'compact' | 'classic' | 'executive' | 'technical' | 'academic' | 'swiss' | 'folio' | 'harbor' | 'lumen' | 'chronicle' | 'velvet' | 'atlas' | 'slate' | 'meridian' | 'noir' | 'linen' | 'grove' | 'aurora' | 'ledger' | 'pebble' | 'cobalt' | 'signal' | 'quartz' | 'cedar' | 'kite' | 'index' | 'summit' | 'iris' | 'coral' | 'ink' | 'mosaic' | 'horizon' | 'orchid' | 'prism' | 'canyon' | 'frost' | 'monarch' | 'ember' | 'solstice';
+export type TemplateId = 'minimal' | 'professional' | 'modern' | 'editorial' | 'creative' | 'compact' | 'classic' | 'executive' | 'technical' | 'academic' | 'swiss' | 'folio' | 'harbor' | 'lumen' | 'chronicle' | 'velvet' | 'atlas' | 'slate' | 'meridian' | 'noir' | 'linen' | 'grove' | 'aurora' | 'ledger' | 'pebble' | 'cobalt' | 'signal' | 'quartz' | 'cedar' | 'kite' | 'index' | 'summit' | 'iris' | 'coral' | 'ink' | 'mosaic' | 'horizon' | 'orchid' | 'prism' | 'canyon' | 'frost' | 'monarch' | 'ember' | 'solstice' | 'gazette' | 'metro' | 'vellum' | 'ribbon' | 'atelier' | 'nocturne';

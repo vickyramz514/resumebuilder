@@ -388,6 +388,62 @@
 .template-solstice .resume-section h2 { border: 0; border-bottom: 1px solid #99f6e4; color: #0f766e !important; }
 .template-solstice .skill-list span { border: 0; background: #f0fdfa; color: #115e59; border-radius: 999px; }
 
+/* Gazette — free, a newspaper column */
+.template-gazette { background: #faf7f2; font-family: Georgia, "Times New Roman", serif; }
+.template-gazette .resume-header { display: block; text-align: center; border-bottom: 3px double #1c1917; padding-bottom: 12px; }
+.template-gazette .resume-header h1 { font-size: 36px; letter-spacing: -0.5px; font-weight: 700; }
+.template-gazette .resume-header p { font-family: var(--resume-font-family, Arial, sans-serif); letter-spacing: 2px; text-transform: uppercase; font-size: 10px; }
+.template-gazette .resume-contact { justify-content: center; font-family: var(--resume-font-family, Arial, sans-serif); }
+.template-gazette .resume-summary:first-letter { float: left; font-size: 32px; line-height: .8; padding-right: 6px; font-weight: 700; }
+.template-gazette .resume-section h2 { font-family: var(--resume-font-family, Arial, sans-serif); text-align: center; border-bottom: 1px solid #1c1917; letter-spacing: 3px; color: #1c1917 !important; }
+.template-gazette .resume-entry { border-bottom: 1px solid #e7e5e4; padding-bottom: 8px; }
+.template-gazette .skill-list span { border-radius: 0; border-color: #1c1917; background: transparent; }
+
+/* Metro — free, numbered section stops */
+.template-metro { counter-reset: metro; }
+.template-metro .resume-header { border-bottom: 8px solid var(--accent, #b45309); }
+.template-metro .resume-header h1 { letter-spacing: -1.2px; }
+.template-metro .resume-section { counter-increment: metro; }
+.template-metro .resume-section h2 { border: 0; display: flex; align-items: center; gap: 8px; color: #9a3412 !important; }
+.template-metro .resume-section h2:before { content: counter(metro, decimal-leading-zero); font-size: 11px; letter-spacing: 0; color: #fff; background: var(--accent, #b45309); border-radius: 99px; padding: 2px 6px; }
+.template-metro .skill-list span { border: 0; background: #fff7ed; color: #9a3412; border-radius: 99px; }
+
+/* Vellum — ₹100, a manuscript page */
+.template-vellum { background: #f6f1e7; }
+.template-vellum .resume-header { border-bottom: 0; }
+.template-vellum .resume-header h1 { font-family: Georgia, serif; font-weight: 500; font-size: 34px; color: #3f3f46; }
+.template-vellum .resume-section h2 { font-variant: small-caps; letter-spacing: 2px; border-bottom: 1px dotted #a8a29e; color: #57534e !important; }
+.template-vellum .resume-summary, .template-vellum .resume-entry li { text-indent: 1.1em; }
+.template-vellum .skill-list span { border-radius: 0; background: transparent; border-color: #a8a29e; font-variant: small-caps; }
+
+/* Ribbon — ₹100, a bookmark beside the name */
+.template-ribbon { box-shadow: inset 14px 0 0 var(--accent, #be123c); }
+.template-ribbon .resume-header { border-bottom: 0; padding-left: 8px; }
+.template-ribbon .resume-header h1 { color: #881337; }
+.template-ribbon .resume-section h2 { border: 0; color: #9f1239 !important; }
+.template-ribbon .resume-section h2:before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; background: var(--accent, #be123c); transform: rotate(45deg); }
+.template-ribbon .skill-list span { border: 0; background: #fff1f2; color: #9f1239; }
+
+/* Atelier — Pro, a studio poster */
+.template-atelier { background: #fafafa; }
+.template-atelier .resume-header { display: block; border-bottom: 0; }
+.template-atelier .resume-header h1 { font-size: 46px; line-height: .9; letter-spacing: -2px; max-width: 10ch; }
+.template-atelier .resume-header p { margin-top: 12px; letter-spacing: 2px; text-transform: uppercase; font-size: 10px; }
+.template-atelier .resume-contact { justify-content: flex-start; margin-top: 12px; }
+.template-atelier .resume-section h2 { border: 0; font-size: 10px; letter-spacing: 3px; color: #111827 !important; }
+.template-atelier .skill-list span { border-radius: 0; background: #111827; color: #fff; border: 0; }
+.template-atelier .resume-entry { border-left: 2px solid #111827; padding-left: 10px; }
+
+/* Nocturne — Pro, an indigo sheet */
+.template-nocturne { background: #1e1b4b; color: #e0e7ff; }
+.template-nocturne .resume-header { border-bottom: 1px solid #4338ca; }
+.template-nocturne .resume-header h1 { color: #fff; }
+.template-nocturne .resume-header p, .template-nocturne .entry-subheading, .template-nocturne .entry-heading span, .template-nocturne .resume-contact { color: #c4b5fd; }
+.template-nocturne a { color: #ddd6fe; }
+.template-nocturne .resume-section h2 { border-bottom-color: #4338ca; color: #c4b5fd !important; }
+.template-nocturne .skill-list span { border: 0; background: #312e81; color: #e0e7ff; }
+.template-nocturne .resume-entry li::marker { color: #a78bfa; }
+
 .density-compact .resume-section { margin-top: calc(var(--resume-spacing, 18px) * .7); }.density-compact .resume-entry { margin-bottom: 7px; }.density-compact .resume-header { padding-bottom: 11px; }.density-airy .resume-section { margin-top: calc(var(--resume-spacing, 18px) * 1.25); }.density-airy .resume-entry { margin-bottom: 16px; }
 .export-mode { box-shadow: none; width: 190mm; min-height: 277mm; }
 .resume-sheet.is-interactive .is-editable { cursor: pointer; border-radius: 8px; transition: background .15s ease, box-shadow .15s ease; }
@@ -409,4 +465,6 @@
   .template-folio .resume-header, .template-folio .resume-main { padding: 0; }
   .template-folio .resume-aside { min-height: 0; margin-bottom: 16px; padding: 18px; }
   .template-technical { box-shadow: inset 6px 0 0 var(--accent, #4338ca); padding-left: 28px; }
+  .template-ribbon { box-shadow: inset 10px 0 0 var(--accent, #be123c); }
+  .template-atelier .resume-header h1 { font-size: 34px; }
 }

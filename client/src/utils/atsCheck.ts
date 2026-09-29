@@ -13,7 +13,8 @@ const STOP = new Set([
   'strong', 'good', 'great', 'well', 'etc', 'job', 'position', 'candidate', 'looking', 'required',
   'requirements', 'preferred', 'experience', 'skills', 'skill', 'responsibilities', 'responsibility',
   'high', 'need', 'needs', 'plus', 'only', 'best', 'help', 'make', 'made', 'join', 'apply', 'real',
-  'fast', 'large', 'small', 'other', 'based', 'build', 'built', 'across', 'please'
+  'fast', 'large', 'small', 'other', 'based', 'build', 'built', 'across', 'please', 'knows', 'know',
+  'familiar', 'understanding', 'demonstrated', 'responsible', 'proven', 'hands', 'solid', 'excellent'
 ]);
 
 export type AtsHeading = { label: string; present: boolean; detail: string };
@@ -27,7 +28,8 @@ export type AtsReport = {
 
 const SHORT_TECH = new Set([
   'ai', 'ml', 'ui', 'ux', 'qa', 'go', 'sql', 'aws', 'gcp', 'api', 'ios', 'nlp', 'sdk', 'css', 'html',
-  'xml', 'jwt', 'cdn', 'erp', 'crm', 'etl', 'oop', 'tdd', 'rest', 'grpc', 'orm', 'ssh', 'dns', 'sap', 'bi'
+  'xml', 'jwt', 'cdn', 'erp', 'crm', 'etl', 'oop', 'tdd', 'rest', 'grpc', 'orm', 'ssh', 'dns', 'sap', 'bi',
+  'node', 'js', 'ts'
 ]);
 
 const SPECIAL = /\b(?:[A-Z]{2,}(?:\/[A-Z0-9]+)+|C\+\+|C#|[A-Za-z][\w]*\.[\w.]+|[A-Za-z]{3,}(?:-[A-Za-z]{2,})+)\b/g;
@@ -103,7 +105,7 @@ function extractKeywords(jobDescription: string) {
 
   return [...found.values()]
     .sort((a, b) => b.weight - a.weight || b.count - a.count || b.label.length - a.label.length)
-    .filter((item) => item.weight >= 2 || /[\s./-]/.test(item.label))
+    .filter((item) => !roleWord.has(item.label.toLowerCase()) && (item.weight >= 2 || /[\s./-]/.test(item.label)))
     .slice(0, 40);
 }
 
@@ -111,15 +113,40 @@ function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+const ALIASES: Record<string, string[]> = {
+  javascript: ['js'],
+  typescript: ['ts'],
+  'node.js': ['nodejs', 'node'],
+  'react.js': ['reactjs', 'react'],
+  postgresql: ['postgres'],
+  kubernetes: ['k8s'],
+  'front-end': ['frontend', 'front end'],
+  'back-end': ['backend', 'back end'],
+  'full-stack': ['fullstack', 'full stack'],
+  'ci/cd': ['cicd', 'ci cd'],
+  'machine learning': ['ml'],
+  rest: ['restful']
+};
+
+function aliasForms(needle: string) {
+  const forms = new Set<string>([needle]);
+  for (const [canonical, extras] of Object.entries(ALIASES)) {
+    const group = [canonical, ...extras];
+    if (group.includes(needle)) group.forEach((item) => forms.add(item));
+  }
+  return forms;
+}
+
 function resumeHas(resumeText: string, keyword: string) {
   const hay = resumeText.toLowerCase();
   const needle = keyword.toLowerCase().trim();
-  const forms = new Set([
-    needle,
-    needle.replace(/[-/]/g, ' '),
-    needle.replace(/[-/\s.]/g, ''),
-    needle.replace(/\b([a-z]{4,})s\b/g, '$1')
-  ]);
+  const forms = new Set<string>();
+  for (const form of aliasForms(needle)) {
+    forms.add(form);
+    forms.add(form.replace(/[-/]/g, ' '));
+    forms.add(form.replace(/[-/\s.]/g, ''));
+    forms.add(form.replace(/\b([a-z]{4,})s\b/g, '$1'));
+  }
   for (const form of forms) {
     if (!form) continue;
     if (form.includes(' ')) {
@@ -177,6 +204,16 @@ export function checkAts(input: Resume, jobDescription: string): AtsReport {
       label: 'Skills',
       present: !hidden.has('skills') && resume.skills.filter(Boolean).length >= 3,
       detail: 'A skills list a parser can read as text.'
+    },
+    {
+      label: 'Contact',
+      present: Boolean(resume.personal.contact.email.trim()),
+      detail: 'An email address in the header.'
+    },
+    {
+      label: 'Dates',
+      present: resume.experience.some((item) => item.role.trim()) && resume.experience.filter((item) => item.role.trim()).every((item) => item.startDate.trim()),
+      detail: 'A start date on every role.'
     }
   ];
   const headingScore = headings.filter((item) => item.present).length / headings.length;
@@ -234,13 +271,13 @@ export function alignResumeToJob(input: Resume, jobDescription: string) {
   const skills = [...keptSkills, ...added];
   const removed = resume.skills.filter((skill) => skill.trim() && !skills.some((kept) => kept.toLowerCase() === skill.trim().toLowerCase()));
   const summaryBody = orderByJob(resume.summary.split(/(?<=[.!?])\s+/), labels, 1, 40).join(' ');
-  const focus = added.slice(0, 6);
-  const summary = focus.length && !resumeHas(summaryBody, focus[0])
-    ? `${summaryBody}${summaryBody.endsWith('.') || !summaryBody ? '' : '.'} Aligned to this posting: ${focus.join(', ')}.`.trim()
+  const focus = added.filter((label) => !resumeHas(summaryBody, label)).slice(0, 4);
+  const summary = focus.length
+    ? `${summaryBody.replace(/[.\s]+$/, '')}${summaryBody ? ', including ' : ''}${focus.join(', ')}.`.trim()
     : summaryBody;
   const experience = resume.experience.map((item) => ({
     ...item,
-    bullets: orderByJob(item.bullets, labels, Math.min(2, item.bullets.filter(Boolean).length))
+    bullets: orderByJob(item.bullets, labels, item.bullets.filter(Boolean).length + 1)
   }));
   const projects = [...resume.projects]
     .sort((a, b) => keywordHits(`${b.name} ${b.description} ${b.technologies}`, labels) - keywordHits(`${a.name} ${a.description} ${a.technologies}`, labels))

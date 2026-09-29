@@ -55,7 +55,7 @@ export function PaywallDialog({ open, reason, onClose }: Props) {
   const blurb = reason === 'pdf'
     ? 'PDF and Word unlock on the ₹100 plan for its layouts, and on Pro for every layout. Subscribe with Razorpay, then export in one click.'
     : reason === 'template'
-      ? 'You can keep editing this page. The ₹100 plan downloads eight designed layouts plus every free one. Pro downloads this layout and adds the AI assistant.'
+      ? 'You can keep editing this page. The ₹100 plan downloads ten designed layouts plus every free one. Pro downloads this layout and adds the AI assistant.'
       : 'The AI assistant unlocks on Pro. The ₹100 plan includes downloads for its layouts, without AI.';
 
   return (
