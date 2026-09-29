@@ -8,7 +8,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { ApiError } from '../services/api';
 import {
-  cancelSubscription, confirmSubscription, getSubscriptionStatus, listPlans,
+  billingFeatureLabel, billingPlanName, cancelSubscription, confirmSubscription, getSubscriptionStatus, listPlans,
   type SubscriptionPlan, type UserSubscription
 } from '../services/billingApi';
 import { startPlanCheckout } from '../lib/razorpayCheckout';
@@ -29,7 +29,7 @@ function formatMoney(cents: number, currency = 'INR') {
 }
 
 function featureList(plan: SubscriptionPlan) {
-  return Array.isArray(plan.features) ? plan.features.map(String) : [];
+  return Array.isArray(plan.features) ? plan.features.map(String).map(billingFeatureLabel) : [];
 }
 
 export default function BillingPage() {
@@ -150,7 +150,7 @@ export default function BillingPage() {
               {isActive && subscription ? (
                 <>
                   <Stack direction="row" spacing={1} alignItems="center" mt={1}>
-                    <Typography variant="h5" fontWeight={750}>{subscription.plan.name}</Typography>
+                    <Typography variant="h5" fontWeight={750}>{billingPlanName(subscription.plan)}</Typography>
                     <Chip size="small" color="success" label="Active" />
                   </Stack>
                   <Typography color="text.secondary" mt={1}>Renews {new Date(subscription.currentPeriodEnd).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</Typography>
@@ -184,7 +184,7 @@ export default function BillingPage() {
               <Card variant="outlined" className={`billing-plan-card ${plan.slug === popularSlug ? 'popular' : ''}`}>
                 <CardContent>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography fontWeight={800}>{plan.name}</Typography>
+                    <Typography fontWeight={800}>{billingPlanName(plan)}</Typography>
                     {plan.metadata?.offerBadge && <Chip size="small" label={plan.metadata.offerBadge} />}
                   </Stack>
                   <Typography variant="body2" color="text.secondary" mt={0.75} minHeight={40}>{plan.description}</Typography>

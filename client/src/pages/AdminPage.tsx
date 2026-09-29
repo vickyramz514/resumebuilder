@@ -7,6 +7,7 @@ import { ChevronDown, CreditCard, LayoutDashboard, LogOut, Sparkles } from 'luci
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { adminOverview, type AdminOverview } from '../services/adminApi';
+import { planCategory } from '../utils/entitlements';
 import '../dashboard.css';
 
 function money(cents: number, currency = 'INR') {
@@ -32,6 +33,13 @@ export default function AdminPage() {
   }, []);
 
   const peak = Math.max(1, ...(data?.signups.map((day) => day.count) ?? [1]));
+  const categories = (data?.plans ?? []).reduce((totals, row) => {
+    const label = planCategory(row.plan).label;
+    if (label === 'Basic') totals.basic += row.count;
+    else if (label === 'Pro') totals.pro += row.count;
+    else totals.free += row.count;
+    return totals;
+  }, { free: 0, basic: 0, pro: 0 });
 
   return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#f6f7fb', color: '#202124' }}>
     <AppBar position="static" elevation={0} className="dashboard-topbar" sx={{ bgcolor: '#fff', color: '#202124', borderBottom: '1px solid #e5e9e6' }}>
@@ -101,13 +109,18 @@ export default function AdminPage() {
 
         <Card variant="outlined" sx={{ borderColor: '#D0D3D6', mb: 2, overflow: 'auto' }}>
           <CardContent>
-            <Typography fontWeight={750} mb={1}>Recent users</Typography>
+            <Stack direction="row" spacing={1} alignItems="center" mb={1.5} flexWrap="wrap">
+              <Typography fontWeight={750}>Recent users</Typography>
+              <Chip size="small" label={`Free ${categories.free}`} variant="outlined" />
+              <Chip size="small" label={`Basic ${categories.basic}`} color="warning" variant="outlined" />
+              <Chip size="small" label={`Pro ${categories.pro}`} color="success" variant="outlined" />
+            </Stack>
             <Table size="small">
               <TableHead>
                 <TableRow>
                   <TableCell>Name</TableCell>
                   <TableCell>Email</TableCell>
-                  <TableCell>Plan</TableCell>
+                  <TableCell>Category</TableCell>
                   <TableCell>Resumes</TableCell>
                   <TableCell>Payments</TableCell>
                   <TableCell>Joined</TableCell>
@@ -118,7 +131,7 @@ export default function AdminPage() {
                   <TableRow key={person.id}>
                     <TableCell>{person.name}{person.role === 'ADMIN' ? ' · Admin' : ''}</TableCell>
                     <TableCell>{person.email}</TableCell>
-                    <TableCell>{person.plan}</TableCell>
+                    <TableCell><Chip size="small" label={planCategory(person.plan).label} color={planCategory(person.plan).color} variant="outlined" /></TableCell>
                     <TableCell>{person._count.resumes}</TableCell>
                     <TableCell>{person._count.payments}</TableCell>
                     <TableCell>{when(person.createdAt)}</TableCell>

@@ -13,7 +13,7 @@ import { ApiError } from '../services/api';
 import { IMPORT_ACCEPT, importResumeFile } from '../utils/importResume';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
 import { TEMPLATE_CATALOG, isTemplateId } from '../templates/catalog';
-import { isAdminUser } from '../utils/entitlements';
+import { isAdminUser, planCategory } from '../utils/entitlements';
 import type { Resume, TemplateId } from '../types';
 import '../dashboard.css';
 
@@ -149,13 +149,14 @@ export default function DashboardPage() {
         <Box className="brand-mark"><Box className="brand-badge"><Sparkles size={16} fill="currentColor" /></Box><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
         <Box flex={1} />
         {isAdminUser(user) && <Button color="inherit" onClick={() => navigate('/admin')} sx={{ mr: 1 }}>Track</Button>}
+        <Chip size="small" label={planCategory(user?.plan).label} color={planCategory(user?.plan).color} variant="outlined" sx={{ mr: 1 }} />
         <Box className="user-chip" onClick={(event) => setUserMenuAnchor(event.currentTarget)}>
           <Avatar sx={{ width: 30, height: 30, fontSize: 13, fontWeight: 700, bgcolor: '#0d9488' }}>{(user?.name || 'U').slice(0, 1).toUpperCase()}</Avatar>
           <Typography variant="body2" fontWeight={650} sx={{ display: { xs: 'none', sm: 'inline' } }} noWrap maxWidth={140}>{user?.name}</Typography>
           <ChevronDown size={15} />
         </Box>
         <Menu anchorEl={userMenuAnchor} open={Boolean(userMenuAnchor)} onClose={() => setUserMenuAnchor(null)} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-          <Box px={2} py={1.25} sx={{ borderBottom: '1px solid #eef1ee' }}><Typography variant="body2" fontWeight={700} noWrap>{user?.name}</Typography><Typography variant="caption" color="text.secondary" noWrap>{user?.email}</Typography></Box>
+          <Box px={2} py={1.25} sx={{ borderBottom: '1px solid #eef1ee' }}><Typography variant="body2" fontWeight={700} noWrap>{user?.name}</Typography><Typography variant="caption" color="text.secondary" display="block" noWrap>{user?.email}</Typography><Typography variant="caption" color="text.secondary">{planCategory(user?.plan).label} user</Typography></Box>
           {isAdminUser(user) && <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/admin'); }} sx={{ gap: 1 }}><Sparkles size={15} /> Track</MenuItem>}
           <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/billing'); }} sx={{ gap: 1 }}><CreditCard size={15} /> Billing</MenuItem>
           <MenuItem onClick={() => { logout(); navigate('/login'); }} sx={{ color: 'error.main', gap: 1 }}><LogOut size={15} /> Sign out</MenuItem>
@@ -239,7 +240,7 @@ export default function DashboardPage() {
 
     <Dialog open={templateDialog} onClose={() => setTemplateDialog(false)} fullWidth maxWidth="lg">
       <DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><FileText size={16} /></Box>Choose a starting template</DialogTitle>
-      <DialogContent><Typography color="text.secondary" variant="body2" mb={2}>Every layout is available while you edit. The ₹100 plan downloads eight designed layouts. The rest download on Starter.</Typography><Grid container spacing={1.5}>{TEMPLATE_CATALOG.map((template) => <Grid item xs={12} sm={6} md={3} key={template.id}><Card className={`template-choice${template.tier === 'paid' ? ' is-paid' : ''}`} variant="outlined" onClick={() => create(template.id)} sx={{ cursor: 'pointer', p: 1.25, height: '100%' }}><TemplateThumbnail template={template.id} compact /><Stack direction="row" justifyContent="space-between" alignItems="center" mt={1}><Typography fontWeight={750}>{template.label}</Typography><Chip size="small" label={template.tier === 'paid' ? 'Pro' : template.tier === 'plus' ? '₹100' : 'Free'} color={template.tier === 'free' ? 'success' : 'warning'} variant="outlined" /></Stack><Typography variant="caption" color="text.secondary">{template.description}</Typography><Button size="small" sx={{ mt: 1 }} onClick={(event) => { event.stopPropagation(); create(template.id); }}>Use this template</Button></Card></Grid>)}</Grid></DialogContent>
+      <DialogContent><Typography color="text.secondary" variant="body2" mb={2}>Every layout is available while you edit. The ₹100 plan downloads eight designed layouts. The rest download on Pro.</Typography><Grid container spacing={1.5}>{TEMPLATE_CATALOG.map((template) => <Grid item xs={12} sm={6} md={3} key={template.id}><Card className={`template-choice${template.tier === 'paid' ? ' is-paid' : ''}`} variant="outlined" onClick={() => create(template.id)} sx={{ cursor: 'pointer', p: 1.25, height: '100%' }}><TemplateThumbnail template={template.id} compact /><Stack direction="row" justifyContent="space-between" alignItems="center" mt={1}><Typography fontWeight={750}>{template.label}</Typography><Chip size="small" label={template.tier === 'paid' ? 'Pro' : template.tier === 'plus' ? '₹100' : 'Free'} color={template.tier === 'free' ? 'success' : 'warning'} variant="outlined" /></Stack><Typography variant="caption" color="text.secondary">{template.description}</Typography><Button size="small" sx={{ mt: 1 }} onClick={(event) => { event.stopPropagation(); create(template.id); }}>Use this template</Button></Card></Grid>)}</Grid></DialogContent>
       <DialogActions><Button onClick={() => setTemplateDialog(false)}>Cancel</Button></DialogActions>
     </Dialog>
     <Dialog open={Boolean(rename)} onClose={() => setRename(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><FileText size={16} /></Box>Rename resume</DialogTitle><DialogContent><TextField autoFocus fullWidth label="Resume title" value={renameValue} onChange={(e) => setRenameValue(e.target.value)} sx={{ mt: 1 }} /></DialogContent><DialogActions><Button onClick={() => setRename(null)}>Cancel</Button><Button variant="contained" onClick={submitRename} disabled={!renameValue.trim()}>Save name</Button></DialogActions></Dialog>

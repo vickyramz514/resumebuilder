@@ -43,9 +43,9 @@ export async function userHasAiEntitlement(userId: string) {
 
 export async function templateDownloadBlock(userId: string, templateId: string | null | undefined) {
   const tier = await downloadTierForUser(userId);
-  if (tier === 'none') return 'PDF and Word export are included on the ₹100 plan and on Starter.';
+  if (tier === 'none') return 'PDF and Word export are included on the ₹100 plan and on Pro.';
   if (tier === 'basic' && templateNeedsFullPlan(templateId)) {
-    return 'This layout is included on Starter. The ₹100 plan can download its eight designed layouts and every free layout.';
+    return 'This layout is included on Pro. The ₹100 plan can download its eight designed layouts and every free layout.';
   }
   return null;
 }
@@ -57,7 +57,7 @@ export async function requirePaidPlan(req: Request, res: Response, next: NextFun
       return res.status(402).json({
         error: {
           code: 'PAYWALL',
-          message: 'PDF and Word export are included on the ₹100 plan and on Starter. Subscribe to continue.'
+          message: 'PDF and Word export are included on the ₹100 plan and on Pro. Subscribe to continue.'
         }
       });
     }
@@ -74,7 +74,7 @@ export async function requireAiPlan(req: Request, res: Response, next: NextFunct
       return res.status(402).json({
         error: {
           code: 'PAYWALL',
-          message: 'The AI assistant is included on Starter and Pro. Subscribe to continue.'
+          message: 'The AI assistant is included on Pro. Subscribe to continue.'
         }
       });
     }

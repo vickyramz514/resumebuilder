@@ -27,6 +27,16 @@ export type UserSubscription = {
   plan: Pick<SubscriptionPlan, 'id' | 'name' | 'slug' | 'credits' | 'creditsPerMonth' | 'priceCents' | 'billingCycle' | 'currency'>;
 };
 
+export function billingPlanName(plan: { slug?: string; name: string }) {
+  if (plan.slug === 'starter' || plan.name === 'Starter') return 'Pro';
+  if (plan.slug === 'pro' && plan.name === 'Pro') return 'Pro Plus';
+  return plan.name;
+}
+
+export function billingFeatureLabel(feature: string) {
+  return feature.replace('Everything in Starter', 'Everything in Pro');
+}
+
 const isHiddenRupeePlan = (plan: Pick<SubscriptionPlan, 'priceCents' | 'currency'>) =>
   plan.currency.toUpperCase() === 'INR' && plan.priceCents === 100;
 

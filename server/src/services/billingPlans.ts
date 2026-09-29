@@ -47,7 +47,7 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
     metadata: { offerBadge: '₹100' }
   },
   {
-    name: 'Starter',
+    name: 'Pro',
     slug: 'starter',
     description: 'Every layout, PDF and Word, and the AI writing assistant',
     priceCents: 65000,
@@ -63,7 +63,7 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
     metadata: { popular: true }
   },
   {
-    name: 'Pro',
+    name: 'Pro Plus',
     slug: 'pro',
     description: 'AI-assisted resumes, PDF and Word export, and extra AI capacity',
     priceCents: 129900,
@@ -72,7 +72,7 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
     creditsPerMonth: 0,
     billingCycle: 'monthly',
     razorpayPlanId: proPlanId(),
-    features: ['Everything in Starter', 'Higher AI usage', 'Priority support'] as Prisma.InputJsonValue,
+    features: ['Everything in Pro', 'Higher AI usage', 'Priority support'] as Prisma.InputJsonValue,
     isActive: true,
     adminOnly: false,
     sortOrder: 3,

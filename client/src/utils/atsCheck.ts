@@ -103,8 +103,8 @@ function extractKeywords(jobDescription: string) {
 
   return [...found.values()]
     .sort((a, b) => b.weight - a.weight || b.count - a.count || b.label.length - a.label.length)
-    .slice(0, 40)
-    .map((item) => item.label);
+    .filter((item) => item.weight >= 2 || /[\s./-]/.test(item.label))
+    .slice(0, 40);
 }
 
 function escapeRegExp(value: string) {
@@ -152,7 +152,7 @@ export function resumePlainText(input: Resume) {
 
 export function checkAts(input: Resume, jobDescription: string): AtsReport {
   const resume = withResumeDefaults(input);
-  const keywords = extractKeywords(jobDescription);
+  const keywords = extractKeywords(jobDescription).map((item) => item.label);
   const plain = resumePlainText(resume);
   const matched = keywords.filter((word) => resumeHas(plain, word));
   const missing = keywords.filter((word) => !resumeHas(plain, word));
@@ -187,4 +187,69 @@ export function checkAts(input: Resume, jobDescription: string): AtsReport {
 
 export function skillLabel(word: string) {
   return displayLabel(word);
+}
+
+const ROLE_WORD = new Set(['engineer', 'developer', 'manager', 'designer', 'analyst', 'architect', 'consultant', 'specialist', 'intern', 'lead', 'senior', 'junior', 'officer', 'associate']);
+
+function keywordHits(text: string, labels: string[]) {
+  return labels.reduce((count, label) => count + (resumeHas(text, label) ? 1 : 0), 0);
+}
+
+function overlapsTerm(left: string, right: string) {
+  if (left.length < 4 || right.length < 4) return resumeHas(left, right) || resumeHas(right, left);
+  const a = left.toLowerCase();
+  const b = right.toLowerCase();
+  return a.includes(b) || b.includes(a);
+}
+
+function orderByJob(parts: string[], labels: string[], minimum: number, minChars = 0) {
+  const ranked = parts
+    .map((text, index) => ({ text: text.trim(), index, score: keywordHits(text, labels) }))
+    .filter((item) => item.text);
+  if (ranked.length < 2) return ranked.map((item) => item.text);
+  const sorted = [...ranked].sort((a, b) => b.score - a.score || a.index - b.index);
+  const useful = sorted.filter((item) => item.score > 0);
+  const usefulText = useful.map((item) => item.text).join(' ');
+  if (useful.length >= minimum && usefulText.length >= minChars) return useful.map((item) => item.text);
+  return sorted.map((item) => item.text);
+}
+
+export function alignResumeToJob(input: Resume, jobDescription: string) {
+  const resume = withResumeDefaults(input);
+  const ranked = extractKeywords(jobDescription);
+  const labels = ranked.map((item) => item.label);
+  const worthAdding = ranked.filter((item) => {
+    const key = item.label.toLowerCase();
+    if (ROLE_WORD.has(key)) return false;
+    return item.weight >= 2 || /[\s./-]/.test(item.label);
+  });
+  const keptSkills = resume.skills.filter((skill) => skill.trim() && labels.some((label) => overlapsTerm(skill, label) || overlapsTerm(skill, jobDescription)));
+  const taken = new Set(keptSkills.map((skill) => skill.toLowerCase()));
+  const added = worthAdding.map((item) => item.label).filter((label) => {
+    const key = label.toLowerCase();
+    if (taken.has(key) || keptSkills.some((skill) => overlapsTerm(skill, label)) || resumeHas(resumePlainText(resume), label)) return false;
+    taken.add(key);
+    return true;
+  });
+  const skills = [...keptSkills, ...added];
+  const removed = resume.skills.filter((skill) => skill.trim() && !skills.some((kept) => kept.toLowerCase() === skill.trim().toLowerCase()));
+  const summaryBody = orderByJob(resume.summary.split(/(?<=[.!?])\s+/), labels, 1, 40).join(' ');
+  const focus = added.slice(0, 6);
+  const summary = focus.length && !resumeHas(summaryBody, focus[0])
+    ? `${summaryBody}${summaryBody.endsWith('.') || !summaryBody ? '' : '.'} Aligned to this posting: ${focus.join(', ')}.`.trim()
+    : summaryBody;
+  const experience = resume.experience.map((item) => ({
+    ...item,
+    bullets: orderByJob(item.bullets, labels, Math.min(2, item.bullets.filter(Boolean).length))
+  }));
+  const projects = [...resume.projects]
+    .sort((a, b) => keywordHits(`${b.name} ${b.description} ${b.technologies}`, labels) - keywordHits(`${a.name} ${a.description} ${a.technologies}`, labels))
+    .map((item) => {
+      const parts = item.technologies.split(/[,|•·]/).map((part) => part.trim()).filter(Boolean);
+      if (parts.length < 2) return item;
+      const relevant = parts.filter((part) => labels.some((label) => overlapsTerm(part, label)));
+      return relevant.length ? { ...item, technologies: relevant.join(', ') } : item;
+    });
+  const hiddenSections = (resume.hiddenSections ?? []).filter((section) => section !== 'skills' && section !== 'summary' && section !== 'experience');
+  return { ...resume, summary, skills, experience, projects, hiddenSections, removed, added };
 }

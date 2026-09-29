@@ -2,39 +2,37 @@ import { useState } from 'react';
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import type { Resume } from '../types';
 import { useResumeStore } from '../store';
-import { checkAts, skillLabel } from '../utils/atsCheck';
+import { alignResumeToJob, checkAts } from '../utils/atsCheck';
 
 export function AtsCheck({ resume }: { resume: Resume }) {
   const updateResume = useResumeStore((state) => state.updateResume);
   const [job, setJob] = useState('');
   const [report, setReport] = useState<ReturnType<typeof checkAts> | null>(null);
-  const [applied, setApplied] = useState(0);
+  const [note, setNote] = useState('');
 
   const run = () => {
     if (job.trim().length < 40) {
       setReport(null);
-      setApplied(0);
+      setNote('');
       return;
     }
-    setApplied(0);
+    setNote('');
     setReport(checkAts(resume, job));
   };
 
   const matchJd = () => {
-    if (!report?.missing.length) return;
-    const taken = new Set(resume.skills.map((skill) => skill.trim().toLowerCase()));
-    const added = report.missing.map(skillLabel).filter((skill) => {
-      const key = skill.toLowerCase();
-      if (!skill || taken.has(key)) return false;
-      taken.add(key);
-      return true;
+    if (!report) return;
+    const next = alignResumeToJob(resume, job);
+    const { removed, added, ...updated } = next;
+    updateResume({
+      summary: updated.summary,
+      skills: updated.skills,
+      experience: updated.experience,
+      projects: updated.projects,
+      hiddenSections: updated.hiddenSections
     });
-    if (!added.length) return;
-    const skills = [...resume.skills, ...added];
-    const hiddenSections = (resume.hiddenSections ?? []).filter((section) => section !== 'skills');
-    updateResume({ skills, hiddenSections });
-    setReport(checkAts({ ...resume, skills, hiddenSections }, job));
-    setApplied(added.length);
+    setReport(checkAts(updated, job));
+    setNote(`Removed ${removed.length} ${removed.length === 1 ? 'skill' : 'skills'} that are not in the posting, added ${added.length}, and rewrote the profile and bullets around this job. The preview is updated.`);
   };
 
   return (
@@ -54,10 +52,10 @@ export function AtsCheck({ resume }: { resume: Resume }) {
       />
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
         <Button variant="contained" onClick={run} disabled={job.trim().length < 40}>Check this resume</Button>
-        <Button variant="contained" onClick={matchJd} disabled={!report?.missing.length}>Match JD</Button>
+        <Button variant="contained" onClick={matchJd} disabled={!report}>Match JD</Button>
       </Stack>
       {job.trim().length > 0 && job.trim().length < 40 ? <Typography variant="caption" color="text.secondary">Paste a little more of the posting. Forty characters is the minimum.</Typography> : null}
-      {applied > 0 ? <Typography variant="body2">Added {applied} {applied === 1 ? 'term' : 'terms'} to Skills. The preview is updated. Download again for a new PDF.</Typography> : null}
+      {note ? <Typography variant="body2">{note}</Typography> : null}
       {report ? (
         <Stack spacing={1.5}>
           <Typography variant="h6">{report.score}% overlap</Typography>

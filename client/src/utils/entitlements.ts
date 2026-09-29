@@ -27,3 +27,9 @@ export function hasFullCatalog(user?: PlanUser) {
 export function hasAiPlan(user?: PlanUser) {
   return planIsCurrent(user, FULL_PLANS);
 }
+
+export function planCategory(plan?: string | null) {
+  if (plan === 'BASIC') return { label: 'Basic', color: 'warning' as const };
+  if (plan === 'STARTER' || plan === 'PRO' || plan === 'ULTRA') return { label: 'Pro', color: 'success' as const };
+  return { label: 'Free', color: 'default' as const };
+}

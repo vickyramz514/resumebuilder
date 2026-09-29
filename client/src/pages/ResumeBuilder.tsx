@@ -479,7 +479,7 @@ function ResumeBuilder() {
           <Tooltip title={ai ? 'Improve with AI' : 'Subscribe to use AI'}>
             <IconButton className="topbar-icon-btn" aria-label="Open AI assistant" onClick={openAi} sx={{ display: { xs: 'inline-flex', md: 'none' } }}><Sparkles size={18} /></IconButton>
           </Tooltip>
-          <Tooltip title={resume && downloadAllowed(resume.template) ? 'Download PDF or Word' : paid ? 'This layout downloads on Starter' : 'Subscribe to download PDF or Word'}>
+          <Tooltip title={resume && downloadAllowed(resume.template) ? 'Download PDF or Word' : paid ? 'This layout downloads on Pro' : 'Subscribe to download PDF or Word'}>
             <Button onClick={(event) => { if (!resume || !downloadAllowed(resume.template)) { setPaywallReason(paid ? 'template' : 'pdf'); return; } setDownloadAnchor(event.currentTarget); }} startIcon={<Download size={17} />} variant="contained" size="small" disabled={Boolean(exporting)} aria-haspopup="menu" aria-expanded={Boolean(downloadAnchor)}>
               <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{exporting === 'pdf' ? 'Exporting PDF…' : exporting === 'docx' ? 'Exporting Word…' : 'Download'}</Box>
               <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>{exporting ? '…' : 'Download'}</Box>

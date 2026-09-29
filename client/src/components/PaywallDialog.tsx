@@ -3,7 +3,7 @@ import { Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogCont
 import { Check, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ApiError } from '../services/api';
-import { listPlans, type SubscriptionPlan } from '../services/billingApi';
+import { billingFeatureLabel, billingPlanName, listPlans, type SubscriptionPlan } from '../services/billingApi';
 import { startPlanCheckout } from '../lib/razorpayCheckout';
 import '../billing.css';
 
@@ -51,12 +51,12 @@ export function PaywallDialog({ open, reason, onClose }: Props) {
     }
   };
 
-  const title = reason === 'pdf' ? 'Subscribe to download your resume' : reason === 'template' ? 'This layout is on Starter' : 'Subscribe to use AI';
+  const title = reason === 'pdf' ? 'Subscribe to download your resume' : reason === 'template' ? 'This layout is on Pro' : 'Subscribe to use AI';
   const blurb = reason === 'pdf'
-    ? 'PDF and Word unlock on the ₹100 plan for its layouts, and on Starter for every layout. Subscribe with Razorpay, then export in one click.'
+    ? 'PDF and Word unlock on the ₹100 plan for its layouts, and on Pro for every layout. Subscribe with Razorpay, then export in one click.'
     : reason === 'template'
-      ? 'You can keep editing this page. The ₹100 plan downloads eight designed layouts plus every free one. Starter downloads this layout and adds the AI assistant.'
-      : 'The AI assistant unlocks on Starter and Pro. The ₹100 plan includes downloads for its layouts, without AI.';
+      ? 'You can keep editing this page. The ₹100 plan downloads eight designed layouts plus every free one. Pro downloads this layout and adds the AI assistant.'
+      : 'The AI assistant unlocks on Pro. The ₹100 plan includes downloads for its layouts, without AI.';
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -71,7 +71,7 @@ export function PaywallDialog({ open, reason, onClose }: Props) {
             {plans.map((plan) => (
               <Box key={plan.id} className={`paywall-plan ${plan.metadata?.popular ? 'popular' : ''}`}>
                 <Stack direction="row" justifyContent="space-between" alignItems="baseline" gap={1}>
-                  <Typography fontWeight={800}>{plan.name}</Typography>
+                  <Typography fontWeight={800}>{billingPlanName(plan)}</Typography>
                   <Typography fontWeight={750}>
                     {formatMoney(plan.priceCents, plan.currency)}
                     {plan.priceCents > 0 && <Typography component="span" color="text.secondary" fontWeight={500}>/{plan.billingCycle === 'yearly' ? 'yr' : 'mo'}</Typography>}
@@ -79,7 +79,7 @@ export function PaywallDialog({ open, reason, onClose }: Props) {
                 </Stack>
                 <Typography variant="body2" color="text.secondary" mt={0.5}>{plan.description}</Typography>
                 <Stack spacing={0.4} mt={1} mb={1.5}>
-                  {(Array.isArray(plan.features) ? plan.features.map(String) : []).map((feature) => (
+                  {(Array.isArray(plan.features) ? plan.features.map(String).map(billingFeatureLabel) : []).map((feature) => (
                     <Stack direction="row" spacing={1} key={feature} alignItems="flex-start">
                       <Check size={14} color="#0d9488" />
                       <Typography variant="body2">{feature}</Typography>
@@ -92,7 +92,7 @@ export function PaywallDialog({ open, reason, onClose }: Props) {
                   disabled={Boolean(checkoutSlug) || plan.checkoutAvailable === false}
                   onClick={() => subscribe(plan)}
                 >
-                  {checkoutSlug === plan.slug ? 'Redirecting to Razorpay…' : `Subscribe to ${plan.name}`}
+                  {checkoutSlug === plan.slug ? 'Redirecting to Razorpay…' : `Subscribe to ${billingPlanName(plan)}`}
                 </Button>
               </Box>
             ))}
