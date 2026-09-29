@@ -106,7 +106,7 @@ export function ExperienceForm() {
               <IconButton size="small" color="error" aria-label="Remove experience" onClick={() => remove(i)}><Trash2 size={16} /></IconButton>
             </Stack>
             <Field label="Job title" value={item.role} onChange={(role) => change(i, { role })} placeholder="Senior Product Designer" />
-            <Field label="Company" value={item.company} onChange={(company) => change(i, { company })} />
+            <Field label="Company" value={item.company} onChange={(company) => change(i, { company })} placeholder="Where you did this work" />
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
               <Field label="Location" value={item.location} onChange={(location) => change(i, { location })} />
               <Field label="Start" value={item.startDate} onChange={(startDate) => change(i, { startDate })} placeholder="Jan 2022" />
@@ -165,7 +165,7 @@ export function EducationForm() {
   );
 }
 
-export function ProjectsForm() {
+export function ProjectsForm({ manualHints = false }: { manualHints?: boolean }) {
   const resume = useActiveResume();
   const update = useResumeStore((s) => s.updateResume);
   const change = (index: number, patch: Partial<Project>) => update({ projects: resume.projects.map((item, i) => i === index ? { ...item, ...patch } : item) });
@@ -173,6 +173,7 @@ export function ProjectsForm() {
   return (
     <Stack spacing={2}>
       <Header title="Projects" onAdd={add} />
+      {manualHints ? <Typography variant="caption" color="text.secondary">Add each project yourself. Automate does not fill project names, links, or descriptions.</Typography> : null}
       {resume.projects.map((item, i) => (
         <Box key={item.id} sx={{ p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1.5 }}>
           <Stack spacing={1.5}>
@@ -180,7 +181,8 @@ export function ProjectsForm() {
               <Typography fontWeight={600} fontSize={14}>{item.name || 'New project'}</Typography>
               <IconButton size="small" color="error" aria-label="Remove project" onClick={() => update({ projects: resume.projects.filter((_, j) => j !== i) })}><Trash2 size={16} /></IconButton>
             </Stack>
-            <Field label="Project name" value={item.name} onChange={(name) => change(i, { name })} />
+            <Field label="Project name" value={item.name} onChange={(name) => change(i, { name })} placeholder="The project you want to show" />
+            {manualHints && !item.name ? <Typography variant="caption" color="text.secondary">Enter the project name, description, and link yourself.</Typography> : null}
             <Field label="Description" value={item.description} onChange={(description) => change(i, { description })} multiline />
             <Field label="Link" value={item.url} onChange={(url) => change(i, { url })} placeholder="https://" />
             <Field label="Technologies" value={item.technologies} onChange={(technologies) => change(i, { technologies })} placeholder="React, Node.js, PostgreSQL" />

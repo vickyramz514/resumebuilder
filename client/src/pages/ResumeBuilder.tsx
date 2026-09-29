@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import {
   Copy, Download, ExternalLink, Eye, EyeOff, FileJson, FilePlus2, FileText, Menu as MenuIcon, MoreVertical,
-  Palette, PanelLeftClose, PanelLeftOpen, Plus, Share2, Sparkles, Undo2, ZoomIn, ZoomOut
+  Palette, PanelLeftClose, PanelLeftOpen, Plus, Share2, Sparkles, Undo2, WandSparkles, ZoomIn, ZoomOut
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ResumePreview } from '../templates/ResumePreview';
@@ -25,7 +25,9 @@ import { CompletenessCard } from '../components/CompletenessCard';
 import { ContentSuggestions } from '../components/ContentSuggestions';
 import { PaywallDialog } from '../components/PaywallDialog';
 import { getResumeCompleteness } from '../utils/completeness';
+import { AutomateDialog } from '../components/AutomateDialog';
 import { applyAiSuggestion } from '../utils/applyAiSuggestion';
+import { AUTOMATE_HINT_KEY } from '../utils/automateDraft';
 import { hasAiPlan, hasFullCatalog, hasPaidPlan, isAdminUser } from '../utils/entitlements';
 import { apiUrl } from '../services/api';
 import { buildCoverLetterDocx, buildResumeDocx } from '../services/docxExport';
@@ -93,6 +95,8 @@ function ResumeBuilder() {
   const [extra, setExtra] = useState<'cover' | 'ats' | null>(null);
   const [zoom, setZoom] = useState(100);
   const [toast, setToast] = useState('');
+  const [automateOpen, setAutomateOpen] = useState(false);
+  const [manualHints, setManualHints] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [showStrength, setShowStrength] = useState(false);
   const [shareInfo, setShareInfo] = useState<{ isPublic: boolean; publicSlug?: string | null }>({ isPublic: false });
@@ -104,6 +108,12 @@ function ResumeBuilder() {
   const hiddenSections = resume?.hiddenSections ?? [];
   const navSections = useMemo<Array<SectionType | 'personal'>>(() => resume ? ['personal', ...resume.sections] : ['personal'], [resume]);
   const navIndex = navSections.indexOf(selectedSection);
+
+  useEffect(() => {
+    if (!routeId || sessionStorage.getItem(AUTOMATE_HINT_KEY) !== routeId) return;
+    setManualHints(true);
+    setSelectedSection('personal');
+  }, [routeId, setSelectedSection]);
 
   const refreshLibrary = useCallback(async () => {
     if (!authenticated) return;
@@ -364,7 +374,7 @@ function ResumeBuilder() {
     ? <CoverLetterForm onDownload={() => { void exportCoverLetter(); }} downloading={exporting === 'letter'} />
     : extra === 'ats'
       ? <AtsCheck resume={resume} />
-      : selectedSection === 'personal' ? <PersonalForm /> : selectedSection === 'summary' ? <SummaryForm /> : selectedSection === 'experience' ? <ExperienceForm /> : selectedSection === 'education' ? <EducationForm /> : selectedSection === 'skills' ? <SkillsForm /> : selectedSection === 'projects' ? <ProjectsForm /> : selectedSection === 'languages' ? <LanguagesForm /> : selectedSection === 'awards' ? <AwardsForm /> : selectedSection === 'volunteer' ? <VolunteerForm /> : <CertificationsForm />;
+      : selectedSection === 'personal' ? <PersonalForm manualHints={manualHints} /> : selectedSection === 'summary' ? <SummaryForm /> : selectedSection === 'experience' ? <ExperienceForm /> : selectedSection === 'education' ? <EducationForm /> : selectedSection === 'skills' ? <SkillsForm /> : selectedSection === 'projects' ? <ProjectsForm manualHints={manualHints} /> : selectedSection === 'languages' ? <LanguagesForm /> : selectedSection === 'awards' ? <AwardsForm /> : selectedSection === 'volunteer' ? <VolunteerForm /> : <CertificationsForm />;
   const editorPanel = (
     <Box className="editor-panel">
       <Box className="editor-heading">
@@ -473,6 +483,7 @@ function ResumeBuilder() {
           <Tooltip title="Undo last change">
             <span><IconButton className="topbar-icon-btn" aria-label="Undo last change" disabled={!canUndo} onClick={() => undo()}><Undo2 size={18} /></IconButton></span>
           </Tooltip>
+          <Button onClick={() => setAutomateOpen(true)} startIcon={<WandSparkles size={16} />} color="inherit" size="small" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>Automate</Button>
           <Tooltip title={ai ? 'Improve with AI' : 'Subscribe to use AI'}>
             <Button onClick={openAi} startIcon={<Sparkles size={16} />} color="inherit" size="small" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>AI Assistant</Button>
           </Tooltip>
@@ -578,6 +589,7 @@ function ResumeBuilder() {
       </Box>
       <AIAssistant open={aiOpen} onClose={() => setAiOpen(false)} resume={resume} onApply={applySuggestion} onSaveCopy={saveTailoredCopy} />
       <PaywallDialog open={Boolean(paywallReason)} reason={paywallReason ?? 'pdf'} onClose={() => setPaywallReason(null)} />
+      <AutomateDialog open={automateOpen} onClose={() => setAutomateOpen(false)} onError={setToast} />
       <Dialog open={shareOpen} onClose={() => setShareOpen(false)}>
         <DialogTitle>Share resume</DialogTitle>
         <DialogContent>

@@ -4,7 +4,7 @@ import {
   DialogContent, DialogTitle, Grid, IconButton, InputAdornment, Menu, MenuItem, Stack, TextField, Toolbar,
   Tooltip, Typography
 } from '@mui/material';
-import { ChevronDown, Clock, Copy, CreditCard, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Search, Share2, Sparkles, Trash2, Upload } from 'lucide-react';
+import { ChevronDown, Clock, Copy, CreditCard, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Search, Share2, Sparkles, Trash2, Upload, WandSparkles } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
@@ -13,6 +13,7 @@ import { ApiError } from '../services/api';
 import { IMPORT_ACCEPT, importResumeFile } from '../utils/importResume';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
 import { TEMPLATE_CATALOG, isTemplateId } from '../templates/catalog';
+import { AutomateDialog } from '../components/AutomateDialog';
 import { isAdminUser, planCategory } from '../utils/entitlements';
 import type { Resume, TemplateId } from '../types';
 import '../dashboard.css';
@@ -35,6 +36,7 @@ export default function DashboardPage() {
   const [actionResume, setActionResume] = useState<CloudResume | null>(null);
   const [actionAnchor, setActionAnchor] = useState<null | HTMLElement>(null);
   const [templateDialog, setTemplateDialog] = useState(false);
+  const [automateOpen, setAutomateOpen] = useState(false);
   const [importing, setImporting] = useState(false);
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -183,6 +185,7 @@ export default function DashboardPage() {
           <Button variant="outlined" startIcon={<Upload size={17} />} onClick={() => inputRef.current?.click()} disabled={importing}>
             {importing ? 'Reading file…' : 'Import existing'}
           </Button>
+          <Button variant="outlined" startIcon={<WandSparkles size={17} />} onClick={() => setAutomateOpen(true)}>Automate</Button>
           <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => create()}>New resume</Button>
           <input ref={inputRef} type="file" accept={IMPORT_ACCEPT} hidden onChange={handleImport} />
         </Stack>
@@ -246,5 +249,6 @@ export default function DashboardPage() {
     <Dialog open={Boolean(rename)} onClose={() => setRename(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><FileText size={16} /></Box>Rename resume</DialogTitle><DialogContent><TextField autoFocus fullWidth label="Resume title" value={renameValue} onChange={(e) => setRenameValue(e.target.value)} sx={{ mt: 1 }} /></DialogContent><DialogActions><Button onClick={() => setRename(null)}>Cancel</Button><Button variant="contained" onClick={submitRename} disabled={!renameValue.trim()}>Save name</Button></DialogActions></Dialog>
     <Dialog open={Boolean(share)} onClose={() => setShare(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><Share2 size={16} /></Box>Share resume</DialogTitle><DialogContent>{share?.isPublic ? <Stack spacing={2} pt={1}><Typography variant="body2">Anyone with this link can view your resume.</Typography><TextField fullWidth value={shareUrl} InputProps={{ readOnly: true }} /><Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}><Button startIcon={<Copy size={15} />} onClick={() => navigator.clipboard.writeText(shareUrl)}>Copy link</Button><Button startIcon={<ExternalLink size={15} />} onClick={() => window.open(shareUrl, '_blank')}>Open resume</Button></Stack></Stack> : <Typography py={1}>Your resume is private. Enable sharing to create a public link.</Typography>}</DialogContent><DialogActions><Button onClick={() => setShare(null)}>Close</Button><Button variant="contained" onClick={toggleShare}>{share?.isPublic ? 'Disable sharing' : 'Enable sharing'}</Button></DialogActions></Dialog>
     <Dialog open={Boolean(importResume)} onClose={() => setImportResume(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><Upload size={16} /></Box>Resume ready to import</DialogTitle><DialogContent><Typography>Save <strong>{importResume?.title}</strong> to your library. It is laid out on the {TEMPLATE_CATALOG.find((item) => item.id === importResume?.template)?.label ?? 'Modern'} template, ready to edit.</Typography></DialogContent><DialogActions><Button onClick={() => { sessionStorage.removeItem('resumeforge_pending_import'); if (importResume) sessionStorage.setItem('resumeforge_dismissed_import', importResume.id); setImportResume(null); }}>Not now</Button><Button variant="contained" onClick={async () => { if (!importResume) return; try { const result = await createResume({ title: importResume.title, data: importResume, templateId: importResume.template }); setResumes((items) => [result.resume, ...items]); sessionStorage.removeItem('resumeforge_pending_import'); sessionStorage.removeItem('resumeforge_dismissed_import'); setImportResume(null); } catch (e) { setError(e instanceof ApiError ? e.message : 'Unable to import resume'); } }}>Import to My Resumes</Button></DialogActions></Dialog>
+    <AutomateDialog open={automateOpen} onClose={() => setAutomateOpen(false)} onError={setError} />
   </Box>;
 }

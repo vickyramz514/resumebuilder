@@ -1,7 +1,7 @@
 import { Box, Stack, TextField, Typography } from '@mui/material';
 import { useActiveResume, useResumeStore } from '../store';
 
-export function PersonalForm() {
+export function PersonalForm({ manualHints = false }: { manualHints?: boolean }) {
   const resume = useActiveResume();
   const updatePersonal = useResumeStore((s) => s.updatePersonal);
   const updateContact = useResumeStore((s) => s.updateContact);
@@ -12,10 +12,11 @@ export function PersonalForm() {
       <Typography variant="overline" color="text.secondary">Resume setup</Typography>
       <Stack spacing={1.25} mt={0.5}>
         <TextField label="Resume title" size="small" value={resume.title} onChange={(event) => updateResume({ title: event.target.value })} />
-        <TextField label="Full name" size="small" value={resume.personal.name} onChange={(event) => updatePersonal({ name: event.target.value })} autoComplete="name" />
+        <TextField label="Full name" size="small" value={resume.personal.name} onChange={(event) => updatePersonal({ name: event.target.value })} autoComplete="name" helperText={manualHints ? 'Enter your name. Automate leaves this blank.' : undefined} />
         <TextField label="Professional headline" size="small" value={resume.personal.headline} onChange={(event) => updatePersonal({ headline: event.target.value })} placeholder="Product designer · 8 years building B2B tools" />
         <Typography variant="overline" color="text.secondary" sx={{ mt: 1 }}>Contact details</Typography>
-        <TextField label="Email" size="small" type="email" value={contact.email} onChange={(event) => updateContact({ email: event.target.value })} autoComplete="email" />
+        {manualHints ? <Typography variant="caption" color="text.secondary">Enter your email, phone, and links yourself. Automate does not fill contact details.</Typography> : null}
+        <TextField label="Email" size="small" type="email" value={contact.email} onChange={(event) => updateContact({ email: event.target.value })} autoComplete="email" helperText={manualHints ? 'Add the email employers should use.' : undefined} />
         <TextField label="Phone" size="small" value={contact.phone} onChange={(event) => updateContact({ phone: event.target.value })} autoComplete="tel" />
         <TextField label="Location" size="small" value={contact.location} onChange={(event) => updateContact({ location: event.target.value })} placeholder="City, Country" />
         <TextField label="Website" size="small" value={contact.website} onChange={(event) => updateContact({ website: event.target.value })} placeholder="yourwebsite.com" />
