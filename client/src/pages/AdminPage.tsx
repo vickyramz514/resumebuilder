@@ -3,7 +3,7 @@ import {
   Alert, AppBar, Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Menu, MenuItem,
   Stack, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Typography
 } from '@mui/material';
-import { ChevronDown, CreditCard, LayoutDashboard, LogOut } from 'lucide-react';
+import { Briefcase, ChevronDown, CreditCard, LayoutDashboard, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { adminOverview, type AdminOverview } from '../services/adminApi';
@@ -48,6 +48,7 @@ export default function AdminPage() {
         <Box className="brand-mark"><BrandLogo /><Typography component="span" fontWeight={800} letterSpacing="-0.5px">ResumeForge</Typography></Box>
         <Box flex={1} />
         <Button color="inherit" onClick={() => navigate('/dashboard')} sx={{ mr: 1 }}>My Resumes</Button>
+        <Button color="inherit" onClick={() => navigate('/applications')} sx={{ mr: 1 }}>Applications</Button>
         <Box className="user-chip" onClick={(event) => setMenuAnchor(event.currentTarget)}>
           <Avatar sx={{ width: 30, height: 30, fontSize: 13, fontWeight: 700, bgcolor: '#0d9488' }}>{(user?.name || 'A').slice(0, 1).toUpperCase()}</Avatar>
           <Typography variant="body2" fontWeight={650} noWrap maxWidth={140}>{user?.name}</Typography>
@@ -55,6 +56,7 @@ export default function AdminPage() {
         </Box>
         <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={() => setMenuAnchor(null)}>
           <MenuItem onClick={() => { setMenuAnchor(null); navigate('/dashboard'); }}><LayoutDashboard size={15} />&nbsp; My Resumes</MenuItem>
+          <MenuItem onClick={() => { setMenuAnchor(null); navigate('/applications'); }}><Briefcase size={15} />&nbsp; Applications</MenuItem>
           <MenuItem onClick={() => { setMenuAnchor(null); navigate('/billing'); }}><CreditCard size={15} />&nbsp; Billing</MenuItem>
           <MenuItem onClick={() => { logout(); navigate('/login'); }} sx={{ color: 'error.main' }}><LogOut size={15} />&nbsp; Sign out</MenuItem>
         </Menu>

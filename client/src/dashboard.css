@@ -78,6 +78,10 @@
 .icon-import { background: #eef1fb; color: #4338ca; }
 .icon-browse { background: #fff1e6; color: #c2410c; }
 .start-card strong, .start-card small { display: block; text-align: left; }
+.application-form { display: grid; gap: 12px; margin-bottom: 22px; padding: 16px; background: #fff; border: 1px solid #e3ebe6; border-radius: 16px; box-shadow: 0 1px 2px #1c2b230a; }
+.application-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; padding: 16px 18px; background: #fff; border: 1px solid #e3ebe6; border-radius: 16px; }
+.application-copy { min-width: 220px; flex: 1; }
+.application-actions { flex-wrap: wrap; }
 .start-card strong { font-size: 14px; font-weight: 700; }
 .start-card small { margin-top: 3px; color: #626871; font-size: 12px; font-weight: 450; line-height: 1.35; }
 .user-chip { display: flex; align-items: center; gap: 8px; padding: 5px 10px 5px 5px; border-radius: 999px; cursor: pointer; transition: background .15s ease; color: #202124; }

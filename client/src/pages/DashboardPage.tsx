@@ -4,7 +4,7 @@ import {
   DialogContent, DialogTitle, Grid, IconButton, InputAdornment, Menu, MenuItem, Stack, TextField, Toolbar,
   Tooltip, Typography
 } from '@mui/material';
-import { ChevronDown, Clock, Copy, CreditCard, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Search, Share2, Sparkles, Trash2, Upload, WandSparkles } from 'lucide-react';
+import { Briefcase, ChevronDown, Clock, Copy, CreditCard, ExternalLink, FileText, FolderOpen, LogOut, MoreHorizontal, Plus, Search, Share2, Sparkles, Trash2, Upload, WandSparkles } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
@@ -160,6 +160,7 @@ export default function DashboardPage() {
       <Toolbar sx={{ maxWidth: 1180, width: '100%', mx: 'auto' }}>
         <Box className="brand-mark"><BrandLogo /><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
         <Box flex={1} />
+        <Button color="inherit" startIcon={<Briefcase size={16} />} onClick={() => navigate('/applications')} sx={{ mr: 1 }}>Applications</Button>
         {isAdminUser(user) && <Button color="inherit" onClick={() => navigate('/admin')} sx={{ mr: 1 }}>Track</Button>}
         <Chip size="small" label={planCategory(user?.plan).label} color={planCategory(user?.plan).color} variant="outlined" sx={{ mr: 1 }} />
         <Box className="user-chip" onClick={(event) => setUserMenuAnchor(event.currentTarget)}>
@@ -170,6 +171,7 @@ export default function DashboardPage() {
         <Menu anchorEl={userMenuAnchor} open={Boolean(userMenuAnchor)} onClose={() => setUserMenuAnchor(null)} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
           <Box px={2} py={1.25} sx={{ borderBottom: '1px solid #eef1ee' }}><Typography variant="body2" fontWeight={700} noWrap>{user?.name}</Typography><Typography variant="caption" color="text.secondary" display="block" noWrap>{user?.email}</Typography><Typography variant="caption" color="text.secondary">{planCategory(user?.plan).label} user</Typography></Box>
           {isAdminUser(user) && <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/admin'); }} sx={{ gap: 1 }}><Sparkles size={15} /> Track</MenuItem>}
+          <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/applications'); }} sx={{ gap: 1 }}><Briefcase size={15} /> Applications</MenuItem>
           <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/billing'); }} sx={{ gap: 1 }}><CreditCard size={15} /> Billing</MenuItem>
           <MenuItem onClick={() => { logout(); navigate('/login'); }} sx={{ color: 'error.main', gap: 1 }}><LogOut size={15} /> Sign out</MenuItem>
         </Menu>

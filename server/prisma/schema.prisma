@@ -37,6 +37,20 @@ enum PaymentProvider {
   RAZORPAY
 }
 
+enum ApplicationStatus {
+  SAVED
+  APPLIED
+  INTERVIEW
+  OFFER
+  CLOSED
+}
+
+enum ApplicationSource {
+  NAUKRI
+  LINKEDIN
+  OTHER
+}
+
 model User {
   id              String             @id @default(cuid())
   name            String
@@ -49,6 +63,7 @@ model User {
   role            UserRole           @default(USER)
   planExpiresAt   DateTime?
   resumes         Resume[]
+  applications    JobApplication[]
   subscriptions   UserSubscription[]
   payments        Payment[]
   createdAt       DateTime           @default(now())
@@ -132,6 +147,23 @@ model Payment {
 
   @@index([userId])
   @@index([provider, providerId])
+}
+
+model JobApplication {
+  id        String            @id @default(cuid())
+  userId    String
+  role      String
+  company   String            @default("")
+  url       String
+  source    ApplicationSource @default(OTHER)
+  status    ApplicationStatus @default(SAVED)
+  notes     String            @default("")
+  appliedAt DateTime?
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([userId, updatedAt])
 }
 
 model SeoPage {

@@ -5,6 +5,7 @@ import ProtectedRoute, { AdminRoute } from './routes/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
+import ApplicationsPage from './pages/ApplicationsPage';
 import ResumeBuilder from './pages/ResumeBuilder';
 import PublicResumePage from './pages/PublicResumePage';
 import LandingPage from './pages/LandingPage';
@@ -24,6 +25,7 @@ function App() {
     <Route path="/r/:slug" element={<PublicResumePage />} />
     <Route element={<ProtectedRoute />}>
       <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/applications" element={<ApplicationsPage />} />
       <Route path="/billing" element={<BillingPage />} />
       <Route element={<AdminRoute />}>
         <Route path="/admin" element={<AdminPage />} />

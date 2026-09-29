@@ -3,7 +3,7 @@ import {
   Alert, AppBar, Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Dialog, DialogActions,
   DialogContent, DialogTitle, Grid, IconButton, Menu, MenuItem, Stack, Toolbar, Typography
 } from '@mui/material';
-import { Check, ChevronDown, CreditCard, LogOut } from 'lucide-react';
+import { Briefcase, Check, ChevronDown, CreditCard, LogOut } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { ApiError } from '../services/api';
@@ -118,6 +118,7 @@ export default function BillingPage() {
         <Box className="brand-mark"><BrandLogo /><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
         <Box flex={1} />
         <Button color="inherit" onClick={() => navigate('/dashboard')} sx={{ mr: 1 }}>My Resumes</Button>
+        <Button color="inherit" onClick={() => navigate('/applications')} sx={{ mr: 1 }}>Applications</Button>
         {isAdminUser(user) && <Button color="inherit" onClick={() => navigate('/admin')} sx={{ mr: 1 }}>Track</Button>}
         <Box className="user-chip" onClick={(event) => setUserMenuAnchor(event.currentTarget)}>
           <Avatar sx={{ width: 30, height: 30, fontSize: 13, fontWeight: 700, bgcolor: '#0d9488' }}>{(user?.name || 'U').slice(0, 1).toUpperCase()}</Avatar>
@@ -127,6 +128,7 @@ export default function BillingPage() {
         <Menu anchorEl={userMenuAnchor} open={Boolean(userMenuAnchor)} onClose={() => setUserMenuAnchor(null)} transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
           <Box px={2} py={1.25} sx={{ borderBottom: '1px solid #eef1ee' }}><Typography variant="body2" fontWeight={700} noWrap>{user?.name}</Typography><Typography variant="caption" color="text.secondary" noWrap>{user?.email}</Typography></Box>
           {isAdminUser(user) && <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/admin'); }}>Track</MenuItem>}
+          <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/applications'); }}><Briefcase size={15} />&nbsp; Applications</MenuItem>
           <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/billing'); }}><CreditCard size={15} />&nbsp; Billing</MenuItem>
           <MenuItem onClick={() => { logout(); navigate('/login'); }} sx={{ color: 'error.main', gap: 1 }}><LogOut size={15} /> Sign out</MenuItem>
         </Menu>
