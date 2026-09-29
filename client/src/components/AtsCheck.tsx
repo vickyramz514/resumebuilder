@@ -40,7 +40,7 @@ export function AtsCheck({ resume }: { resume: Resume }) {
   return (
     <Stack spacing={2}>
       <Typography variant="body2" color="text.secondary">
-        Paste a job description. This compares its words with the text already on your resume. It does not send the description anywhere.
+        Paste a job description. This compares its tools, phrases, and other terms with the text already on your resume. It does not send the description anywhere.
       </Typography>
       <TextField
         label="Job description"
@@ -63,7 +63,7 @@ export function AtsCheck({ resume }: { resume: Resume }) {
           <Typography variant="h6">{report.score}% overlap</Typography>
           <Typography variant="body2" color="text.secondary">
             {report.missing.length
-              ? 'Missing words are terms from the posting that do not appear in your resume text. Add one only if you actually used it.'
+              ? 'Missing terms are tools and phrases from the posting that do not appear in your resume text. Add one only if you actually used it.'
               : 'Every extracted term from the posting already appears in the resume.'}
           </Typography>
           <Box>
