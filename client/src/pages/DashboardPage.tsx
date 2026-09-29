@@ -145,7 +145,7 @@ export default function DashboardPage() {
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .filter((resume) => !needle || resume.title.toLowerCase().includes(needle) || resume.templateId.toLowerCase().includes(needle));
 
-  return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#f6f7fb', color: '#202124' }}>
+  return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#f3f6f4', color: '#202124' }}>
     <AppBar position="static" elevation={0} className="dashboard-topbar" sx={{ bgcolor: '#fff', color: '#202124', borderBottom: '1px solid #e5e9e6' }}>
       <Toolbar sx={{ maxWidth: 1180, width: '100%', mx: 'auto' }}>
         <Box className="brand-mark"><Box className="brand-badge"><Sparkles size={16} fill="currentColor" /></Box><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
@@ -166,42 +166,40 @@ export default function DashboardPage() {
       </Toolbar>
     </AppBar>
 
-    <Box className="dashboard-content" maxWidth={1180} mx="auto" px={{ xs: 2, sm: 3 }} py={{ xs: 3, sm: 6 }}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={2} mb={3} className="dashboard-heading">
-        <Box>
-          <Typography variant="overline" color="#0d9488" fontWeight={800}>Your workspace</Typography>
-          <Typography variant="h3" fontWeight={750} letterSpacing="-1.5px">My Resumes</Typography>
-          <Typography color="#626871">Choose a starting point, then build a resume you feel good sending.</Typography>
-        </Box>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems={{ sm: 'center' }}>
+    <Box className="dashboard-content" maxWidth={1180} mx="auto" px={{ xs: 2, sm: 3 }} py={{ xs: 3, sm: 5 }}>
+      <Box className="dashboard-heading" mb={3.5}>
+        <Typography variant="overline" color="#0d9488" fontWeight={800}>Your workspace</Typography>
+        <Typography variant="h3" fontWeight={750} letterSpacing="-1.5px">My Resumes</Typography>
+        <Typography color="#626871" maxWidth={460}>Choose a starting point, then build a resume you feel good sending.</Typography>
+        <Box className="dashboard-toolbar">
           <TextField
+            className="dashboard-search"
             size="small"
             placeholder="Search resumes"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             InputProps={{ startAdornment: <InputAdornment position="start"><Search size={16} /></InputAdornment> }}
-            sx={{ minWidth: { sm: 220 }, bgcolor: '#fff' }}
           />
-          <Button variant="outlined" startIcon={<Upload size={17} />} onClick={() => inputRef.current?.click()} disabled={importing}>
-            {importing ? 'Reading file…' : 'Import existing'}
-          </Button>
-          <Button variant="outlined" startIcon={<WandSparkles size={17} />} onClick={() => setAutomateOpen(true)}>Automate</Button>
-          <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => create()}>New resume</Button>
+          <Box className="dashboard-actions">
+            <Button className="dash-btn dash-btn-ghost" variant="outlined" startIcon={<Upload size={16} />} onClick={() => inputRef.current?.click()} disabled={importing}>
+              {importing ? 'Reading file…' : 'Import'}
+            </Button>
+            <Button className="dash-btn dash-btn-automate" variant="outlined" startIcon={<WandSparkles size={16} />} onClick={() => setAutomateOpen(true)}>Automate</Button>
+            <Button className="dash-btn dash-btn-primary" variant="contained" startIcon={<Plus size={16} />} onClick={() => create()}>New resume</Button>
+          </Box>
           <input ref={inputRef} type="file" accept={IMPORT_ACCEPT} hidden onChange={handleImport} />
-        </Stack>
-      </Stack>
+        </Box>
+      </Box>
 
-      <Card className="quick-actions" variant="outlined" sx={{ mb: 4, borderColor: '#D0D3D6', bgcolor: '#fff' }}>
-        <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
-          <Typography variant="subtitle1" fontWeight={750}>Start your next version</Typography>
-          <Typography variant="body2" color="text.secondary" mb={2}>Not sure where to begin? Pick the path that fits you best.</Typography>
-          <Grid container spacing={1.5}>
-            <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" onClick={() => create()}><Box className="quick-action-icon icon-scratch"><Plus size={18} /></Box><Box textAlign="left"><strong>Start from scratch</strong><small>A guided blank canvas</small></Box></Button></Grid>
-            <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" onClick={() => inputRef.current?.click()}><Box className="quick-action-icon icon-import"><FolderOpen size={18} /></Box><Box textAlign="left"><strong>Bring an existing resume</strong><small>Import a PDF or ResumeForge JSON file</small></Box></Button></Grid>
-            <Grid item xs={12} sm={4}><Button className="quick-action" fullWidth variant="outlined" onClick={() => setTemplateDialog(true)}><Box className="quick-action-icon icon-browse"><FileText size={18} /></Box><Box textAlign="left"><strong>Browse templates</strong><small>Find a layout that fits your story</small></Box></Button></Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+      <Box className="quick-actions" mb={4}>
+        <Typography variant="subtitle1" fontWeight={750}>Start your next version</Typography>
+        <Typography variant="body2" color="text.secondary" mb={1.5}>Not sure where to begin? Pick the path that fits you best.</Typography>
+        <Box className="start-grid">
+          <button type="button" className="start-card" onClick={() => create()}><Box className="quick-action-icon icon-scratch"><Plus size={18} /></Box><Box textAlign="left"><strong>Start from scratch</strong><small>A guided blank canvas</small></Box></button>
+          <button type="button" className="start-card" onClick={() => inputRef.current?.click()}><Box className="quick-action-icon icon-import"><FolderOpen size={18} /></Box><Box textAlign="left"><strong>Bring an existing resume</strong><small>Import a PDF or ResumeForge JSON file</small></Box></button>
+          <button type="button" className="start-card" onClick={() => setTemplateDialog(true)}><Box className="quick-action-icon icon-browse"><FileText size={18} /></Box><Box textAlign="left"><strong>Browse templates</strong><small>Find a layout that fits your story</small></Box></button>
+        </Box>
+      </Box>
 
       {error && <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>{error}</Alert>}
       {loading ? <Box className="dashboard-loading" textAlign="center" py={8}><CircularProgress color="inherit" /><Typography variant="body2" color="text.secondary" mt={2}>Loading your library…</Typography></Box> : resumes.length ? (
@@ -221,7 +219,7 @@ export default function DashboardPage() {
                 <Tooltip title="More actions"><IconButton className="card-menu-btn" size="small" aria-label={`More actions for ${resume.title}`} onClick={(event) => { setActionResume(resume); setActionAnchor(event.currentTarget); }}><MoreHorizontal size={18} /></IconButton></Tooltip>
               </Stack>
               <Stack direction="row" spacing={1} mt={1.5}><Chip className="template-chip" label={resume.templateId} size="small" /><Chip label={resume.isPublic ? 'Shared' : 'Private'} size="small" color={resume.isPublic ? 'success' : 'default'} variant="outlined" /></Stack>
-              <Stack direction="row" spacing={1} mt={2}><Button fullWidth variant="contained" size="small" onClick={() => navigate(`/resume/${resume.id}/edit`)}>Continue editing</Button><Button size="small" variant="outlined" startIcon={<Share2 size={14} />} onClick={() => setShare(resume)}>Share</Button></Stack>
+              <Stack direction="row" spacing={1} mt={2}><Button className="dash-btn dash-btn-primary" fullWidth onClick={() => navigate(`/resume/${resume.id}/edit`)}>Continue</Button><Button className="dash-btn dash-btn-ghost" variant="outlined" startIcon={<Share2 size={14} />} onClick={() => setShare(resume)}>Share</Button></Stack>
             </CardContent>
           </Card>
         </Grid>)}</Grid>

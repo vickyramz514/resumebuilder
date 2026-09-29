@@ -19,7 +19,8 @@ import { renderPdf } from './services/pdf.service.js';
 import adminRoutes from './routes/admin.routes.js';
 import { ensureBillingPlans } from './services/billingPlans.js';
 import { ensureAdminAccount } from './services/adminAccount.js';
-import { ensureSeoPages, robotsTxt, seoHtml, seoNotFoundHtml, sitemapXml } from './services/seoPages.js';
+import { SEO_SEEDS } from './services/seoContent.js';
+import { canonicalForSlug, ensureSeoPages, robotsTxt, seoHtml, seoNotFoundHtml, sitemapXml } from './services/seoPages.js';
 
 const app = express();
 const isAllowedOrigin = (origin?: string) => {
@@ -68,9 +69,18 @@ app.get('/resume-builder/:slug', async (req, res, next) => {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
       return res.status(404).set({ 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex' }).send(seoNotFoundHtml());
     }
-    const page = await prisma.seoPage.findFirst({ where: { slug, published: true } });
-    if (!page) return res.status(404).set({ 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex' }).send(seoNotFoundHtml());
-    return res.set({ 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' }).send(seoHtml(page));
+    const page = await prisma.seoPage.findFirst({ where: { slug, published: true } }).catch(() => null);
+    const seed = SEO_SEEDS.find((item) => item.slug === slug);
+    if (!page && !seed) return res.status(404).set({ 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex' }).send(seoNotFoundHtml());
+    const html = seoHtml(page ?? {
+      title: seed!.title,
+      metaDescription: seed!.metaDescription,
+      h1: seed!.h1,
+      content: JSON.stringify(seed!.body),
+      canonicalUrl: canonicalForSlug(slug),
+      keywords: seed!.keywords
+    });
+    return res.set({ 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' }).send(html);
   } catch (error) { return next(error); }
 });
 app.post('/api/pdf', requireAuth, requirePaidPlan, async (req, res, next) => {

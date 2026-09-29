@@ -57,19 +57,32 @@ function isPublicCanonical(url: string) {
   }
 }
 
+function lastMod(value: Date | string | null | undefined) {
+  const date = value instanceof Date ? value : value ? new Date(value) : new Date();
+  return Number.isNaN(date.getTime()) ? new Date().toISOString().slice(0, 10) : date.toISOString().slice(0, 10);
+}
+
+function urlEntry(loc: string, lastmod: string, priority: string) {
+  return `  <url><loc>${xmlEscape(loc)}</loc><lastmod>${lastmod}</lastmod><changefreq>${priority === '1.0' ? 'weekly' : 'monthly'}</changefreq><priority>${priority}</priority></url>`;
+}
+
 export async function sitemapXml() {
-  const pages = await prisma.seoPage.findMany({
-    where: { published: true },
-    orderBy: { slug: 'asc' },
-    select: { slug: true, updatedAt: true, canonicalUrl: true }
-  });
-  const urls = [
-    `  <url><loc>${xmlEscape(`${SITE_ORIGIN}/`)}</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>`,
-    ...pages
-      .map((page) => ({ loc: page.canonicalUrl || canonicalForSlug(page.slug), updatedAt: page.updatedAt }))
-      .filter((page) => isPublicCanonical(page.loc))
-      .map((page) => `  <url><loc>${xmlEscape(page.loc)}</loc><lastmod>${page.updatedAt.toISOString().slice(0, 10)}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`)
-  ];
+  const today = new Date().toISOString().slice(0, 10);
+  const byLoc = new Map<string, string>([[`${SITE_ORIGIN}/`, today]]);
+  for (const seed of SEO_SEEDS) byLoc.set(canonicalForSlug(seed.slug), today);
+  try {
+    const pages = await prisma.seoPage.findMany({
+      where: { published: true },
+      select: { slug: true, updatedAt: true, canonicalUrl: true }
+    });
+    for (const page of pages) {
+      const loc = page.canonicalUrl || canonicalForSlug(page.slug);
+      if (isPublicCanonical(loc)) byLoc.set(loc, lastMod(page.updatedAt));
+    }
+  } catch (error) {
+    console.error('Sitemap is using the published guide list because the page table could not be read', error);
+  }
+  const urls = [...byLoc.entries()].map(([loc, updated]) => urlEntry(loc, updated, loc === `${SITE_ORIGIN}/` ? '1.0' : '0.8'));
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`;
 }
 
@@ -113,6 +126,9 @@ export function seoHtml(page: { title: string; metaDescription: string; h1: stri
   const related = body.related
     .map((slug) => `<a href="${htmlEscape(canonicalForSlug(slug))}">${htmlEscape(relatedLabel(slug))}</a>`)
     .join('');
+  const allGuides = SEO_SEEDS
+    .map((seed) => `<a href="${htmlEscape(canonicalForSlug(seed.slug))}">${htmlEscape(relatedLabel(seed.slug))}</a>`)
+    .join('');
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -145,6 +161,7 @@ export function seoHtml(page: { title: string; metaDescription: string; h1: stri
 <p>${htmlEscape(body.intro)}</p>
 ${sections}
 ${related ? `<nav><h2>Related guides</h2>${related}</nav>` : ''}
+<nav><h2>Resume guides</h2>${allGuides}</nav>
 <p><a class="cta" href="${SITE_ORIGIN}/register">Start a resume</a></p>
 </main>
 </body></html>`;
