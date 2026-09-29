@@ -57,12 +57,19 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+  const dismissImport = () => {
+    sessionStorage.removeItem('resumeforge_pending_import');
+    sessionStorage.setItem('resumeforge_import_prompt_closed', '1');
+    if (importResume) sessionStorage.setItem('resumeforge_dismissed_import', importResume.id);
+    setImportResume(null);
+  };
+
   useEffect(() => {
-    if (loading || importResume) return;
+    if (loading || importResume || sessionStorage.getItem('resumeforge_import_prompt_closed') === '1') return;
     const pendingId = sessionStorage.getItem('resumeforge_pending_import');
     const dismissedId = sessionStorage.getItem('resumeforge_dismissed_import');
     const pendingResume = pendingId
-      ? localResumes.find((item) => item.id === pendingId)
+      ? localResumes.find((item) => item.id === pendingId && item.id !== dismissedId)
       : !resumes.length ? localResumes.find((item) => item.id !== 'sample-resume' && item.id !== dismissedId) : undefined;
     if (pendingResume) setImportResume(pendingResume);
   }, [loading, resumes.length, localResumes, importResume]);
@@ -94,6 +101,7 @@ export default function DashboardPage() {
     try {
       const resume = await importResumeFile(file);
       replaceResume(resume);
+      sessionStorage.removeItem('resumeforge_import_prompt_closed');
       sessionStorage.setItem('resumeforge_pending_import', resume.id);
       setImportResume(resume);
     } catch (e) {
@@ -248,7 +256,7 @@ export default function DashboardPage() {
     </Dialog>
     <Dialog open={Boolean(rename)} onClose={() => setRename(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><FileText size={16} /></Box>Rename resume</DialogTitle><DialogContent><TextField autoFocus fullWidth label="Resume title" value={renameValue} onChange={(e) => setRenameValue(e.target.value)} sx={{ mt: 1 }} /></DialogContent><DialogActions><Button onClick={() => setRename(null)}>Cancel</Button><Button variant="contained" onClick={submitRename} disabled={!renameValue.trim()}>Save name</Button></DialogActions></Dialog>
     <Dialog open={Boolean(share)} onClose={() => setShare(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><Share2 size={16} /></Box>Share resume</DialogTitle><DialogContent>{share?.isPublic ? <Stack spacing={2} pt={1}><Typography variant="body2">Anyone with this link can view your resume.</Typography><TextField fullWidth value={shareUrl} InputProps={{ readOnly: true }} /><Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}><Button startIcon={<Copy size={15} />} onClick={() => navigator.clipboard.writeText(shareUrl)}>Copy link</Button><Button startIcon={<ExternalLink size={15} />} onClick={() => window.open(shareUrl, '_blank')}>Open resume</Button></Stack></Stack> : <Typography py={1}>Your resume is private. Enable sharing to create a public link.</Typography>}</DialogContent><DialogActions><Button onClick={() => setShare(null)}>Close</Button><Button variant="contained" onClick={toggleShare}>{share?.isPublic ? 'Disable sharing' : 'Enable sharing'}</Button></DialogActions></Dialog>
-    <Dialog open={Boolean(importResume)} onClose={() => setImportResume(null)}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><Upload size={16} /></Box>Resume ready to import</DialogTitle><DialogContent><Typography>Save <strong>{importResume?.title}</strong> to your library. It is laid out on the {TEMPLATE_CATALOG.find((item) => item.id === importResume?.template)?.label ?? 'Modern'} template, ready to edit.</Typography></DialogContent><DialogActions><Button onClick={() => { sessionStorage.removeItem('resumeforge_pending_import'); if (importResume) sessionStorage.setItem('resumeforge_dismissed_import', importResume.id); setImportResume(null); }}>Not now</Button><Button variant="contained" onClick={async () => { if (!importResume) return; try { const result = await createResume({ title: importResume.title, data: importResume, templateId: importResume.template }); setResumes((items) => [result.resume, ...items]); sessionStorage.removeItem('resumeforge_pending_import'); sessionStorage.removeItem('resumeforge_dismissed_import'); setImportResume(null); } catch (e) { setError(e instanceof ApiError ? e.message : 'Unable to import resume'); } }}>Import to My Resumes</Button></DialogActions></Dialog>
+    <Dialog open={Boolean(importResume)} onClose={dismissImport}><DialogTitle className="dialog-title-icon"><Box className="dialog-icon-badge"><Upload size={16} /></Box>Resume ready to import</DialogTitle><DialogContent><Typography>Save <strong>{importResume?.title}</strong> to your library. It is laid out on the {TEMPLATE_CATALOG.find((item) => item.id === importResume?.template)?.label ?? 'Modern'} template, ready to edit.</Typography></DialogContent><DialogActions><Button onClick={dismissImport}>Not now</Button><Button variant="contained" onClick={async () => { if (!importResume) return; try { const result = await createResume({ title: importResume.title, data: importResume, templateId: importResume.template }); setResumes((items) => [result.resume, ...items]); sessionStorage.removeItem('resumeforge_pending_import'); sessionStorage.removeItem('resumeforge_dismissed_import'); setImportResume(null); } catch (e) { setError(e instanceof ApiError ? e.message : 'Unable to import resume'); } }}>Import to My Resumes</Button></DialogActions></Dialog>
     <AutomateDialog open={automateOpen} template={automateTemplate} onClose={() => setAutomateOpen(false)} onError={setError} />
   </Box>;
 }
