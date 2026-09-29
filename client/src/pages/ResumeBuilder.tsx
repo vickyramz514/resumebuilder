@@ -248,16 +248,17 @@ function ResumeBuilder() {
     }
   };
 
-  const paid = hasPaidPlan(user);
-  const fullCatalog = hasFullCatalog(user);
-  const ai = hasAiPlan(user);
+  const admin = isAdminUser(user);
+  const paid = admin || hasPaidPlan(user);
+  const fullCatalog = admin || hasFullCatalog(user);
+  const ai = admin || hasAiPlan(user);
   const downloadAllowed = (templateId: TemplateId) => paid && (fullCatalog || !templateNeedsFullPlan(templateId));
   const chooseTemplate = (templateId: TemplateId) => {
     setTemplate(templateId);
   };
   const openAi = () => {
-    if (!ai) { setPaywallReason('ai'); return; }
-    setAiOpen(true);
+    if (admin || ai) { setAiOpen(true); return; }
+    setPaywallReason('ai');
   };
 
   const downloadBlob = (blob: Blob, filename: string) => {

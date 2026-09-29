@@ -5,6 +5,8 @@ import type { Resume } from '../types';
 import { generateProjectBullets, improveSummary, rewriteExperience, suggestSkills, tailorResume } from '../services/aiApi';
 import { ApiError } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
+import { isAdminUser } from '../utils/entitlements';
 
 type Action = 'summary' | 'experience' | 'project' | 'tailor' | 'skills';
 export type AssistantResult = { kind: Action; targetId?: string; text?: string; bullets?: string[]; skills?: string[]; experienceBullets?: Array<{ experienceId?: string; bullets: string[] }> };
@@ -19,6 +21,7 @@ interface Props {
 
 export function AIAssistant({ open, onClose, resume, onApply, onSaveCopy }: Props) {
   const navigate = useNavigate();
+  const admin = isAdminUser(useAuthStore((state) => state.user));
   const [action, setAction] = useState<Action>('summary');
   const [targetRole, setTargetRole] = useState('');
   const [experienceId, setExperienceId] = useState(resume.experience[0]?.id ?? '');
@@ -53,7 +56,7 @@ export function AIAssistant({ open, onClose, resume, onApply, onSaveCopy }: Prop
       }
       setSelected(true);
     } catch (cause) {
-      if (cause instanceof ApiError && (cause.status === 402 || cause.code === 'PAYWALL')) {
+      if (!admin && cause instanceof ApiError && (cause.status === 402 || cause.code === 'PAYWALL')) {
         setError('PDF and Word export, and AI writing, are included on Starter and Pro. Subscribe to continue.');
       } else {
         setError(cause instanceof Error ? cause.message : 'AI writing failed. Please try again.');
@@ -81,7 +84,7 @@ export function AIAssistant({ open, onClose, resume, onApply, onSaveCopy }: Prop
         <Button variant="contained" startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <Sparkles size={16} />} onClick={run} disabled={loading || !hasTarget}>{loading ? 'Writing…' : 'Generate suggestion'}</Button>
         {error && <>
           <Alert severity={error.includes('Subscribe') || error.includes('Starter') ? 'info' : 'error'}>{error}</Alert>
-          {(error.includes('Subscribe') || error.includes('Starter')) && <Button variant="contained" onClick={() => { onClose(); navigate('/billing'); }}>Subscribe</Button>}
+          {!admin && (error.includes('Subscribe') || error.includes('Starter')) && <Button variant="contained" onClick={() => { onClose(); navigate('/billing'); }}>Subscribe</Button>}
         </>}
         {result && <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1.5, p: 1.5 }}>
           <Typography variant="overline" color="text.secondary">Preview — nothing has been changed</Typography>

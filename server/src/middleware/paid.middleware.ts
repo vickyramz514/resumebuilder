@@ -4,6 +4,12 @@ import { env } from '../config/env.js';
 import { templateNeedsFullPlan } from '../services/templateAccess.js';
 
 const FULL_SLUGS = new Set(['starter', 'starter-annual', 'pro', 'ultra', 'admin-test']);
+const ADMIN_LOGIN = 'admin@careerresume.in';
+
+function isAdminAccount(user: { role?: string | null; email?: string | null } | null | undefined) {
+  const email = user?.email?.trim().toLowerCase() ?? '';
+  return user?.role === 'ADMIN' || email === ADMIN_LOGIN || email === env.adminEmail;
+}
 
 export type DownloadTier = 'none' | 'basic' | 'full';
 
@@ -12,7 +18,7 @@ export async function downloadTierForUser(userId: string): Promise<DownloadTier>
     where: { id: userId },
     select: { plan: true, planExpiresAt: true, role: true, email: true }
   });
-  if (user?.role === 'ADMIN' || user?.email?.toLowerCase() === env.adminEmail) return 'full';
+  if (isAdminAccount(user)) return 'full';
   const active = await prisma.userSubscription.findFirst({
     where: { userId, status: 'ACTIVE' },
     select: { plan: { select: { slug: true } } }

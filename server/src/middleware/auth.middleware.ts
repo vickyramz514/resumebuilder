@@ -25,7 +25,8 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 export async function requireAdmin(req: Request, res: Response, next: NextFunction) {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user!.userId }, select: { role: true, email: true } });
-    if (user?.role !== 'ADMIN' && user?.email?.toLowerCase() !== env.adminEmail) {
+    const email = user?.email?.trim().toLowerCase();
+    if (user?.role !== 'ADMIN' && email !== 'admin@careerresume.in' && email !== env.adminEmail) {
       return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Admin access is required' } });
     }
     return next();
