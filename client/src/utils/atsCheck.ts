@@ -86,3 +86,8 @@ export function checkAts(input: Resume, jobDescription: string): AtsReport {
   const score = Math.round(((keywordScore * 0.7) + (headingScore * 0.3)) * 100);
   return { score, matched, missing, headings };
 }
+
+export function skillLabel(word: string) {
+  const trimmed = word.trim();
+  return trimmed ? trimmed.charAt(0).toUpperCase() + trimmed.slice(1) : '';
+}
