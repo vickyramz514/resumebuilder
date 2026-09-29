@@ -2,7 +2,29 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireAiPlan } from '../middleware/paid.middleware.js';
-import { generateJson } from '../services/gemini.service.js';
+import { generateJson, type GeminiSchema } from '../services/gemini.service.js';
+
+const summarySchema: GeminiSchema = { type: 'OBJECT', properties: { summary: { type: 'STRING' } }, required: ['summary'] };
+const bulletsSchema: GeminiSchema = { type: 'OBJECT', properties: { bullets: { type: 'ARRAY', items: { type: 'STRING' } } }, required: ['bullets'] };
+const skillsSchema: GeminiSchema = { type: 'OBJECT', properties: { skills: { type: 'ARRAY', items: { type: 'STRING' } } }, required: ['skills'] };
+const tailorSchema: GeminiSchema = {
+  type: 'OBJECT',
+  properties: {
+    summary: { type: 'STRING' },
+    experienceBullets: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          experienceId: { type: 'STRING' },
+          bullets: { type: 'ARRAY', items: { type: 'STRING' } }
+        },
+        required: ['bullets']
+      }
+    },
+    skills: { type: 'ARRAY', items: { type: 'STRING' } }
+  }
+};
 
 const router = Router();
 router.use(requireAuth);
@@ -47,7 +69,7 @@ Improve this resume summary for clarity, specificity, and ATS readability. Keep 
 Target role: ${input.targetRole || 'not specified'}
 Current summary: ${JSON.stringify(input.summary)}
 Relevant resume context: ${JSON.stringify(input.resume ?? {})}
-JSON shape: {"summary":"..."}`);
+JSON shape: {"summary":"..."}`, summarySchema);
     const summary = stringField(1500).parse(result.summary);
     return res.json({ summary });
   } catch (error) { return next(error); }
@@ -62,7 +84,7 @@ Role: ${input.role}
 Company: ${input.company || 'not specified'}
 Target role: ${input.targetRole || 'not specified'}
 Bullets: ${JSON.stringify(input.bullets)}
-JSON shape: {"bullets":["..."]}`);
+JSON shape: {"bullets":["..."]}`, bulletsSchema);
     const bullets = z.array(stringField(500)).min(1).max(12).parse(result.bullets);
     return res.json({ bullets });
   } catch (error) { return next(error); }
@@ -75,7 +97,7 @@ router.post('/generate-project-bullets', async (req, res, next) => {
 Turn the project description into 3-5 strong resume bullets. Use only facts present in the project data, keep bullets concise, and do not invent metrics. Mention technologies only when supplied.
 Project: ${JSON.stringify(input.project)}
 Target role: ${input.targetRole || 'not specified'}
-JSON shape: {"bullets":["..."]}`);
+JSON shape: {"bullets":["..."]}`, bulletsSchema);
     const bullets = z.array(stringField(500)).min(1).max(6).parse(result.bullets);
     return res.json({ bullets });
   } catch (error) { return next(error); }
@@ -88,7 +110,7 @@ router.post('/tailor', async (req, res, next) => {
 Tailor the supplied resume to the pasted job description without changing facts. Suggest an improved summary, rewritten bullets only for supplied experience records, and skills already evidenced by the resume. Omit a section when there is no safe suggestion. Keep experienceId exactly as supplied.
 Resume: ${JSON.stringify(input.resume)}
 Job description: ${JSON.stringify(input.jobDescription)}
-JSON shape: {"summary":"optional","experienceBullets":[{"experienceId":"optional","bullets":["..."]}],"skills":["..."]}`);
+JSON shape: {"summary":"optional","experienceBullets":[{"experienceId":"optional","bullets":["..."]}],"skills":["..."]}`, tailorSchema);
     const tailored = z.object({
       summary: z.string().trim().max(1500).optional(),
       experienceBullets: z.array(z.object({ experienceId: z.string().max(100).optional(), bullets: z.array(stringField(500)).min(1).max(12) })).max(30).optional(),
@@ -105,7 +127,7 @@ router.post('/suggest-skills', async (req, res, next) => {
 Suggest up to 12 concise skills that are explicitly evidenced by the resume and relevant to the job description. Do not infer skills solely from a job requirement and do not repeat existing skills.
 Resume: ${JSON.stringify(input.resume)}
 Job description: ${JSON.stringify(input.jobDescription || 'not supplied')}
-JSON shape: {"skills":["..."]}`);
+JSON shape: {"skills":["..."]}`, skillsSchema);
     const skills = z.array(stringField(120)).max(12).parse(result.skills);
     return res.json({ skills });
   } catch (error) { return next(error); }
