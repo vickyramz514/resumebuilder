@@ -3,10 +3,11 @@ import {
   Alert, AppBar, Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Menu, MenuItem,
   Stack, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Typography
 } from '@mui/material';
-import { ChevronDown, CreditCard, LayoutDashboard, LogOut, Sparkles } from 'lucide-react';
+import { ChevronDown, CreditCard, LayoutDashboard, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { adminOverview, type AdminOverview } from '../services/adminApi';
+import { BrandLogo } from '../components/BrandLogo';
 import { planCategory } from '../utils/entitlements';
 import '../dashboard.css';
 
@@ -44,7 +45,7 @@ export default function AdminPage() {
   return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#f6f7fb', color: '#202124' }}>
     <AppBar position="static" elevation={0} className="dashboard-topbar" sx={{ bgcolor: '#fff', color: '#202124', borderBottom: '1px solid #e5e9e6' }}>
       <Toolbar sx={{ maxWidth: 1180, width: '100%', mx: 'auto' }}>
-        <Box className="brand-mark"><Box className="brand-badge"><Sparkles size={16} fill="currentColor" /></Box><Typography component="span" fontWeight={800} letterSpacing="-0.5px">ResumeForge</Typography></Box>
+        <Box className="brand-mark"><BrandLogo /><Typography component="span" fontWeight={800} letterSpacing="-0.5px">ResumeForge</Typography></Box>
         <Box flex={1} />
         <Button color="inherit" onClick={() => navigate('/dashboard')} sx={{ mr: 1 }}>My Resumes</Button>
         <Box className="user-chip" onClick={(event) => setMenuAnchor(event.currentTarget)}>

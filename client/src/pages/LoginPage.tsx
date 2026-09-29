@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Alert, Box, Button, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { Check, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { Check, Eye, EyeOff } from 'lucide-react';
+import { BrandLogo } from '../components/BrandLogo';
 import { useAuthStore } from '../store/authStore';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 import '../auth.css';
@@ -41,7 +42,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
   return <Box className="auth-page">
     <Box className="auth-brand-panel">
       <Link to="/" className="auth-brand-top" style={{ color: 'inherit', textDecoration: 'none' }}>
-        <Box className="auth-brand-icon"><Sparkles size={16} fill="currentColor" /></Box>ResumeForge
+        <BrandLogo size={32} />ResumeForge
       </Link>
       <Box className="auth-brand-mid">
         <Typography component="h2">Build a resume that opens doors.</Typography>
@@ -57,7 +58,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
     </Box>
     <Box className="auth-form-panel">
       <Box className="auth-form-card">
-        <Link to="/" className="auth-mobile-brand"><span><Sparkles size={15} fill="currentColor" /></span>ResumeForge</Link>
+        <Link to="/" className="auth-mobile-brand"><BrandLogo size={30} />ResumeForge</Link>
         <Typography className="auth-form-title">{title}</Typography>
         <Typography className="auth-form-subtitle">{subtitle}</Typography>
         {children}

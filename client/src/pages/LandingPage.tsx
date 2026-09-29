@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useResumeStore } from '../store';
 import { IMPORT_ACCEPT, importResumeFile } from '../utils/importResume';
+import { BrandLogo } from '../components/BrandLogo';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
 import { TEMPLATE_CATALOG } from '../templates/catalog';
 import { billingPlanName, listPlans, type SubscriptionPlan } from '../services/billingApi';
@@ -128,7 +129,7 @@ export default function LandingPage() {
     <Box component="header" className="landing-header">
       <Container maxWidth="lg">
         <Stack direction="row" alignItems="center" spacing={1.5} py={1.75}>
-          <Box className="landing-brand" component="a" href="#top"><Box className="landing-brand-icon"><Sparkles size={17} fill="currentColor" /></Box><Typography fontWeight={850} letterSpacing="-0.8px">ResumeForge</Typography></Box>
+          <Box className="landing-brand" component="a" href="#top"><BrandLogo size={30} /><Typography fontWeight={850} letterSpacing="-0.8px">ResumeForge</Typography></Box>
           <Stack direction="row" spacing={2.5} sx={{ ml: 4, display: { xs: 'none', lg: 'flex' } }} className="landing-nav">
             <a href="#ats">Why it works</a>
             <a href="#features">Features</a>
@@ -198,7 +199,7 @@ export default function LandingPage() {
               <Paper className="hero-editor-window" elevation={0}>
                 <Stack direction="row" spacing={.75} className="hero-window-bar"><i /><i /><i /><Typography variant="caption">ResumeForge / Editor</Typography></Stack>
                 <Box className="hero-editor-body">
-                  <Box className="hero-editor-sidebar"><Box className="hero-sidebar-logo"><Sparkles size={12} /></Box><i /><i /><i /><i /></Box>
+                  <Box className="hero-editor-sidebar"><Box className="hero-sidebar-logo"><BrandLogo size={18} /></Box><i /><i /><i /><i /></Box>
                   <Box className="hero-editor-content">
                     <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
                       <Box><Typography variant="caption" color="text.secondary">My resume</Typography><Typography fontWeight={800}>Product resume</Typography></Box>
@@ -436,7 +437,7 @@ export default function LandingPage() {
       <Container maxWidth="lg">
         <Box className="footer-grid">
           <Box>
-            <Box className="landing-brand"><Box className="landing-brand-icon"><Sparkles size={15} fill="currentColor" /></Box><Typography fontWeight={850}>ResumeForge</Typography></Box>
+            <Box className="landing-brand"><BrandLogo size={28} /><Typography fontWeight={850}>ResumeForge</Typography></Box>
             <Typography variant="body2" className="footer-blurb">A calmer place to write, arrange, and export the resume you are willing to put your name on.</Typography>
           </Box>
           <Box>

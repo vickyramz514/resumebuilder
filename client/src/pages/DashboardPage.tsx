@@ -11,6 +11,7 @@ import { useResumeStore } from '../store';
 import { createResume, deleteResume, duplicateResume, listResumes, renameResume, shareResume, type CloudResume } from '../services/resumeApi';
 import { ApiError } from '../services/api';
 import { IMPORT_ACCEPT, importResumeFile } from '../utils/importResume';
+import { BrandLogo } from '../components/BrandLogo';
 import { TemplateThumbnail } from '../components/TemplateThumbnail';
 import { TEMPLATE_CATALOG, isTemplateId } from '../templates/catalog';
 import { AutomateDialog } from '../components/AutomateDialog';
@@ -149,7 +150,7 @@ export default function DashboardPage() {
   return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#f3f6f4', color: '#202124' }}>
     <AppBar position="static" elevation={0} className="dashboard-topbar" sx={{ bgcolor: '#fff', color: '#202124', borderBottom: '1px solid #e5e9e6' }}>
       <Toolbar sx={{ maxWidth: 1180, width: '100%', mx: 'auto' }}>
-        <Box className="brand-mark"><Box className="brand-badge"><Sparkles size={16} fill="currentColor" /></Box><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
+        <Box className="brand-mark"><BrandLogo /><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
         <Box flex={1} />
         {isAdminUser(user) && <Button color="inherit" onClick={() => navigate('/admin')} sx={{ mr: 1 }}>Track</Button>}
         <Chip size="small" label={planCategory(user?.plan).label} color={planCategory(user?.plan).color} variant="outlined" sx={{ mr: 1 }} />

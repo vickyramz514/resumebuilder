@@ -3,7 +3,7 @@ import {
   Alert, AppBar, Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Dialog, DialogActions,
   DialogContent, DialogTitle, Grid, IconButton, Menu, MenuItem, Stack, Toolbar, Typography
 } from '@mui/material';
-import { Check, ChevronDown, CreditCard, LogOut, Sparkles } from 'lucide-react';
+import { Check, ChevronDown, CreditCard, LogOut } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { ApiError } from '../services/api';
@@ -12,6 +12,7 @@ import {
   type SubscriptionPlan, type UserSubscription
 } from '../services/billingApi';
 import { startPlanCheckout } from '../lib/razorpayCheckout';
+import { BrandLogo } from '../components/BrandLogo';
 import { isAdminUser } from '../utils/entitlements';
 import '../dashboard.css';
 import '../billing.css';
@@ -114,7 +115,7 @@ export default function BillingPage() {
   return <Box className="dashboard-page" sx={{ minHeight: '100vh', bgcolor: '#f6f7fb', color: '#202124' }}>
     <AppBar position="static" elevation={0} className="dashboard-topbar" sx={{ bgcolor: '#fff', color: '#202124', borderBottom: '1px solid #e5e9e6' }}>
       <Toolbar sx={{ maxWidth: 1180, width: '100%', mx: 'auto' }}>
-        <Box className="brand-mark"><Box className="brand-badge"><Sparkles size={16} fill="currentColor" /></Box><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
+        <Box className="brand-mark"><BrandLogo /><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
         <Box flex={1} />
         <Button color="inherit" onClick={() => navigate('/dashboard')} sx={{ mr: 1 }}>My Resumes</Button>
         {isAdminUser(user) && <Button color="inherit" onClick={() => navigate('/admin')} sx={{ mr: 1 }}>Track</Button>}

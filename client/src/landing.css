@@ -3,7 +3,7 @@ html:has(.landing-page) { scroll-behavior: smooth; }
 .landing-header { position: sticky; top: 0; z-index: 20; background: rgba(246,247,251,.88); border-bottom: 1px solid rgba(196,181,253,.45); backdrop-filter: blur(16px); }
 .landing-section, .landing-cta { scroll-margin-top: 76px; }
 .landing-brand { display: inline-flex; align-items: center; gap: 9px; color: #1e1b4b; font-size: 16px; }
-.landing-brand-icon { display: grid; place-items: center; width: 29px; height: 29px; border-radius: 9px; color: #fff; background: linear-gradient(145deg, #2dd4bf, #0d9488 55%, #7c3aed); box-shadow: 0 6px 16px #0d948844; animation: brand-pop 3.6s ease-in-out infinite; }
+.landing-brand .brand-logo { display: block; border-radius: 8px; box-shadow: 0 6px 16px #0d948844; }
 .landing-header a { color: #57534e; font-size: 13px; text-decoration: none; }.landing-header a:hover { color: #0f766e; }
 .landing-hero { position: relative; overflow: hidden; background: radial-gradient(820px 380px at 8% -8%, #ddd6fe 0%, transparent 58%), radial-gradient(640px 340px at 96% 0%, #99f6e4 0%, transparent 52%), linear-gradient(180deg, #f5f3ff 0%, #f0fdfa 62%, #fff 100%); }
 .landing-hero:before, .landing-hero:after { pointer-events: none; }

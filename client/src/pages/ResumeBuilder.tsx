@@ -16,6 +16,7 @@ import { ResumePreview } from '../templates/ResumePreview';
 import { useActiveResume, useResumeStore } from '../store';
 import { TEMPLATE_CATALOG, templateNeedsFullPlan } from '../templates/catalog';
 import type { FontFamily, ResumeDesign, ResumeDensity, SectionType, TemplateId } from '../types';
+import { BrandLogo } from '../components/BrandLogo';
 import { PersonalForm } from '../components/PersonalForm';
 import { AwardsForm, CertificationsForm, CoverLetterForm, EducationForm, ExperienceForm, LanguagesForm, ProjectsForm, SkillsForm, SummaryForm, VolunteerForm } from '../components/SectionForms';
 import { AtsCheck } from '../components/AtsCheck';
@@ -465,7 +466,7 @@ function ResumeBuilder() {
       <AppBar position="static" color="inherit" elevation={0} className="topbar">
         <Toolbar>
           <IconButton className="topbar-icon-btn" edge="start" aria-label="Open resume navigation" onClick={() => setMobileMenu(!mobileMenu)} sx={{ display: { md: 'none' }, mr: 1 }}><MenuIcon size={20} /></IconButton>
-          <Box className="brand-mark"><Box className="brand-badge"><Sparkles size={16} fill="currentColor" /></Box><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
+          <Box className="brand-mark"><BrandLogo /><Typography component="span" fontWeight={800} letterSpacing="-0.5px" sx={{ display: { xs: 'none', sm: 'inline' } }}>ResumeForge</Typography></Box>
           <Button size="small" color="inherit" onClick={() => navigate('/dashboard')} sx={{ textTransform: 'none', ml: 1 }}>My Resumes</Button>
           <Box className="topbar-title">
             <FileText size={16} color="#64748b" />
