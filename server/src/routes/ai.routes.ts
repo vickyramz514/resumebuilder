@@ -47,10 +47,60 @@ const projectSchema = z.object({
 const resumeContextSchema = z.object({
   personal: z.object({ name: z.string().max(200).optional(), headline: z.string().max(300).optional() }).optional(),
   summary: z.string().max(5000).optional(),
-  skills: z.array(contextString(120)).max(100).optional(),
-  experience: z.array(experienceSchema).max(30).optional(),
-  projects: z.array(projectSchema).max(30).optional()
+  skills: z.array(contextString(120)).max(80).optional(),
+  experience: z.array(experienceSchema).max(40).optional(),
+  projects: z.array(projectSchema).max(40).optional()
 }).default({});
+
+function asRecord(value: unknown) {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : null;
+}
+
+function clipText(value: unknown, max: number) {
+  return typeof value === 'string' ? value.slice(0, max) : value;
+}
+
+/** Keep the model prompt inside the request limits, even when an imported resume has a long list. */
+function boundResume(value: unknown) {
+  const resume = asRecord(value);
+  if (!resume) return value;
+  if (Array.isArray(resume.skills)) {
+    resume.skills = resume.skills
+      .filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+      .slice(0, 40)
+      .map((item) => item.slice(0, 120));
+  }
+  if (Array.isArray(resume.experience)) {
+    resume.experience = resume.experience.slice(0, 12).map((item) => {
+      const role = asRecord(item);
+      if (!role) return item;
+      role.bullets = Array.isArray(role.bullets)
+        ? role.bullets
+          .filter((bullet): bullet is string => typeof bullet === 'string' && bullet.trim().length > 0)
+          .slice(0, 6)
+          .map((bullet) => bullet.slice(0, 500))
+        : [];
+      role.id = clipText(role.id, 100);
+      role.role = clipText(role.role, 200);
+      role.company = clipText(role.company, 200);
+      return role;
+    });
+  }
+  if (Array.isArray(resume.projects)) {
+    resume.projects = resume.projects.flatMap((item) => {
+      const project = asRecord(item);
+      if (!project) return [];
+      const name = typeof project.name === 'string' ? project.name.trim().slice(0, 200) : '';
+      if (!name) return [];
+      project.name = name;
+      project.description = clipText(project.description, 1000);
+      project.technologies = clipText(project.technologies, 300);
+      return [project];
+    }).slice(0, 12);
+  }
+  resume.summary = clipText(resume.summary, 2000);
+  return resume;
+}
 
 const targetRole = z.string().trim().max(200).optional();
 const summaryRequest = z.object({ summary: z.string().trim().max(5000).default(''), targetRole, resume: resumeContextSchema.optional() });
@@ -63,7 +113,9 @@ const jsonRules = 'Return only valid JSON matching the requested shape. Do not u
 
 router.post('/improve-summary', async (req, res, next) => {
   try {
-    const input = summaryRequest.parse(req.body ?? {});
+    const body = (req.body ?? {}) as { resume?: unknown };
+    body.resume = boundResume(body.resume);
+    const input = summaryRequest.parse(body);
     const result = await generateJson<{ summary: string }>(`${jsonRules}
 Improve this resume summary for clarity, specificity, and ATS readability. Keep it truthful and under 700 characters.
 Target role: ${input.targetRole || 'not specified'}
@@ -105,7 +157,9 @@ JSON shape: {"bullets":["..."]}`, bulletsSchema);
 
 router.post('/tailor', async (req, res, next) => {
   try {
-    const input = tailorRequest.parse(req.body ?? {});
+    const body = (req.body ?? {}) as { resume?: unknown };
+    body.resume = boundResume(body.resume);
+    const input = tailorRequest.parse(body);
     const result = await generateJson<{ summary?: string; experienceBullets?: Array<{ experienceId?: string; bullets: string[] }>; skills?: string[] }>(`${jsonRules}
 Tailor the supplied resume to the pasted job description without changing facts. Suggest an improved summary, rewritten bullets only for supplied experience records, and skills already evidenced by the resume. Omit a section when there is no safe suggestion. Keep experienceId exactly as supplied.
 Resume: ${JSON.stringify(input.resume)}
@@ -122,7 +176,9 @@ JSON shape: {"summary":"optional","experienceBullets":[{"experienceId":"optional
 
 router.post('/suggest-skills', async (req, res, next) => {
   try {
-    const input = skillsRequest.parse(req.body ?? {});
+    const body = (req.body ?? {}) as { resume?: unknown };
+    body.resume = boundResume(body.resume);
+    const input = skillsRequest.parse(body);
     const result = await generateJson<{ skills: string[] }>(`${jsonRules}
 Suggest up to 12 concise skills that are explicitly evidenced by the resume and relevant to the job description. Do not infer skills solely from a job requirement and do not repeat existing skills.
 Resume: ${JSON.stringify(input.resume)}

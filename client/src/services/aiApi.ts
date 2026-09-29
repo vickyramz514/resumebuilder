@@ -4,10 +4,13 @@ import { apiRequest } from './api';
 type ResumeContext = Pick<Resume, 'personal' | 'summary' | 'skills' | 'experience' | 'projects'>;
 const context = (resume: Resume): ResumeContext => ({
   personal: resume.personal,
-  summary: resume.summary,
-  skills: resume.skills,
-  experience: resume.experience,
-  projects: resume.projects
+  summary: resume.summary.slice(0, 2000),
+  skills: resume.skills.filter(Boolean).slice(0, 40),
+  experience: resume.experience.slice(0, 12).map((item) => ({
+    ...item,
+    bullets: item.bullets.filter(Boolean).slice(0, 6)
+  })),
+  projects: resume.projects.slice(0, 12)
 });
 
 export const improveSummary = (summary: string, resume: Resume, targetRole?: string) =>
