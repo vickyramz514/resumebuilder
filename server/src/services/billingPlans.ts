@@ -6,7 +6,7 @@ import { fetchPlan } from './razorpay.service.js';
 const basicPlanId = () => env.razorpay.basicPlanId;
 const starterPlanId = () => env.razorpay.starterPlanId;
 const proPlanId = () => env.razorpay.proPlanId;
-/** Flip `RAZORPAY_PLAN_PRO_ENABLED` (false / disable / 0) to hide Pro without deleting it. */
+/** The ₹1299 plan stays off unless `RAZORPAY_PLAN_PRO_ENABLED` is turned on. Public Pro is slug `starter`. */
 export const isProPlanEnabled = () => env.razorpay.proPlanEnabled;
 
 function activeSlugs() {
@@ -63,7 +63,7 @@ export const defaultBillingPlans: Prisma.SubscriptionPlanCreateInput[] = [
     metadata: { popular: true }
   },
   {
-    name: 'Pro Plus',
+    name: 'Pro',
     slug: 'pro',
     description: 'AI-assisted resumes, PDF and Word export, and extra AI capacity',
     priceCents: 129900,

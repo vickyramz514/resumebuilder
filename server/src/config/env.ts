@@ -36,8 +36,8 @@ export const env = {
       basicPlanId: process.env.RAZORPAY_PLAN_BASIC ?? 'plan_ThSBTP8SqSMNcy',
       starterPlanId: process.env.RAZORPAY_PLAN_STARTER ?? 'plan_TfKovTk3qxjBhH',
       proPlanId: process.env.RAZORPAY_PLAN_PRO ?? 'plan_TfjVh8pptWF8AG',
-      // Flip RAZORPAY_PLAN_PRO_ENABLED to false/disable/0 to hide this plan without deleting it.
-      proPlanEnabled: envFlag(process.env.RAZORPAY_PLAN_PRO_ENABLED, true)
+      // The public Pro plan is slug starter. This flag only controls the older ₹1299 plan.
+      proPlanEnabled: envFlag(process.env.RAZORPAY_PLAN_PRO_ENABLED, false)
     };
   })()
 };

@@ -28,8 +28,7 @@ export type UserSubscription = {
 };
 
 export function billingPlanName(plan: { slug?: string; name: string }) {
-  if (plan.slug === 'starter' || plan.name === 'Starter') return 'Pro';
-  if (plan.slug === 'pro' && plan.name === 'Pro') return 'Pro Plus';
+  if (plan.slug === 'starter' || plan.name === 'Starter' || plan.slug === 'pro' || plan.name === 'Pro Plus') return 'Pro';
   return plan.name;
 }
 
@@ -41,7 +40,7 @@ const isHiddenRupeePlan = (plan: Pick<SubscriptionPlan, 'priceCents' | 'currency
   plan.currency.toUpperCase() === 'INR' && plan.priceCents === 100;
 
 export const listPlans = () => apiRequest<{ success: boolean; data: { plans: SubscriptionPlan[] } }>('/api/subscriptions/plans')
-  .then((body) => body.data.plans.filter((plan) => !isHiddenRupeePlan(plan)));
+  .then((body) => body.data.plans.filter((plan) => !isHiddenRupeePlan(plan) && plan.slug !== 'pro' && plan.name !== 'Pro Plus'));
 export const getSubscriptionStatus = () => apiRequest<{ success: boolean; data: { subscription: UserSubscription | null } }>('/api/subscriptions/status').then((body) => body.data.subscription);
 export const createSubscription = (planSlug: string) =>
   apiRequest<{ success: boolean; data: { subscriptionId: string; checkoutUrl: string; razorpayKeyId: string | null; planId: string; planSlug: string } }>(
