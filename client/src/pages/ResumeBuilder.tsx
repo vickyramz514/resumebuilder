@@ -589,7 +589,7 @@ function ResumeBuilder() {
       </Box>
       <AIAssistant open={aiOpen} onClose={() => setAiOpen(false)} resume={resume} onApply={applySuggestion} onSaveCopy={saveTailoredCopy} />
       <PaywallDialog open={Boolean(paywallReason)} reason={paywallReason ?? 'pdf'} onClose={() => setPaywallReason(null)} />
-      <AutomateDialog open={automateOpen} onClose={() => setAutomateOpen(false)} onError={setToast} />
+      <AutomateDialog open={automateOpen} template={resume.template} onClose={() => setAutomateOpen(false)} onError={setToast} />
       <Dialog open={shareOpen} onClose={() => setShareOpen(false)}>
         <DialogTitle>Share resume</DialogTitle>
         <DialogContent>
